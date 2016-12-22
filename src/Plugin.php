@@ -2,53 +2,57 @@
 
 namespace Arc;
 
-abstract class Plugin implements PluginInterface
+use Arc\Contracts\Activator;
+use Arc\Contracts\Deactivator;
+use Arc\Contracts\Plugin as PluginContract;
+
+abstract class Plugin implements PluginContract
 {
     /**
      * The callable which handles the plugin's activation
      * @var Callable
      **/
-    private $activationHandler;
+    private $activator;
 
     /**
      * The callable which handles the plugin's deactivation
      * @var Callable
      **/
-    private $deactivationHandler;
+    private $deactivator;
 
     /**
      * Returns the handler for activating the plugin
      * @param Callable
      **/
-    public function getActivationHandler()
+    public function getActivator()
     {
-        return $this->activationHandler;
+        return $this->activator;
     }
 
     /**
      * Set the handler for activating the plugin
      * @param Callable $handler
      **/
-    public function setActivationHandler(Callable $handler)
+    public function setActivator(Activator $activator)
     {
-        $this->activationHandler = $handler;
+        $this->activator = $activator;
     }
 
     /**
      * Returns the handler for deactivating the plugin
      * @param Callable
      **/
-    public function getDeactivationHandler()
+    public function getDeactivator()
     {
-        return $this->deactivationHandler;
+        return $this->deactivator;
     }
 
     /**
      * Set the handler for deactivating the plugin
      * @param Callable $handler
      **/
-    public function setDeactivationHandler(Callable $handler)
+    public function setDeactivator(Deactivator $deactivator)
     {
-        $this->handler = $handler;
+        $this->deactivator = $deactivator;
     }
 }

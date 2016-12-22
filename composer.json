@@ -2,11 +2,17 @@
     "name": "arc/framework",
     "description": "A simple modern framework for building WordPress plugins",
     "type": "library",
+    "license": "MIT",
     "authors": [
         {
             "name": "Andrew Feeney",
             "email": "webspannerdev@gmail.com"
         }
     ],
-    "require": {}
+    "require": {},
+    "autoload": {
+        "psr-4":{
+            "Arc\\": "src/"
+        }
+    }
 }

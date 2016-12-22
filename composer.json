@@ -1,0 +1,12 @@
+{
+    "name": "arc/framework",
+    "description": "A simple modern framework for building WordPress plugins",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Andrew Feeney",
+            "email": "webspannerdev@gmail.com"
+        }
+    ],
+    "require": {}
+}

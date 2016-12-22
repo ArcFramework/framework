@@ -9,10 +9,20 @@
             "email": "webspannerdev@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "illuminate/container": "~5.3"
+    },
     "autoload": {
         "psr-4":{
             "Arc\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4":{
+            "Arc\\TestPlugin\\": "tests/test-plugin/src/"
+        },
+        "classmap": [
+            "tests"
+        ]
     }
 }

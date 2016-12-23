@@ -16,23 +16,20 @@ class Framework
 
     public $plugin;
 
-    public function __construct($pluginClassName, $pluginFileName)
+    public function __construct($pluginFileName)
     {
         // Save the plugin file name attribute
         $this->pluginFileName = $pluginFileName;
 
         // Instantiate the IoC container
         $this->container = new Container();
+    }
 
+    public function boot($pluginClassName)
+    {
         // Resolve the plugin class to a concretion
         $this->plugin = $this->container->make($pluginClassName);
 
-        // Boot the plugin
-        $this->boot($this->plugin);
-    }
-
-    public function boot()
-    {
         $this->registerBindings();
 
         register_activation_hook($this->pluginFileName, [

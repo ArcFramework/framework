@@ -6,7 +6,7 @@ use Arc\Contracts\Activator;
 use Arc\Contracts\Deactivator;
 use Arc\Contracts\Plugin as PluginContract;
 
-abstract class Plugin implements PluginContract
+abstract class BasePlugin implements PluginContract
 {
     /**
      * The callable which handles the plugin's activation

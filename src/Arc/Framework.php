@@ -27,10 +27,15 @@ class Framework
 
     public function boot($pluginClassName)
     {
+        // Bind plugin class
+        //$this->container->bind($pluginClassName, Arc\BasePlugin);
+
+        // Get all other bindings
+        $this->registerBindings();
+
         // Resolve the plugin class to a concretion
         $this->plugin = $this->container->make($pluginClassName);
 
-        $this->registerBindings();
 
         register_activation_hook($this->pluginFileName, [
             $this->make(Activator::class),

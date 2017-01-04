@@ -2,7 +2,9 @@
 
 namespace Arc\Testing;
 
-class TestCase
+use WP_UnitTestCase;
+
+class TestCase extends WP_UnitTestCase
 {
     /**
      * Performs an HTTP request

@@ -1,5 +1,5 @@
 {
-    "name": "arc/framework",
+    "name": "arc-framework/framework",
     "description": "A simple modern framework for building WordPress plugins",
     "type": "library",
     "license": "MIT",

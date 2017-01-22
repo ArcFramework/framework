@@ -22,7 +22,7 @@
             "Arc\\": "src/Arc/"
         },
         "files": [
-            "src/helpers.php"
+            "src/Arc/helpers.php"
         ]
     },
     "autoload-dev": {

@@ -30,7 +30,7 @@ class BasePlugin
     public function __construct($pluginFilename)
     {
         // Pull in dependencies
-        require (__DIR__ . "/../vendor/autoload.php");
+        require (__DIR__ . "/../../vendor/autoload.php");
 
         // Instantiate IoC container
         $this->app = new Application(

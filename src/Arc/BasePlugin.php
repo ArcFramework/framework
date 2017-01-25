@@ -69,14 +69,18 @@ class BasePlugin
      **/
     public function boot()
     {
+        global $wpdb;
+
         $this->capsule->addConnection([
             'driver' => 'mysql',
-            'database' => 'wp',
-            'username' => 'root',
-            'password' => '',
+            'database' => DB_NAME,
+            'username' => DB_USER,
+            'password' => DB_PASSWORD,
             'host' => '127.0.0.1',
-            'prefix' => 'mw_'
+            'prefix' => $wpdb->base_prefix,
+            'collation' => DB_COLLATE
         ]);
+
         $this->capsule->getContainer()->singleton(
             ExceptionHandler::class,
             Handler::class

@@ -9,6 +9,8 @@ class PostMeta extends Model
     public $timestamps = false;
 
     protected $guarded = [];
+
+    protected $table = 'postmeta';
 }
 
 

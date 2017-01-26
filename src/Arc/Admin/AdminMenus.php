@@ -8,14 +8,15 @@ use Arc\View\Builder;
 class AdminMenus
 {
     private $name;
-    private $title;
-    private $capability;
+    private $title = '';
+    private $capability = 'administrator';
     private $slug;
     private $view;
     private $viewBuilder;
+    private $viewParameters = [];
     private $icon;
     private $position;
-    private $settings;
+    private $settings = [];
 
     public function __construct(Application $app, Builder $viewBuilder)
     {
@@ -36,7 +37,7 @@ class AdminMenus
         $registrar->register();
     }
 
-    protected function add()
+    public function add()
     {
         if (!is_admin()) {
             return;
@@ -48,7 +49,7 @@ class AdminMenus
                 $this->title,
                 $this->capability,
                 $this->slug,
-                [$this, 'render' . $this->view],
+                $this->getCallable(),
                 $this->icon,
                 $this->position
             );

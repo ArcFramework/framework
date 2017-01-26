@@ -1,0 +1,18 @@
+<?php
+
+namespace DummyNamespace;
+
+use Arc\Providers\ServiceProvider;
+
+class DummyClass extends ServiceProvider
+{
+    /**
+     * Bootstrap the application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+
+    }
+}

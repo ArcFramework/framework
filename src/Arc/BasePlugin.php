@@ -6,10 +6,12 @@ use Arc\Activation\ActivationHooks;
 use Arc\Admin\AdminMenus;
 use Arc\Assets\Assets;
 use Arc\Exceptions\Handler;
+use Arc\Config\Config;
 use Arc\Cron\CronSchedules;
 use Arc\Providers\Providers;
 use Arc\Routes\Router;
 use Arc\Shortcodes\Shortcodes;
+use Dotenv\Dotenv;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -29,31 +31,34 @@ class BasePlugin
      **/
     public function __construct($pluginFilename)
     {
-        // Pull in dependencies
-        require (__DIR__ . "/../../vendor/autoload.php");
-
         // Instantiate IoC container
-        $this->app = new Application(
-            $pluginFilename,
-            substr(get_class($this), 0, strrpos(get_class($this), '\\'))
-        );
+        $app = new Container;
+        Container::setInstance($app);
 
-        // Make sure we get this instance of the Application class every time that class
-        // is resolved from the container
-        app()->singleton(Application::class, function() {
-            return $this->app;
+        // Get environment variables
+        $dotenv = new Dotenv(dirname($pluginFilename));
+        $dotenv->load();
+
+        // Bind config object
+        $app->singleton('config', function() {
+            return app(Config::class);
         });
 
         // Bind Exception Handler
-        app()->singleton(
+        $app->singleton(
             ExceptionHandler::class,
             Handler::class
         );
 
-        app()->bind(
-            \Illuminate\Contracts\Http\Kernel::class,
-            \Illuminate\Foundation\Http\Kernel::class
+        // Bind filesystem
+        $app->bind(
+            \Illuminate\Contracts\Filesystem\Filesystem::class,
+            \Illuminate\Filesystem\Filesystem::class
         );
+
+        $app->bind('blade', function() {
+            return new \Arc\View\Blade(config('plugin_path') . 'assets/views', config('plugin_path') . 'bootstrap/cache');
+        });
 
         $this->capsule = app(Capsule::class);
         $this->adminMenus = app(AdminMenus::class);

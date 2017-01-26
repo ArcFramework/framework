@@ -11,11 +11,15 @@
         }
     ],
     "require": {
-        "illuminate/container": "5.3.*",
+        "illuminate/view": "^5.3",
+        "illuminate/container": "^5.3",
         "illuminate/database": "^5.3",
-        "symfony/var-dumper": "^3.2",
-        "illuminate/http": "^5.3",
-        "tightenco/collect": "^5.3"
+        "illuminate/filesystem": "^5.3",
+        "illuminate/support": "^5.3",
+        "tightenco/collect": "^5.3",
+        "vlucas/phpdotenv": "^2.4",
+        "mnapoli/silly": "^1.5",
+        "acclimate/container": "~1.0"
     },
     "autoload": {
         "psr-4":{

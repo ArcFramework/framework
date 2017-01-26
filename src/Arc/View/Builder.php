@@ -2,14 +2,12 @@
 
 namespace Arc\View;
 
-use Arc\BasePlugin;
-
 use Arc\Application;
+use Arc\BasePlugin;
+use Arc\Exceptions\ViewNotFoundException;
 
 class Builder
 {
-    private $app;
-
     public function __construct(Application $app)
     {
         $this->app = $app;
@@ -22,14 +20,6 @@ class Builder
      **/
     public function build($view, $parameters = [])
     {
-        foreach ($parameters as $key => $value) {
-            $$key = $value;
-        }
-
-        ob_start();
-        include($this->app->pluginDirectory . '/src/views/' . $view . '.php');
-        $contents = ob_get_contents();
-        ob_end_clean();
-        return $contents;
+        return app('blade')->view()->make($view, $parameters);
     }
 }

@@ -25,7 +25,7 @@ class AdminMenus
 
     public function register()
     {
-        $adminRegistrarClassName = $this->app->pluginNamespace . '\\Admin\\RegistersAdminMenus';
+        $adminRegistrarClassName = config('plugin_namespace') . '\\Admin\\RegistersAdminMenus';
 
         // If no activator class has been defined we can return early
         if (!class_exists($adminRegistrarClassName)) {
@@ -70,48 +70,54 @@ class AdminMenus
 
     public function render($view)
     {
-        echo($this->viewBuilder->build($view));
+        echo($this->viewBuilder->build($view, $this->viewParameters));
     }
 
-    protected function addMenuPageCalled($name)
+    public function addMenuPageCalled($name)
     {
         $this->name = $name;
         return $this;
     }
 
-    protected function withMenuTitle($title)
+    public function withMenuTitle($title)
     {
         $this->title = $title;
         return $this;
     }
 
-    protected function restrictedToCapability($capability)
+    public function restrictedToCapability($capability)
     {
         $this->capability = $capability;
         return $this;
     }
 
-    protected function withSettings($settings = [])
+    public function withSettings($settings = [])
     {
         $this->settings = $settings;
         return $this;
     }
 
-    protected function withSlug($slug)
+    public function withSlug($slug)
     {
         $this->slug = $slug;
         return $this;
     }
 
-    protected function whichRendersView($view)
+    public function whichRendersView($view, $parameters = [])
     {
         $this->view = $view;
+        $this->viewParameters = $parameters;
         return $this;
     }
 
-    protected function withIcon($icon)
+    public function withIcon($icon)
     {
-        $this->icon = $this->plugin->pluginPath . '/src/assets/images/' . $icon;
+        $this->icon = config('plugin_path') . '/src/assets/images/' . $icon;
         return $this;
+    }
+
+    protected function getCallable()
+    {
+        return !is_null($this->view) ? [$this, 'render' . $this->view] : function() {};
     }
 }

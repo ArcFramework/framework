@@ -6,13 +6,6 @@ use Arc\Application;
 
 class FlatFileParser
 {
-    private $app;
-
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-    }
-
     /**
      * Requires the given config file, passing in the given variables and returns the result
      *
@@ -26,7 +19,7 @@ class FlatFileParser
             $$name = $value;
         }
 
-        $fileName = $this->app->pluginDirectory . '/config/' . $configFileName . '.php';
+        $fileName = config('plugin_path') . '/config/' . $configFileName . '.php';
 
         if (!file_exists($fileName)) {
             return [];

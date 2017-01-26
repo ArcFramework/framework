@@ -12,7 +12,7 @@ class ActivationHooksTest extends FrameworkTestCase
         WP_Mock::wpFunction('register_activation_hook', [
             'times' => 1,
             'args' => [
-                $this->app->pluginFilename,
+                config('plugin_filename'),
                 $doThis
             ]
         ]);
@@ -28,7 +28,7 @@ class ActivationHooksTest extends FrameworkTestCase
         WP_Mock::wpFunction('register_deactivation_hook', [
             'times' => 1,
             'args' => [
-                $this->app->pluginFilename,
+                config('plugin_filename'),
                 $doThis
             ]
         ]);

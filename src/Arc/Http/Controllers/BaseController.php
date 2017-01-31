@@ -1,6 +1,6 @@
 <?php
 
-namespace Arc\Http;
+namespace Arc\Http\Controllers;
 
 use Arc\BasePlugin;
 
@@ -8,11 +8,6 @@ class BaseController
 {
     private $plugin;
     private $validator;
-
-    public function __construct(BasePlugin $plugin)
-    {
-        $this->plugin = $plugin;
-    }
 
     public function validate($request, $rules)
     {

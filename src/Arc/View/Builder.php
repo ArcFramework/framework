@@ -22,4 +22,9 @@ class Builder
     {
         return app('blade')->view()->make($view, $parameters);
     }
+
+    public function render($view)
+    {
+        return $this->build($view);
+    }
 }

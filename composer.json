@@ -19,7 +19,8 @@
         "tightenco/collect": "^5.3",
         "vlucas/phpdotenv": "^2.4",
         "mnapoli/silly": "^1.5",
-        "acclimate/container": "~1.0"
+        "acclimate/container": "~1.0",
+        "symfony/var-dumper": "^3.2"
     },
     "autoload": {
         "psr-4":{

@@ -9,7 +9,7 @@ use Arc\Exceptions\Handler;
 use Arc\Config\Config;
 use Arc\Cron\CronSchedules;
 use Arc\Providers\Providers;
-use Arc\Routes\Router;
+use Arc\Routing\Router;
 use Arc\Shortcodes\Shortcodes;
 use Dotenv\Dotenv;
 use Illuminate\Container\Container;

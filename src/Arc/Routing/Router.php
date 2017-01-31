@@ -1,9 +1,9 @@
 <?php
 
-namespace Arc\Routes;
+namespace Arc\Routing;
 
 use Arc\BasePlugin;
-use Arc\Controller\ControllerHandler;
+use Arc\Http\Controllers\ControllerHandler;
 use Arc\Config\FlatFileParser;
 
 class Router
@@ -68,7 +68,7 @@ class Router
 
     private function loadRoutes()
     {
-        $this->parser->parse('routes', [
+        $this->parser->parseDirectory('routes', [
             'router' => $this
         ]);
     }
@@ -80,7 +80,7 @@ class Router
      **/
     private function getURI()
     {
-        return $_SERVER["REQUEST_URI"];
+        return $_SERVER['PHP_SELF'];
     }
 
     /**
@@ -89,18 +89,11 @@ class Router
     public function execute(Route $route)
     {
         if (is_string($route->callback)) {
-            $this->callControllerMethod($route->callback);
+            $this->controllerHandler->parseControllerCall($route->callback);
         }
 
         if (is_callable($route->callback)) {
             call_user_func($route->callback);
         }
-    }
-
-    private function callControllerMethod($callback)
-    {
-        $callback = explode('@', $callback);
-
-        $this->plugin->callControllerMethod($callback[0], $callback[1]);
     }
 }

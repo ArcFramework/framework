@@ -258,4 +258,28 @@ abstract class Command extends SymfonyCommand
 
         return $level;
     }
+
+    /**
+     * Get the value of a command option.
+     *
+     * @param  string  $key
+     * @return string|array
+     */
+    public function option($key = null)
+    {
+        if (is_null($key)) {
+            return $this->input->getOptions();
+        }
+        return $this->input->getOption($key);
+    }
+
+    /**
+     * Get all of the options passed to the command.
+     *
+     * @return array
+     */
+    public function options()
+    {
+        return $this->option();
+    }
 }

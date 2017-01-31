@@ -15,4 +15,14 @@ class ServiceProvider
     {
         return app(FlatFileParser::class)->parse($file, $variables);
     }
+
+    public function boot()
+    {
+
+    }
+
+    public function register()
+    {
+
+    }
 }

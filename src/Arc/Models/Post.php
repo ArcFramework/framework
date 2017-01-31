@@ -64,10 +64,13 @@ class Post extends Model
      **/
     public function findMetaValue($key)
     {
-        return $this->postMeta()
-            ->where('meta_key', $key)
-            ->first()
-            ->meta_value;
+        $meta = $this->getMeta($key)->first();
+
+        if (is_null($meta)) {
+            return null;
+        }
+
+        return $meta->meta_value;
     }
 
     /**

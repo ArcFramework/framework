@@ -23,6 +23,10 @@ class Providers
     {
         foreach ($this->parser->parse('providers') as $providerClass) {
             $provider = $this->app->make($providerClass);
+            $provider->register();
+        }
+        foreach ($this->parser->parse('providers') as $providerClass) {
+            $provider = $this->app->make($providerClass);
             $provider->boot();
         }
     }

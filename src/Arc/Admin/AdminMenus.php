@@ -3,6 +3,7 @@
 namespace Arc\Admin;
 
 use Arc\Application;
+use Arc\Http\Controllers\ControllerHandler;
 use Arc\View\Builder;
 
 class AdminMenus
@@ -10,6 +11,8 @@ class AdminMenus
     private $name;
     private $title = '';
     private $capability = 'administrator';
+    private $controller;
+    private $controllerMethod;
     private $slug;
     private $view;
     private $viewBuilder;
@@ -18,9 +21,14 @@ class AdminMenus
     private $position;
     private $settings = [];
 
-    public function __construct(Application $app, Builder $viewBuilder)
+    public function __construct(
+        Application $app,
+        Builder $viewBuilder,
+        ControllerHandler $controllerHandler
+    )
     {
         $this->app = $app;
+        $this->controllerHandler = $controllerHandler;
         $this->viewBuilder = $viewBuilder;
     }
 
@@ -104,6 +112,14 @@ class AdminMenus
         return $this;
     }
 
+    public function whichCallsControllerMethod($controllerMethod)
+    {
+        $parameters = explode('@', $controllerMethod);
+        $this->controller = $parameters[0];
+        $this->controllerMethod = $parameters[1];
+        return $this;
+    }
+
     public function whichRendersView($view, $parameters = [])
     {
         $this->view = $view;
@@ -119,6 +135,11 @@ class AdminMenus
 
     protected function getCallable()
     {
+        if (!empty($this->controller)) {
+            return function() {
+                $this->controllerHandler->call($this->controller, $this->controllerMethod);
+            };
+        }
         return !is_null($this->view) ? [$this, 'render' . $this->view] : function() {};
     }
 }

@@ -92,8 +92,9 @@ class BasePlugin
         );
         $this->capsule->bootEloquent();
 
-        $this->cronSchedules->register();
         $this->providers->register();
+
+        $this->cronSchedules->register();
         $this->shortcodes->register();
         $this->adminMenus->register();
         $this->assets->enqueue();

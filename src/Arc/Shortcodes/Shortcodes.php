@@ -58,12 +58,6 @@ class Shortcodes
     {
         $shortcode = $this->shortcodes[$shortcodeName];
 
-/**var_dump(array_merge([
-            'attributes' => $attributes,
-            'content' => $content,
-            'shortcodeName' => $shortcodeName
-        ], $shortcode->parameters)); die;
-        **/
         return $this->viewBuilder->build('shortcodes/' . $shortcode->partial, array_merge([
             'attributes' => $attributes,
             'content' => $content,

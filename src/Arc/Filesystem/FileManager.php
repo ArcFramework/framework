@@ -1,6 +1,6 @@
 <?php
 
-namespace Arc\FileSystem;
+namespace Arc\Filesystem;
 
 class FileManager
 {

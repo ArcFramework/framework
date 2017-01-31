@@ -3,7 +3,7 @@
 namespace Arc\Config;
 
 use Arc\Application;
-use Arc\FileSystem\FileManager;
+use Arc\Filesystem\FileManager;
 
 class FlatFileParser
 {

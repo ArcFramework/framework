@@ -1,9 +1,9 @@
 <?php
 
-use MakeWeb\REAXMLImporter\FileSystem;
+use MakeWeb\REAXMLImporter\Filesystem;
 
-use MakeWeb\REAXMLImporter\FileSystem\File;
-use MakeWeb\REAXMLImporter\FileSystem\FileManager;
+use MakeWeb\REAXMLImporter\Filesystem\File;
+use MakeWeb\REAXMLImporter\Filesystem\FileManager;
 
 class FileManagerTest extends TestCase
 {

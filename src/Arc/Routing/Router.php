@@ -80,7 +80,7 @@ class Router
      **/
     private function getURI()
     {
-        return $_SERVER['PHP_SELF'];
+        return explode('?', $_SERVER['REQUEST_URI'])[0] ?? $_SERVER['PHP_SELF'];
     }
 
     /**

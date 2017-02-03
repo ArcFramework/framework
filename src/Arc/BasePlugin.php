@@ -57,7 +57,7 @@ class BasePlugin
         );
 
         $app->bind('blade', function() {
-            return new \Arc\View\Blade(config('plugin_path') . 'assets/views', config('plugin_path') . 'cache');
+            return new \Arc\View\Blade(config('plugin_path') . '/assets/views', config('plugin_path') . '/cache');
         });
 
         $this->capsule = app(Capsule::class);

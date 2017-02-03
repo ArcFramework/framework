@@ -41,23 +41,42 @@ class PostTypes
         return $this;
     }
 
+    public function add()
+    {
+        $postType = new PostType;
+
+        foreach(['slug', 'public', 'name', 'pluralName', 'supports','metaBoxes'] as $property) {
+            $postType->$property = $this->$property;
+            unset($this->property);
+        }
+
+        $this->postTypes[] = $postType;
+    }
+
     public function register()
     {
         add_action('init', function() {
-            register_post_type($this->slug, [
-                'public' => $this->public,
-                'labels' => [
-                    'name' => $this->name,
-                    'plural' => $this->pluralName,
-                ],
-                'supports' => $this->supports ?? ['title', 'editor'],
-            ]);
+            foreach ($this->postTypes as $postType) {
+                register_post_type($postType->slug, [
+                    'public' => $postType->public,
+                    'labels' => [
+                        'name' => $postType->name,
+                        'plural' => $postType->pluralName,
+                    ],
+                    'supports' => $postType->supports ?? ['title', 'editor'],
+                ]);
+
+                if (!is_null($this->metaBoxes)) {
+                    add_action('load-post.php', function() {
+                        $this->setupMetaBoxes($postType);
+                    });
+                    add_action('load-post-new.php', function() {
+                        $this->setupMetaBoxes($postType);
+                    });
+                }
+            }
         });
 
-        if (!is_null($this->metaBoxes)) {
-            add_action('load-post.php', [$this, 'setupMetaBoxes']);
-            add_action('load-post-new.php', [$this, 'setupMetaBoxes']);
-        }
 
         // Register the template handler for a controller method
         if (!is_null($this->controllerMethod)) {
@@ -81,7 +100,7 @@ class PostTypes
         add_filter('single_template', function() {
             global $post;
             if ($post->post_type == $this->slug) {
-                return config('plugin_path') . 'custom_post_type.php';
+                return rtrim(config('plugin_path'), '/') . '/custom_post_type.php';
             }
         });
     }

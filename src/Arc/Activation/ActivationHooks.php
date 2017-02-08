@@ -13,7 +13,7 @@ class ActivationHooks
     {
         $this->app = $app;
         $this->pluginFile = preg_replace(
-            '#/+#','/', config('plugin_file')
+            '#/+#','/', config('plugin_slug') . '/' . config('plugin_slug') . '.php'
         );
     }
 

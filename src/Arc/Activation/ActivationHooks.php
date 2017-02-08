@@ -6,11 +6,15 @@ use Arc\Application;
 
 class ActivationHooks
 {
-    private $app;
+    protected $app;
+    protected $pluginFile;
 
     public function __construct(Application $app)
     {
         $this->app = $app;
+        $this->pluginFile = preg_replace(
+            '#/+#','/', config('plugin_file')
+        );
     }
 
     /**
@@ -19,7 +23,10 @@ class ActivationHooks
      **/
     public function whenPluginIsActivated($callable)
     {
-        register_activation_hook(config('plugin_filename'), $callable);
+        register_activation_hook(
+            $this->pluginFile,
+            $callable
+        );
     }
 
     /**
@@ -28,6 +35,9 @@ class ActivationHooks
      **/
     public function whenPluginIsDeactivated($callable)
     {
-        register_deactivation_hook(config('plugin_filename'), $callable);
+        register_deactivation_hook(
+            $this->pluginFile,
+            $callable
+        );
     }
 }

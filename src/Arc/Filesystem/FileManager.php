@@ -26,7 +26,11 @@ class FileManager
      **/
     public function createDirectory($dirPath)
     {
-        if (file_exists($dirPath)) {
+        if (empty($dirPath)) {
+            throw new \Exception('Directory path cannot be empty');
+        }
+
+        if (is_dir($dirPath)) {
             return;
         }
         mkdir($dirPath);

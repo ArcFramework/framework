@@ -15,6 +15,7 @@ use Dotenv\Dotenv;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Database\Schema\MySqlBuilder;
 
 class BasePlugin
 {
@@ -33,6 +34,7 @@ class BasePlugin
     {
         // Instantiate IoC container
         $app = new Container;
+        $app->instance(Container::class, $app);
         Container::setInstance($app);
 
         // Get environment variables
@@ -40,7 +42,7 @@ class BasePlugin
         $dotenv->load();
 
         // Bind config object
-        $app->singleton('config', function() {
+        $app->singleton('configuration', function() {
             return app(Config::class);
         });
 
@@ -83,7 +85,7 @@ class BasePlugin
             'password' => DB_PASSWORD,
             'host' => '127.0.0.1',
             'prefix' => $wpdb->base_prefix,
-            'collation' => DB_COLLATE
+            'collation' => !empty(DB_COLLATE) ? DB_COLLATE : 'utf8_unicode_ci'
         ]);
 
         $this->capsule->getContainer()->singleton(
@@ -91,7 +93,10 @@ class BasePlugin
             Handler::class
         );
         $this->capsule->bootEloquent();
-
+        $this->capsule->setAsGlobal();
+        // Bind schema instance
+        $this->schema = $this->capsule->schema();
+        app()->instance(MySqlBuilder::class, $this->schema);
         $this->providers->register();
 
         $this->cronSchedules->register();

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5ab5a4e40eb059be4dd7b99f6db8b7db",
-    "content-hash": "b885ff82ba25564feecadcb14668df7b",
+    "hash": "d050d651548d3b7f64abf2def890922d",
+    "content-hash": "e057928af56db7ea62472fd20080f3d2",
     "packages": [
         {
             "name": "acclimate/container",
@@ -69,17 +69,20 @@
         },
         {
             "name": "container-interop/container-interop",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/container-interop/container-interop.git",
-                "reference": "fc08354828f8fd3245f77a66b9e23a6bca48297e"
+                "reference": "79cbf1341c22ec75643d841642dd5d6acd83bdb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/container-interop/container-interop/zipball/fc08354828f8fd3245f77a66b9e23a6bca48297e",
-                "reference": "fc08354828f8fd3245f77a66b9e23a6bca48297e",
+                "url": "https://api.github.com/repos/container-interop/container-interop/zipball/79cbf1341c22ec75643d841642dd5d6acd83bdb8",
+                "reference": "79cbf1341c22ec75643d841642dd5d6acd83bdb8",
                 "shasum": ""
+            },
+            "require": {
+                "psr/container": "^1.0"
             },
             "type": "library",
             "autoload": {
@@ -92,7 +95,8 @@
                 "MIT"
             ],
             "description": "Promoting the interoperability of container objects (DIC, SL, etc.)",
-            "time": "2014-12-30 15:22:37"
+            "homepage": "https://github.com/container-interop/container-interop",
+            "time": "2017-02-14 19:40:03"
         },
         {
             "name": "doctrine/inflector",
@@ -163,7 +167,7 @@
         },
         {
             "name": "illuminate/container",
-            "version": "v5.4.9",
+            "version": "v5.4.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/container.git",
@@ -206,16 +210,16 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v5.4.9",
+            "version": "v5.4.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "4ec919d294aca396d172e644b243b49885cd2cc7"
+                "reference": "dd256891c80fd94a58ab83d7989d6da2f50e30ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/4ec919d294aca396d172e644b243b49885cd2cc7",
-                "reference": "4ec919d294aca396d172e644b243b49885cd2cc7",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/dd256891c80fd94a58ab83d7989d6da2f50e30ea",
+                "reference": "dd256891c80fd94a58ab83d7989d6da2f50e30ea",
                 "shasum": ""
             },
             "require": {
@@ -244,20 +248,20 @@
             ],
             "description": "The Illuminate Contracts package.",
             "homepage": "https://laravel.com",
-            "time": "2017-01-18 20:23:54"
+            "time": "2017-02-21 14:21:59"
         },
         {
             "name": "illuminate/database",
-            "version": "v5.4.9",
+            "version": "v5.4.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/database.git",
-                "reference": "cd0b08134a8b674683fab649fbc7de65ad7a75f9"
+                "reference": "607d5e1c8e2ecc61d312a455a5e93d6793f694df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/database/zipball/cd0b08134a8b674683fab649fbc7de65ad7a75f9",
-                "reference": "cd0b08134a8b674683fab649fbc7de65ad7a75f9",
+                "url": "https://api.github.com/repos/illuminate/database/zipball/607d5e1c8e2ecc61d312a455a5e93d6793f694df",
+                "reference": "607d5e1c8e2ecc61d312a455a5e93d6793f694df",
                 "shasum": ""
             },
             "require": {
@@ -304,20 +308,20 @@
                 "orm",
                 "sql"
             ],
-            "time": "2017-02-03 19:46:11"
+            "time": "2017-02-22 14:16:49"
         },
         {
             "name": "illuminate/events",
-            "version": "v5.4.9",
+            "version": "v5.4.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/events.git",
-                "reference": "44fda744fa2deab124cb721da526eac9d0d8c386"
+                "reference": "e31e5be1d704a3a001b6cf7ebf457a208e9a8a60"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/events/zipball/44fda744fa2deab124cb721da526eac9d0d8c386",
-                "reference": "44fda744fa2deab124cb721da526eac9d0d8c386",
+                "url": "https://api.github.com/repos/illuminate/events/zipball/e31e5be1d704a3a001b6cf7ebf457a208e9a8a60",
+                "reference": "e31e5be1d704a3a001b6cf7ebf457a208e9a8a60",
                 "shasum": ""
             },
             "require": {
@@ -349,11 +353,11 @@
             ],
             "description": "The Illuminate Events package.",
             "homepage": "https://laravel.com",
-            "time": "2017-01-20 14:16:32"
+            "time": "2017-02-10 21:05:38"
         },
         {
             "name": "illuminate/filesystem",
-            "version": "v5.4.9",
+            "version": "v5.4.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/filesystem.git",
@@ -403,16 +407,16 @@
         },
         {
             "name": "illuminate/support",
-            "version": "v5.4.9",
+            "version": "v5.4.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
-                "reference": "5544aaf67b7e57559d58c01a9030c82ca01872a6"
+                "reference": "904f63003fd67ede2ec3be018b322d1c29415465"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/5544aaf67b7e57559d58c01a9030c82ca01872a6",
-                "reference": "5544aaf67b7e57559d58c01a9030c82ca01872a6",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/904f63003fd67ede2ec3be018b322d1c29415465",
+                "reference": "904f63003fd67ede2ec3be018b322d1c29415465",
                 "shasum": ""
             },
             "require": {
@@ -456,20 +460,20 @@
             ],
             "description": "The Illuminate Support package.",
             "homepage": "https://laravel.com",
-            "time": "2017-02-02 13:32:18"
+            "time": "2017-02-15 19:29:24"
         },
         {
             "name": "illuminate/view",
-            "version": "v5.4.9",
+            "version": "v5.4.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/view.git",
-                "reference": "5dc9dd489cd251eae3ae6eb82c7176b6c153dfc3"
+                "reference": "0152506ccc2815e12e2daf8a01946b627db1efe0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/view/zipball/5dc9dd489cd251eae3ae6eb82c7176b6c153dfc3",
-                "reference": "5dc9dd489cd251eae3ae6eb82c7176b6c153dfc3",
+                "url": "https://api.github.com/repos/illuminate/view/zipball/0152506ccc2815e12e2daf8a01946b627db1efe0",
+                "reference": "0152506ccc2815e12e2daf8a01946b627db1efe0",
                 "shasum": ""
             },
             "require": {
@@ -504,7 +508,7 @@
             ],
             "description": "The Illuminate View package.",
             "homepage": "https://laravel.com",
-            "time": "2017-01-31 13:45:14"
+            "time": "2017-02-22 15:30:41"
         },
         {
             "name": "mnapoli/silly",
@@ -695,6 +699,55 @@
             "time": "2016-07-14 13:09:58"
         },
         {
+            "name": "psr/container",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/container.git",
+                "reference": "b7ce3b176482dbbc1245ebf52b181af44c2cf55f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/container/zipball/b7ce3b176482dbbc1245ebf52b181af44c2cf55f",
+                "reference": "b7ce3b176482dbbc1245ebf52b181af44c2cf55f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Container\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common Container Interface (PHP FIG PSR-11)",
+            "homepage": "https://github.com/php-fig/container",
+            "keywords": [
+                "PSR-11",
+                "container",
+                "container-interface",
+                "container-interop",
+                "psr"
+            ],
+            "time": "2017-02-14 16:28:37"
+        },
+        {
             "name": "psr/log",
             "version": "1.0.2",
             "source": {
@@ -743,16 +796,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v3.2.3",
+            "version": "v3.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "7a8405a9fc175f87fed8a3c40856b0d866d61936"
+                "reference": "0e5e6899f82230fcb1153bcaf0e106ffaa44b870"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/7a8405a9fc175f87fed8a3c40856b0d866d61936",
-                "reference": "7a8405a9fc175f87fed8a3c40856b0d866d61936",
+                "url": "https://api.github.com/repos/symfony/console/zipball/0e5e6899f82230fcb1153bcaf0e106ffaa44b870",
+                "reference": "0e5e6899f82230fcb1153bcaf0e106ffaa44b870",
                 "shasum": ""
             },
             "require": {
@@ -802,20 +855,20 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2017-02-06 12:04:21"
+            "time": "2017-02-16 14:07:22"
         },
         {
             "name": "symfony/debug",
-            "version": "v3.2.3",
+            "version": "v3.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/debug.git",
-                "reference": "b4d9818f127c60ce21ed62c395da7df868dc8477"
+                "reference": "9b98854cb45bc59d100b7d4cc4cf9e05f21026b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/debug/zipball/b4d9818f127c60ce21ed62c395da7df868dc8477",
-                "reference": "b4d9818f127c60ce21ed62c395da7df868dc8477",
+                "url": "https://api.github.com/repos/symfony/debug/zipball/9b98854cb45bc59d100b7d4cc4cf9e05f21026b9",
+                "reference": "9b98854cb45bc59d100b7d4cc4cf9e05f21026b9",
                 "shasum": ""
             },
             "require": {
@@ -859,11 +912,11 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2017-01-28 02:37:08"
+            "time": "2017-02-16 16:34:18"
         },
         {
             "name": "symfony/finder",
-            "version": "v3.2.3",
+            "version": "v3.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
@@ -971,16 +1024,16 @@
         },
         {
             "name": "symfony/translation",
-            "version": "v3.2.3",
+            "version": "v3.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation.git",
-                "reference": "ca032cc56976d88b85e7386b17020bc6dc95dbc5"
+                "reference": "d6825c6bb2f1da13f564678f9f236fe8242c0029"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation/zipball/ca032cc56976d88b85e7386b17020bc6dc95dbc5",
-                "reference": "ca032cc56976d88b85e7386b17020bc6dc95dbc5",
+                "url": "https://api.github.com/repos/symfony/translation/zipball/d6825c6bb2f1da13f564678f9f236fe8242c0029",
+                "reference": "d6825c6bb2f1da13f564678f9f236fe8242c0029",
                 "shasum": ""
             },
             "require": {
@@ -1031,20 +1084,20 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-            "time": "2017-01-21 17:06:35"
+            "time": "2017-02-16 22:46:52"
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v3.2.3",
+            "version": "v3.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "5bb4435a03a4f05c211f4a9a8ee2756965924511"
+                "reference": "cb50260b674ee1c2d4ab49f2395a42e0b4681e20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/5bb4435a03a4f05c211f4a9a8ee2756965924511",
-                "reference": "5bb4435a03a4f05c211f4a9a8ee2756965924511",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/cb50260b674ee1c2d4ab49f2395a42e0b4681e20",
+                "reference": "cb50260b674ee1c2d4ab49f2395a42e0b4681e20",
                 "shasum": ""
             },
             "require": {
@@ -1094,7 +1147,7 @@
                 "debug",
                 "dump"
             ],
-            "time": "2017-01-24 12:58:58"
+            "time": "2017-02-16 22:46:52"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -1277,17 +1330,102 @@
             "time": "2015-05-11 14:41:42"
         },
         {
-            "name": "mockery/mockery",
-            "version": "0.9.7",
+            "name": "johnpbloch/wordpress",
+            "version": "4.7.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/padraic/mockery.git",
-                "reference": "4de7969f4664da3cef1ccd83866c9f59378c3371"
+                "url": "https://github.com/johnpbloch/wordpress.git",
+                "reference": "ac7b1792641d1fb61cb2901db292903b31694057"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/padraic/mockery/zipball/4de7969f4664da3cef1ccd83866c9f59378c3371",
-                "reference": "4de7969f4664da3cef1ccd83866c9f59378c3371",
+                "url": "https://api.github.com/repos/johnpbloch/wordpress/zipball/ac7b1792641d1fb61cb2901db292903b31694057",
+                "reference": "ac7b1792641d1fb61cb2901db292903b31694057",
+                "shasum": ""
+            },
+            "require": {
+                "johnpbloch/wordpress-core-installer": "~0.2",
+                "php": ">=5.3.2"
+            },
+            "type": "wordpress-core",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "WordPress Community",
+                    "homepage": "http://wordpress.org/about/"
+                }
+            ],
+            "description": "WordPress is web software you can use to create a beautiful website or blog.",
+            "homepage": "http://wordpress.org/",
+            "keywords": [
+                "blog",
+                "cms"
+            ],
+            "time": "2017-01-26 18:32:19"
+        },
+        {
+            "name": "johnpbloch/wordpress-core-installer",
+            "version": "0.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/johnpbloch/wordpress-core-installer.git",
+                "reference": "a04c2c383ef13aae077f36799ed2eafdebd618d2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/johnpbloch/wordpress-core-installer/zipball/a04c2c383ef13aae077f36799ed2eafdebd618d2",
+                "reference": "a04c2c383ef13aae077f36799ed2eafdebd618d2",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0"
+            },
+            "conflict": {
+                "composer/installers": "<1.0.6"
+            },
+            "require-dev": {
+                "composer/composer": "1.0.*@dev"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "johnpbloch\\Composer\\WordPressCorePlugin"
+            },
+            "autoload": {
+                "psr-0": {
+                    "johnpbloch\\Composer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "John P. Bloch",
+                    "email": "me@johnpbloch.com"
+                }
+            ],
+            "description": "A custom installer to handle deploying WordPress with composer",
+            "keywords": [
+                "wordpress"
+            ],
+            "time": "2015-06-11 15:15:30"
+        },
+        {
+            "name": "mockery/mockery",
+            "version": "0.9.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/padraic/mockery.git",
+                "reference": "1e5e2ffdc4d71d7358ed58a6fdd30a4a0c506855"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/padraic/mockery/zipball/1e5e2ffdc4d71d7358ed58a6fdd30a4a0c506855",
+                "reference": "1e5e2ffdc4d71d7358ed58a6fdd30a4a0c506855",
                 "shasum": ""
             },
             "require": {
@@ -1339,7 +1477,7 @@
                 "test double",
                 "testing"
             ],
-            "time": "2016-12-19 14:50:55"
+            "time": "2017-02-09 13:29:38"
         }
     ],
     "aliases": [],

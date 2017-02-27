@@ -93,6 +93,20 @@ class Post extends Model
     {
         return $this->hasMany(PostMeta::class, 'post_id', 'ID');
     }
+
+    /**
+     * Updates a unique Post Meta row (or rows) with the given key and value (or array of key value pairs)
+     *
+     * @param mixed $data Metadata key/name or array of key value pairs
+     * @param mixed $value Metadata value. Must be serializable if non-scalar, ignored if $key is array
+     * @return mixed|false Meta ID on success for single, array of ids for array input, false on failure
+     **/
+    public function updateUniqueMeta($data, $value = null)
+    {
+        foreach ($data as $key => $value) {
+            update_post_meta($this->ID, $key, $value);
+        }
+    }
 }
 
 

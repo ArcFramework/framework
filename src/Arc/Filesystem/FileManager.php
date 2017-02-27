@@ -13,9 +13,12 @@ class FileManager
      **/
     public function copyOver($fromPath, $toPath)
     {
+        $this->createDirectory(dirname($toPath));
+
         if (file_exists($toPath)) {
             unlink($toPath);
         }
+
         return copy($fromPath, $toPath);
     }
 
@@ -24,7 +27,7 @@ class FileManager
      *
      * @param string $dirPath
      **/
-    public function createDirectory($dirPath)
+    public function createDirectory($dirPath, $permissions = null, $recursive = true)
     {
         if (empty($dirPath)) {
             throw new \Exception('Directory path cannot be empty');
@@ -33,7 +36,8 @@ class FileManager
         if (is_dir($dirPath)) {
             return;
         }
-        mkdir($dirPath);
+
+        mkdir($dirPath, $permissions ?? 0777, $recursive);
     }
 
     /**
@@ -48,16 +52,7 @@ class FileManager
 
         $subfolders = explode('/', $dirPath);
 
-        $path = "";
-
-        foreach ($subfolders as $subfolder) {
-            if ($subfolder == "") {
-                continue;
-            }
-            $newPath = $path . "/" . $subfolder;
-            $this->createDirectory($newPath);
-            $path = $newPath;
-        }
+        $this->createDirectory($dirPath);
     }
 
     /**

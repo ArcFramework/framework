@@ -3,7 +3,7 @@
     "description": "A simple modern framework for building WordPress plugins",
     "type": "library",
     "license": "MIT",
-    "version": "0.0.5-alpha",
+    "version": "0.0.6-alpha",
     "authors": [
         {
             "name": "Andrew Feeney",

@@ -11,7 +11,15 @@ class CronSchedules
                 'interval' => 1 * 60, // 1 * 60 seconds
                 'display' => __('Every Minute')
             );
-            $schedules['every_fifteen_minutes'] = array(
+            $schedules['every_5_minutes'] = array(
+                'interval' => 5 * 60, // 5 * 60 seconds
+                'display' => __('Every 5 Minutes')
+            );
+            $schedules['every_10_minutes'] = array(
+                'interval' => 10 * 60, // 10 * 60 seconds
+                'display' => __('Every 10 Minutes')
+            );
+            $schedules['every_15_minutes'] = array(
                 'interval' => 15 * 60, // 15 * 60 seconds
                 'display' => __('Every 15 Minutes')
             );

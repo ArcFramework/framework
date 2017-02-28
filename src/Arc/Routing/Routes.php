@@ -29,7 +29,7 @@ class Routes
             return $this->matchGetRoutes($uri);
         }
 
-        throw new \Exception('Invalid HTTP Verb: "' . $verb . '"');
+        // We don't know how to handle this kind of HTTP verb so we'll just return null
     }
 
     public function matchGetRoutes($uri)

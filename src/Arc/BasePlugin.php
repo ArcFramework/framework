@@ -97,6 +97,7 @@ class BasePlugin
         // Bind schema instance
         $this->schema = $this->capsule->schema();
         app()->instance(MySqlBuilder::class, $this->schema);
+
         $this->providers->register();
 
         $this->cronSchedules->register();

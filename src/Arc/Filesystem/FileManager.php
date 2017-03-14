@@ -98,6 +98,15 @@ class FileManager
      **/
     public function getAllFilesInDirectory($dirPath)
     {
+        // Sanitise the given path
+        $dirPath = $this->removeDoubleSlashes($dirPath);
+
+        // If the given path is not a directory, return empty array
+        if (!is_dir($dirPath)) {
+            return [];
+        }
+
+        // Map the files in directory to file objects
         return array_map(function($fileName) use ($dirPath) {
             return $this->getFile($dirPath . '/' . $fileName);
         }, preg_grep('/^([^.])/', scandir($dirPath)));
@@ -112,5 +121,13 @@ class FileManager
     public function getFile($filePath)
     {
         return new File($filePath);
+    }
+
+    /**
+     * Removes double forward slashes from the given path and returns the result
+     **/
+    protected function removeDoubleSlashes($path)
+    {
+        return preg_replace('#/+#','/', $path);
     }
 }

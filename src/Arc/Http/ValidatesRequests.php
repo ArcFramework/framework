@@ -2,18 +2,10 @@
 
 namespace Arc\Http;
 
-use Arc\BasePlugin;
-
 class ValidatesRequests
 {
-    private $plugin;
-    private $customRules;
-    private $customFieldNames;
-
-    public function __construct(BasePlugin $plugin)
-    {
-        $this->plugin = $plugin;
-    }
+    protected $customRules;
+    protected $customFieldNames;
 
     public function validate($data, $rules)
     {

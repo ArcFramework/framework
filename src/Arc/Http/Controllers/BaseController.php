@@ -3,6 +3,7 @@
 namespace Arc\Http\Controllers;
 
 use Arc\BasePlugin;
+use Arc\Http\ValidatesRequests;
 
 class BaseController
 {
@@ -11,6 +12,6 @@ class BaseController
 
     public function validate($request, $rules)
     {
-        $this->plugin->validator->validate($request, $rules);
+        app()->make(ValidatesRequests::class)->validate($request, $rules);
     }
 }

@@ -786,4 +786,48 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
         wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $upload['file'] ) );
         return $id;
     }
+
+    /**
+     * Assert that a script matching the given slug was enqueued
+     * @param string $slug
+     * @param string $list (default is 'enqueued')
+     **/
+    public function assertScriptWasEnqueued($slug, $list = 'enqueued')
+    {
+        do_action('wp_enqueue_scripts');
+        $this->assertTrue(wp_script_is($slug, $list));
+    }
+
+    /**
+     * Assert that a style matching the given slug was enqueued
+     * @param string $slug
+     * @param string $list (default is 'enqueued')
+     **/
+    public function assertStyleWasEnqueued($slug, $list = 'enqueued')
+    {
+        do_action('wp_enqueue_scripts');
+        $this->assertTrue(wp_style_is($slug, $list));
+    }
+
+    /**
+     * Assert that an admin script matching the given slug was enqueued
+     * @param string $slug
+     * @param string $list (default is 'enqueued')
+     **/
+    public function assertAdminScriptWasEnqueued($slug, $list = 'enqueued')
+    {
+        do_action('admin_enqueue_scripts');
+        $this->assertTrue(wp_script_is($slug, $list));
+    }
+
+    /**
+     * Assert that an admin script matching the given slug was enqueued
+     * @param string $slug
+     * @param string $list (default is 'enqueued')
+     **/
+    public function assertAdminStyleWasEnqueued($slug, $list = 'enqueued')
+    {
+        do_action('admin_enqueue_scripts');
+        $this->assertTrue(wp_style_is($slug, $list));
+    }
 }

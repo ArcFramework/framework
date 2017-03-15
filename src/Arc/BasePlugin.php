@@ -8,6 +8,7 @@ use Arc\Assets\Assets;
 use Arc\Exceptions\Handler;
 use Arc\Config\Config;
 use Arc\Cron\CronSchedules;
+use Arc\Http\ValidatesRequests;
 use Arc\Providers\Providers;
 use Arc\Routing\Router;
 use Arc\Shortcodes\Shortcodes;
@@ -26,6 +27,7 @@ class BasePlugin
     private $providers;
     private $router;
     private $shortcodes;
+    private $validator;
 
     /**
      * Instantiate the class

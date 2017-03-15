@@ -160,6 +160,6 @@ class Assets
             return null;
         }
 
-        return config('plugin_path') . '/src/assets/' . $asset->path;
+        return config('plugin_uri') . '/assets/' . $asset->path;
     }
 }

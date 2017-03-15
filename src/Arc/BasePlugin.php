@@ -52,6 +52,13 @@ class BasePlugin
             Handler::class
         );
 
+        // Bind HTTP Request validator
+        $this->validator = $app->make(ValidatesRequests::class);
+        app()->instance(
+            ValidatesRequests::class,
+            $this->validator
+        );
+
         // Bind filesystem
         $app->bind(
             \Illuminate\Contracts\Filesystem\Filesystem::class,

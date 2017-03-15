@@ -4,8 +4,8 @@ namespace Arc\Http;
 
 class ValidatesRequests
 {
-    protected $customRules;
-    protected $customFieldNames;
+    protected $customRules = [];
+    protected $customFieldNames = [];
 
     public function validate($data, $rules)
     {
@@ -66,17 +66,7 @@ class ValidatesRequests
             }
         }
 
-        // Prepare list of field names for error message
-        foreach($fields as $key => $field) {
-            $fieldNames .= $this->getFieldName($field);
-
-            // Comma separate values if not last item in loop
-            if ($key != count($fields) - 1 ) {
-                $fieldNames .= ', ';
-            }
-        }
-
-        return 'You must select at least one of the following: ' . $fieldNames;
+        return 'You must select at least one of the following: ' . implode($fields, ',');
     }
 
     private function failValidation($errors)
@@ -89,6 +79,11 @@ class ValidatesRequests
 
     public function validResponse($data, $haystack, $fieldName)
     {
+        // If the key is not prsent in the data, we don't need to verify that it's valid so it passes
+        if (!isset($data[$fieldName])) {
+            return true;
+        }
+
         return (!in_array($data[$fieldName], $haystack) ? 'Must be a valid ' . $fieldName : false);
     }
 

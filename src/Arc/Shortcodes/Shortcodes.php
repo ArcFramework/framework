@@ -26,6 +26,7 @@ class Shortcodes
     {
         $this->shortcodes[$this->code] = new Shortcode($this->code, $view, $parameters);
         $this->code = null;
+        return $this;
     }
 
     /**

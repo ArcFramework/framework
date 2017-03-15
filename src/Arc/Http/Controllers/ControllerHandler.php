@@ -19,11 +19,11 @@ class ControllerHandler
      * @param string $className The short name of the controller class
      * @param string $methodName The name of the controller method
      */
-    public function call($className, $methodName)
+    public function call($className, $methodName, $argument = null)
     {
         $fullyQualifiedClassName = config('plugin_namespace') . '\\Http\\Controllers\\' . $className;
 
-        return app($fullyQualifiedClassName)->$methodName();
+        return app($fullyQualifiedClassName)->$methodName($argument);
     }
 
     /**

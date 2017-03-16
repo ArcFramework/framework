@@ -2,6 +2,8 @@
 
 namespace Arc\Http;
 
+use Arc\Exceptions\ValidationException;
+
 class ValidatesRequests
 {
     protected $customRules = [];
@@ -71,15 +73,13 @@ class ValidatesRequests
 
     private function failValidation($errors)
     {
-        wp_send_json([
-            'success' => false,
-            'messages' => $errors
-        ]);
+        throw (new ValidationException('The request did not pass validation.'))
+            ->setErrors($errors);
     }
 
     public function validResponse($data, $haystack, $fieldName)
     {
-        // If the key is not prsent in the data, we don't need to verify that it's valid so it passes
+        // If the key is not present in the data, we don't need to verify that it's valid so it passes
         if (!isset($data[$fieldName])) {
             return true;
         }

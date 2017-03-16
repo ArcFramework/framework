@@ -3,6 +3,7 @@
 namespace Arc\Http\Controllers;
 
 use Arc\Application;
+use Arc\Exceptions\ValidationException;
 
 class ControllerHandler
 {
@@ -23,7 +24,27 @@ class ControllerHandler
     {
         $fullyQualifiedClassName = config('plugin_namespace') . '\\Http\\Controllers\\' . $className;
 
-        return app($fullyQualifiedClassName)->$methodName($argument);
+        // If we're in ajax mode we need to cache the output
+        if (defined('DOING_AJAX') && DOING_AJAX) {
+            ob_start();
+        }
+
+        try {
+            $response = app($fullyQualifiedClassName)->$methodName($argument);
+        }
+        catch (ValidationException $e) {
+            wp_send_json([
+                'success' => false,
+                'messages' => $e->errors()
+            ]);
+        }
+
+        // If we're in ajax mode we need to collect the cached output
+        if (defined('DOING_AJAX') && DOING_AJAX) {
+            return ob_get_clean();
+        }
+
+        return $response;
     }
 
     /**

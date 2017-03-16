@@ -7,6 +7,8 @@ class PostTypesTest extends FrameworkTestCase
     /** @test */
     public function a_post_type_can_be_added_using_the_post_types_class()
     {
+        $this->markTestIncomplete();
+
         WP_Mock::wpFunction('register_post_type', [
             'times' => 1,
             'args' => [

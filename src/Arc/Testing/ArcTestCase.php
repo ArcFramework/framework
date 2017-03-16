@@ -101,7 +101,11 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
         self::commit_transaction();
     }
 
-    function setUp() {
+    /**
+     * Prepare the test suite
+     **/
+    public function setUp()
+    {
         set_time_limit(0);
 
         if ( ! self::$ignore_files ) {
@@ -324,6 +328,7 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
     }
 
     function wp_die_handler( $message ) {
+
         if ( ! is_scalar( $message ) ) {
             $message = '0';
         }

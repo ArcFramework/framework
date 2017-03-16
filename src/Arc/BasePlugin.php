@@ -42,8 +42,10 @@ class BasePlugin
         Container::setInstance($this->app);
 
         // Get environment variables
-        $dotenv = new Dotenv(dirname($pluginFilename));
-        $dotenv->load();
+        if (file_exists(dirname($pluginFilename) . '/.env')) {
+            $dotenv = new Dotenv(dirname($pluginFilename));
+            $dotenv->load();
+        }
 
         // Bind config object
         $this->app->singleton('configuration', function() {

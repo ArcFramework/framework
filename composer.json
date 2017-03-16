@@ -36,6 +36,7 @@
         ]
     },
     "require-dev": {
-        "10up/wp_mock": "dev-master"
+        "10up/wp_mock": "dev-master",
+        "mockery/mockery": "^0.9.9"
     }
 }

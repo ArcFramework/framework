@@ -323,7 +323,11 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
         return $query;
     }
 
-    function get_wp_die_handler( $handler ) {
+    function get_wp_die_handler( $handler )
+    {
+        if ($this->isAjaxRequest()) {
+            return [$this, 'ajaxDieHandler'];
+        }
         return array( $this, 'wp_die_handler' );
     }
 

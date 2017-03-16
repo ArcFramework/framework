@@ -6,17 +6,6 @@ use Arc\Application;
 
 class ActivationHooks
 {
-    protected $app;
-    protected $pluginFile;
-
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-        $this->pluginFile = preg_replace(
-            '#/+#','/', config('plugin_slug') . '/' . config('plugin_slug') . '.php'
-        );
-    }
-
     /**
      * Register an activation hook with WordPress to Execute the callable when the plugin
      * is activated
@@ -24,7 +13,7 @@ class ActivationHooks
     public function whenPluginIsActivated($callable)
     {
         register_activation_hook(
-            $this->pluginFile,
+            config('plugin_filename'),
             $callable
         );
     }
@@ -36,7 +25,7 @@ class ActivationHooks
     public function whenPluginIsDeactivated($callable)
     {
         register_deactivation_hook(
-            $this->pluginFile,
+            config('plugin_filename'),
             $callable
         );
     }

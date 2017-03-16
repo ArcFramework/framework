@@ -37,39 +37,39 @@ class BasePlugin
     public function __construct($pluginFilename)
     {
         // Instantiate IoC container
-        $app = new Container;
-        $app->instance(Container::class, $app);
-        Container::setInstance($app);
+        $this->app = new Container;
+        $this->app->instance(Container::class, $this->app);
+        Container::setInstance($this->app);
 
         // Get environment variables
         $dotenv = new Dotenv(dirname($pluginFilename));
         $dotenv->load();
 
         // Bind config object
-        $app->singleton('configuration', function() {
+        $this->app->singleton('configuration', function() {
             return app(Config::class);
         });
 
         // Bind Exception Handler
-        $app->singleton(
+        $this->app->singleton(
             ExceptionHandler::class,
             Handler::class
         );
 
         // Bind HTTP Request validator
-        $this->validator = $app->make(ValidatesRequests::class);
-        app()->instance(
+        $this->validator = $this->app->make(ValidatesRequests::class);
+        $this->app->instance(
             ValidatesRequests::class,
             $this->validator
         );
 
         // Bind filesystem
-        $app->bind(
+        $this->app->bind(
             \Illuminate\Contracts\Filesystem\Filesystem::class,
             \Illuminate\Filesystem\Filesystem::class
         );
 
-        $app->bind('blade', function() {
+        $this->app->bind('blade', function() {
             return new \Arc\View\Blade(config('plugin_path') . '/assets/views', config('plugin_path') . '/cache');
         });
 

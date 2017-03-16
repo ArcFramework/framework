@@ -25,5 +25,5 @@ to use it in production.
 
 If you're involved in WordPress plugin development and looking for an open source project to get involved in we welcome you!
 If you're unsure where to start, or have never/rarely contributed to open source before don't hesitate to get in touch at
-arcwpframework@gmail.com and we'll be happy to get yu started.
+arcwpframework@gmail.com and we'll be happy to get you started.
 

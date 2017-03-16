@@ -9,6 +9,7 @@ use RecursiveIteratorIterator;
 use Text_Template;
 use WP;
 use WP_Query;
+use Illuminate\Database\Schema\MySqlBuilder;
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 if ( ! $_tests_dir ) {
@@ -829,5 +830,19 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
     {
         do_action('admin_enqueue_scripts');
         $this->assertTrue(wp_style_is($slug, $list));
+    }
+
+    /**
+     * Assert that the given table exists in the database
+     * @param string $table The name of the table
+     **/
+    public function assertTableExists($table)
+    {
+        $database = app()->make(MySqlBuilder::class);
+
+        $this->assertTrue(
+            $database->hasTable($table),
+            'Table ' . $table . ' does not exist in the database ' . $database->getConnection()->getDatabaseName()
+        );
     }
 }

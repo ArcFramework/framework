@@ -5,16 +5,16 @@ A simple modern plugin framework for developing WordPress plugins
 
 ## Project Aims
 
+Despite it's prevalence in the modern web landscape, WordPress has also attracted a reputation for being an unfriendly
+platform for the modern PHP developer. Though it had humble beginnings, PHP itself has come a long way since the early days
+of WordPress in terms of its maturity as a language, the quality of its tooling and most importantly the strength of its 
+community.
+
 Arc Framework aims to improve the workflow of developing WordPress plugins to a level closer to that to which developers 
 working in modern frameworks such as Laravel, or Symfony, have become accustomed. Arc aims to encourage high quality, readable
 testable, and maintainable object orientated code in plugins.
 
 Arc makes use of some of the powerful core components from other frameworks to help make this happen.
-
-Despite it's prevalence in the modern web landscape, WordPress has also attracted a reputation for being an unfriendly
-platform for the modern PHP developer. Though it had humble beginnings, PHP itself has come a long way since the early days
-of WordPress in terms of its maturity as a language, the quality of its tooling and most importantly the strength of its 
-community.
 
 ## Project Status
 

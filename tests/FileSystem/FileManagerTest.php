@@ -1,11 +1,11 @@
 <?php
 
-use MakeWeb\REAXMLImporter\Filesystem;
+use Arc\Filesystem;
 
-use MakeWeb\REAXMLImporter\Filesystem\File;
-use MakeWeb\REAXMLImporter\Filesystem\FileManager;
+use Arc\Filesystem\File;
+use Arc\Filesystem\FileManager;
 
-class FileManagerTest extends TestCase
+class FileManagerTest extends FrameworkTestCase
 {
     public function setUp()
     {

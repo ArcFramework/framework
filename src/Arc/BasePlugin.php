@@ -7,8 +7,10 @@ use Arc\Admin\AdminMenus;
 use Arc\Assets\Assets;
 use Arc\Exceptions\Handler;
 use Arc\Config\Config;
+use Arc\Contracts\Mail\Mailer as MailerContract;
 use Arc\Cron\CronSchedules;
 use Arc\Http\ValidatesRequests;
+use Arc\Mail\Mailer;
 use Arc\Providers\Providers;
 use Arc\Routing\Router;
 use Arc\Shortcodes\Shortcodes;
@@ -112,6 +114,9 @@ class BasePlugin
         // Bind schema instance
         $this->schema = $this->capsule->schema();
         app()->instance(MySqlBuilder::class, $this->schema);
+
+        // Bind Mailer concretion
+        app()->bind(MailerContract::class, Mailer::class);
 
         $this->providers->register();
 

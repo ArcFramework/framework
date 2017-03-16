@@ -78,6 +78,7 @@ class BasePlugin
         $this->providers = app(Providers::class);
         $this->router = app(Router::class);
         $this->shortcodes = app(Shortcodes::class);
+        $this->pluginFilename = $pluginFilename;
     }
 
     /**
@@ -85,6 +86,11 @@ class BasePlugin
      **/
     public function boot()
     {
+        // Bind version
+        app()->bind('version', function() {
+            return get_plugin_data($this->pluginFilename)['Version'];
+        });
+
         global $wpdb;
 
         $this->capsule->addConnection([

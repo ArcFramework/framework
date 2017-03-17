@@ -41,7 +41,7 @@ class MailerTest extends FrameworkTestCase
             ]
         ]);
 
-        $mailer = new Arc\Mail\Mailer;
+        $mailer = $this->app->make(Mailer::class);
         $mailer->send($email);
     }
 }

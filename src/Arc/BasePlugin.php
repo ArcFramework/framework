@@ -7,6 +7,7 @@ use Arc\Admin\AdminMenus;
 use Arc\Assets\Assets;
 use Arc\Exceptions\Handler;
 use Arc\Config\Config;
+use Arc\Config\WPOptions;
 use Arc\Contracts\Mail\Mailer as MailerContract;
 use Arc\Cron\CronSchedules;
 use Arc\Http\ValidatesRequests;
@@ -50,6 +51,10 @@ class BasePlugin
         // Bind config object
         $this->app->singleton('configuration', function() {
             return app(Config::class);
+        });
+        // Bind WPOptions object
+        $this->app->singleton(WPOptions::class, function() {
+            return new WPOptions;
         });
 
         // Bind Exception Handler

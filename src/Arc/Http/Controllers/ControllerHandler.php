@@ -38,6 +38,10 @@ class ControllerHandler
                 'messages' => $e->errors()
             ]);
         }
+        catch (\Exception $e) {
+            wp_send_json_error([$e->getMessage()], $e->getCode());
+            throw new \Exception($e);
+        }
 
         // If we're in ajax mode we need to collect the cached output
         if (defined('DOING_AJAX') && DOING_AJAX) {

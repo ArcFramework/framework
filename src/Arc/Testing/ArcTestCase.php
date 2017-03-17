@@ -842,6 +842,20 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Assert that the given table does not exist in the database
+     * @param string $table The name of the table
+     **/
+    public function assertTableDoesNotExist($table)
+    {
+        $database = app()->make(MySqlBuilder::class);
+
+        $this->assertFalse(
+            $database->hasTable($table),
+            'Failed asserting that table ' . $table . ' does not exist in the database ' . $database->getConnection()->getDatabaseName()
+        );
+    }
+
+    /**
      * Assert that the given table exists in the database
      * @param string $table The name of the table
      **/
@@ -851,7 +865,7 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
 
         $this->assertTrue(
             $database->hasTable($table),
-            'Table ' . $table . ' does not exist in the database ' . $database->getConnection()->getDatabaseName()
+            'Failed asserting that table ' . $table . ' exists in the database ' . $database->getConnection()->getDatabaseName()
         );
     }
 }

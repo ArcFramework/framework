@@ -81,6 +81,7 @@ class Blade {
             return $events;
         });
     }
+
     /**
      * Register the engine resolver instance.
      *

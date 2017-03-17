@@ -150,16 +150,23 @@ class Assets
     /**
      * Expand the relative path of the asset
      *
-     * @param Script The Asset object
+     * @param $asset The Asset object or a string with the relative path to the assets folder
      * @return string The fully qualified path of the asset
      **/
-    private function getPath(Asset $asset)
+    public function getPath($asset)
     {
+        if ($asset instanceof Asset) {
+            $path = $asset->path;
+        }
+        else {
+            $path = $asset;
+        };
+
         // If no relative path has been specified the script has no path
-        if (empty($asset->path)) {
+        if (empty($path)) {
             return null;
         }
 
-        return config('plugin_uri') . '/assets/' . $asset->path;
+        return config('plugin_uri') . '/assets/' . $path;
     }
 }

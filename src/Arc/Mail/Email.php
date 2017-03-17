@@ -4,15 +4,18 @@ namespace Arc\Mail;
 
 use Illuminate\Support\Str;
 use Illuminate\View\ViewBuilder;
+use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
-abstract class Email
+class Email
 {
-    public $to;
-    public $from;
-    public $cc;
     public $bcc;
+    public $cc;
+    public $from;
+    public $subject;
+    public $to;
 
     protected $template;
+    protected $css;
 
     public function withTemplate($template)
     {
@@ -21,11 +24,71 @@ abstract class Email
     }
 
     /**
+     * Sets the HTML text to be sent in the message
+     * @param string $message
+     * @return $this
+     **/
+    public function withMessage($message)
+    {
+        $this->message = $message;
+        return $this;
+    }
+
+    /**
+     * Sets the CSS styling rules to be applied to the HTML text in the message
+     * @param string $css
+     * @return $this
+     **/
+    public function withCSS($css)
+    {
+        $this->css = $css;
+        return $this;
+    }
+
+    /**
+     * Gets the email attachments for the email
+     **/
+    public function getAttachments()
+    {
+
+    }
+
+    /**
+     * Gets the email headers for the email
+     **/
+    public function getHeaders()
+    {
+
+    }
+
+    /**
      * Renders and returns the content of the email message
      **/
     public function getMessage()
     {
-        return app('blade')->view()->make($this->template)->render();
+        // Render message as HTML
+        if (!empty($this->message)) {
+            $message = $this->message;
+        }
+        else {
+            $message = app('blade')->view()->make($this->template)->render();
+        }
+
+        // If CSS has been applied, fetch that
+        if (isset($this->css)) {
+            $message = app(CssToInlineStyles::class)->convert($message, $this->css);
+        }
+
+        return $message;
+    }
+
+    /**
+     * Returns the subject text for the email
+     * @return string
+     **/
+    public function getSubject()
+    {
+        return $this->subject;
     }
 
     /**
@@ -40,11 +103,22 @@ abstract class Email
     /**
      * Returns true if the given email address is one of the recipients of the
      * email
-     **/
-     public function isBeingSentTo($emailAddress)
-     {
+    **/
+    public function isBeingSentTo($emailAddress)
+    {
          return Str::contains($this->to, $emailAddress)
             || Str::contains($this->cc, $emailAddress)
             || Str::contains($this->bcc, $emailAddress);
-     }
+    }
+
+    /**
+     * Set the recipient of the email
+     * @param string $email An email address, or comma separated list of email addresses
+     * @return $this
+     **/
+    public function to($email)
+    {
+        $this->to = $email;
+        return $this;
+    }
 }

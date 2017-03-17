@@ -87,6 +87,9 @@ class BasePlugin
         $this->providers = app(Providers::class);
         $this->router = app(Router::class);
         $this->shortcodes = app(Shortcodes::class);
+        $this->app->bind('pluginFilename', function() use ($pluginFilename) {
+            return $pluginFilename;
+        });
         $this->pluginFilename = $pluginFilename;
     }
 

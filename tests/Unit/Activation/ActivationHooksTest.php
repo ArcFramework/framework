@@ -9,7 +9,7 @@ class ActivationHooksTest extends FrameworkTestCase
     public function an_activation_hook_can_be_registered()
     {
         app('configuration')->useTestConfig([
-            'plugin_filename' => 'test-plugin-filename.php'
+            'plugin_slug' => 'test-plugin-filename'
         ]);
 
         $doThis = ['object' => 'method'];
@@ -17,7 +17,7 @@ class ActivationHooksTest extends FrameworkTestCase
         WP_Mock::wpFunction('register_activation_hook', [
             'times' => 1,
             'args' => [
-                'test-plugin-filename.php',
+                'test-plugin-filename',
                 $doThis
             ]
         ]);
@@ -29,7 +29,7 @@ class ActivationHooksTest extends FrameworkTestCase
     public function a_deactivation_hook_can_be_registered()
     {
         app('configuration')->useTestConfig([
-            'plugin_filename' => 'test-plugin-filename.php'
+            'plugin_slug' => 'test-plugin-filename'
         ]);
 
         $doThis = ['object' => 'method'];
@@ -37,7 +37,7 @@ class ActivationHooksTest extends FrameworkTestCase
         WP_Mock::wpFunction('register_deactivation_hook', [
             'times' => 1,
             'args' => [
-                'test-plugin-filename.php',
+                'test-plugin-filename',
                 $doThis
             ]
         ]);

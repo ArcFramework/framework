@@ -138,4 +138,18 @@ class BasePlugin extends Container
         $this->assets->enqueue();
         $this->router->boot();
     }
+
+    public function config($key, $default = null)
+    {
+        return $this->make('configuration')->get($key, $default);
+    }
+
+    public function env($key, $default = null)
+    {
+        if (!isset($this->env[$key])) {
+            return $default;
+        }
+
+        return $this->env[$key];
+    }
 }

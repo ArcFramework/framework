@@ -23,14 +23,16 @@ use Illuminate\Database\Schema\MySqlBuilder;
 
 class BasePlugin extends Container
 {
-    private $activationHooks;
-    private $adminMenus;
-    private $assets;
-    private $cronSchedules;
-    private $providers;
-    private $router;
-    private $shortcodes;
-    private $validator;
+
+    protected $activationHooks;
+    protected $adminMenus;
+    protected $assets;
+    protected $cronSchedules;
+    protected $env;
+    protected $providers;
+    protected $router;
+    protected $shortcodes;
+    protected $validator;
 
     /**
      * Instantiate the class

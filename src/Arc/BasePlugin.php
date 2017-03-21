@@ -21,7 +21,7 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\MySqlBuilder;
 
-class BasePlugin
+class BasePlugin extends Container
 {
     private $activationHooks;
     private $adminMenus;

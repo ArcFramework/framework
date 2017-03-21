@@ -33,7 +33,8 @@
     },
     "autoload-dev": {
         "classmap": [
-            "tests/FrameworkTestCase.php"
+            "tests/FrameworkTestCase.php",
+            "tests/TestPlugin.php"
         ]
     },
     "require-dev": {

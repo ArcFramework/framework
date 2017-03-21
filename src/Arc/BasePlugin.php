@@ -21,7 +21,7 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\MySqlBuilder;
 
-class BasePlugin extends Container
+abstract class BasePlugin extends Container
 {
     public $filename;
     public $path;
@@ -46,9 +46,14 @@ class BasePlugin extends Container
         $this->path = $this->env('PLUGIN_PATH', dirname($this->filename) . '/');
         $this->slug = $this->env('PLUGIN_SLUG', pathinfo($this->filename, PATHINFO_FILENAME));
 
-        // Bind BasePlugin object instance
-        $this->instance(BasePlugin::class, $this);
+        $this->bindInstance();
+    }
 
+    /**
+     * Boots the plugin
+     **/
+    public function boot()
+    {
         // Bind config object
         $this->singleton('configuration', function() {
             return $this->make(Config::class);
@@ -92,18 +97,6 @@ class BasePlugin extends Container
         $this->bind('pluginFilename', function() use ($pluginFilename) {
             return $pluginFilename;
         });
-        $this->pluginFilename = $pluginFilename;
-    }
-
-    /**
-     * Boots the plugin
-     **/
-    public function boot()
-    {
-        // Bind version
-        $this->make()->bind('version', function() {
-            return get_plugin_data($this->pluginFilename)['Version'];
-        });
 
         global $wpdb;
 
@@ -137,6 +130,11 @@ class BasePlugin extends Container
         $this->adminMenus->register();
         $this->assets->enqueue();
         $this->router->boot();
+    }
+
+    public function bindInstance()
+    {
+        $this->instance(BasePlugin::class, $this);
     }
 
     public function config($key, $default = null)

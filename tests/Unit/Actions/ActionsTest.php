@@ -9,7 +9,7 @@ class ActionsTest extends FrameworkTestCase
     {
         WP_Mock::expectActionAdded('save_post', 'special_save_post');
 
-        $actions = $this->app->make(Actions::class);
+        $actions = $this->plugin->make(Actions::class);
 
         $actions->forHook('save_post')
             ->doThis('special_save_post');

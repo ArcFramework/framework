@@ -2,16 +2,16 @@
 
 namespace Arc\Http\Controllers;
 
-use Arc\Application;
+use Arc\BasePlugin;
 use Arc\Exceptions\ValidationException;
 
 class ControllerHandler
 {
-    public $app;
+    protected $plugin;
 
-    public function __construct(Application $app)
+    public function __construct(BasePlugin $plugin)
     {
-        $this->app = $app;
+        $this->plugin = $plugin;
     }
 
     /**
@@ -30,7 +30,7 @@ class ControllerHandler
         }
 
         try {
-            $response = app($fullyQualifiedClassName)->$methodName($argument);
+            $response = $this->plugin->make($fullyQualifiedClassName)->$methodName($argument);
         }
         catch (ValidationException $e) {
             wp_send_json([

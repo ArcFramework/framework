@@ -2,7 +2,6 @@
 
 namespace Arc\Admin;
 
-use Arc\Application;
 use Arc\Http\Controllers\ControllerHandler;
 use Arc\View\Builder;
 
@@ -22,12 +21,10 @@ class AdminMenus
     private $settings = [];
 
     public function __construct(
-        Application $app,
         Builder $viewBuilder,
         ControllerHandler $controllerHandler
     )
     {
-        $this->app = $app;
         $this->controllerHandler = $controllerHandler;
         $this->viewBuilder = $viewBuilder;
     }

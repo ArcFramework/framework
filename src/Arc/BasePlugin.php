@@ -42,13 +42,12 @@ class BasePlugin extends Container
      **/
     public function __construct($pluginFilename)
     {
-        // Instantiate IoC container
-        $this->app = new Container;
-        $this->app->instance(Container::class, $this->app);
-        Container::setInstance($this->app);
         $this->filename = $pluginFilename;
         $this->path = $this->env('PLUGIN_PATH', dirname($this->filename) . '/');
         $this->slug = $this->env('PLUGIN_SLUG', pathinfo($this->filename, PATHINFO_FILENAME));
+
+        // Bind BasePlugin object instance
+        $this->instance(BasePlugin::class, $this);
 
         // Bind config object
         $this->app->singleton('configuration', function() {

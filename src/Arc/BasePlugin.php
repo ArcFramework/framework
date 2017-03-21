@@ -23,6 +23,9 @@ use Illuminate\Database\Schema\MySqlBuilder;
 
 class BasePlugin extends Container
 {
+    public $filename;
+    public $path;
+    public $slug;
 
     protected $activationHooks;
     protected $adminMenus;
@@ -49,6 +52,9 @@ class BasePlugin extends Container
             $dotenv = new Dotenv(dirname($pluginFilename));
             $dotenv->load();
         }
+        $this->filename = $pluginFilename;
+        $this->path = $this->env('PLUGIN_PATH', dirname($this->filename) . '/');
+        $this->slug = $this->env('PLUGIN_SLUG', pathinfo($this->filename, PATHINFO_FILENAME));
 
         // Bind config object
         $this->app->singleton('configuration', function() {

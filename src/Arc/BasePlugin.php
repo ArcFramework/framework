@@ -46,12 +46,6 @@ class BasePlugin extends Container
         $this->app = new Container;
         $this->app->instance(Container::class, $this->app);
         Container::setInstance($this->app);
-
-        // Get environment variables
-        if (file_exists(dirname($pluginFilename) . '/.env')) {
-            $dotenv = new Dotenv(dirname($pluginFilename));
-            $dotenv->load();
-        }
         $this->filename = $pluginFilename;
         $this->path = $this->env('PLUGIN_PATH', dirname($this->filename) . '/');
         $this->slug = $this->env('PLUGIN_SLUG', pathinfo($this->filename, PATHINFO_FILENAME));

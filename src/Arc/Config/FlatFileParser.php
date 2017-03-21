@@ -2,12 +2,14 @@
 
 namespace Arc\Config;
 
+use Arc\BasePlugin;
 use Arc\Filesystem\FileManager;
 
 class FlatFileParser
 {
-    public function __construct(FileManager $fileManager)
+    public function __construct(BasePlugin $plugin, FileManager $fileManager)
     {
+        $this->plugin = $plugin;
         $this->fileManager = $fileManager;
     }
 
@@ -24,7 +26,7 @@ class FlatFileParser
             $$name = $value;
         }
 
-        $fileName = config('plugin_path') . '/config/' . $configFileName . '.php';
+        $fileName = $this->plugin->path . '/config/' . $configFileName . '.php';
 
         if (!file_exists($fileName)) {
             return [];
@@ -39,7 +41,7 @@ class FlatFileParser
             $$name = $value;
         }
 
-        foreach($this->fileManager->getAllFilesInDirectory(config('plugin_path') . '/' . $directoryName) as $file) {
+        foreach($this->fileManager->getAllFilesInDirectory($this->plugin->path . '/' . $directoryName) as $file) {
             include ($file->getPath() . '/' . $file->getFilename());
         }
     }

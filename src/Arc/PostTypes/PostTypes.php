@@ -7,6 +7,8 @@ use Arc\View\Builder;
 
 class PostTypes
 {
+    public $init;
+
     protected $controllerMethod;
     protected $controllerHandler;
     protected $metaBoxes;
@@ -55,7 +57,7 @@ class PostTypes
 
     public function register()
     {
-        add_action('init', function() {
+        $this->init = function() {
             foreach ($this->postTypes as $postType) {
                 register_post_type($postType->slug, [
                     'public' => $postType->public,
@@ -75,8 +77,9 @@ class PostTypes
                     });
                 }
             }
-        });
+        };
 
+        add_action('init', $this->init);
 
         // Register the template handler for a controller method
         if (!is_null($this->controllerMethod)) {

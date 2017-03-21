@@ -50,45 +50,46 @@ class BasePlugin extends Container
         $this->instance(BasePlugin::class, $this);
 
         // Bind config object
-        $this->app->singleton('configuration', function() {
-            return app(Config::class);
+        $this->singleton('configuration', function() {
+            return $this->make(Config::class);
         });
+
         // Bind WPOptions object
-        $this->app->singleton(WPOptions::class, function() {
-            return new WPOptions;
+        $this->singleton(WPOptions::class, function() {
+            return $this->make(WPOptions::class);
         });
 
         // Bind Exception Handler
-        $this->app->singleton(
+        $this->singleton(
             ExceptionHandler::class,
             Handler::class
         );
 
         // Bind HTTP Request validator
-        $this->validator = $this->app->make(ValidatesRequests::class);
-        $this->app->instance(
+        $this->validator = $this->make(ValidatesRequests::class);
+        $this->instance(
             ValidatesRequests::class,
             $this->validator
         );
 
         // Bind filesystem
-        $this->app->bind(
+        $this->bind(
             \Illuminate\Contracts\Filesystem\Filesystem::class,
             \Illuminate\Filesystem\Filesystem::class
         );
 
-        $this->app->bind('blade', function() {
+        $this->bind('blade', function() {
             return new \Arc\View\Blade(config('plugin_path') . '/assets/views', config('plugin_path') . '/cache');
         });
 
-        $this->capsule = app(Capsule::class);
-        $this->adminMenus = app(AdminMenus::class);
-        $this->assets = app(Assets::class);
-        $this->cronSchedules = app(CronSchedules::class);
-        $this->providers = app(Providers::class);
-        $this->router = app(Router::class);
-        $this->shortcodes = app(Shortcodes::class);
-        $this->app->bind('pluginFilename', function() use ($pluginFilename) {
+        $this->capsule = $this->make(Capsule::class);
+        $this->adminMenus = $this->make(AdminMenus::class);
+        $this->assets = $this->make(Assets::class);
+        $this->cronSchedules = $this->make(CronSchedules::class);
+        $this->providers = $this->make(Providers::class);
+        $this->router = $this->make(Router::class);
+        $this->shortcodes = $this->make(Shortcodes::class);
+        $this->bind('pluginFilename', function() use ($pluginFilename) {
             return $pluginFilename;
         });
         $this->pluginFilename = $pluginFilename;
@@ -100,7 +101,7 @@ class BasePlugin extends Container
     public function boot()
     {
         // Bind version
-        app()->bind('version', function() {
+        $this->make()->bind('version', function() {
             return get_plugin_data($this->pluginFilename)['Version'];
         });
 
@@ -124,10 +125,10 @@ class BasePlugin extends Container
         $this->capsule->setAsGlobal();
         // Bind schema instance
         $this->schema = $this->capsule->schema();
-        app()->instance(MySqlBuilder::class, $this->schema);
+        $this->instance(MySqlBuilder::class, $this->schema);
 
         // Bind Mailer concretion
-        app()->bind(MailerContract::class, Mailer::class);
+        $this->bind(MailerContract::class, Mailer::class);
 
         $this->providers->register();
 

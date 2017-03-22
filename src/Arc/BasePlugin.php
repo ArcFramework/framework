@@ -24,9 +24,9 @@ use Illuminate\Database\Schema\MySqlBuilder;
 abstract class BasePlugin extends Container
 {
     public $filename;
+    public $namespace;
     public $path;
     public $slug;
-    public $namespace;
     public $uri;
 
     /**

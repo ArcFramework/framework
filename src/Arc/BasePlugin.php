@@ -67,7 +67,7 @@ abstract class BasePlugin extends Container
 
         // Bind WPOptions object
         $this->singleton(WPOptions::class, function() {
-            return $this->make(WPOptions::class);
+            return new WPOptions;
         });
 
         // Bind Exception Handler

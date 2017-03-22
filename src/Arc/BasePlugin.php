@@ -178,10 +178,22 @@ abstract class BasePlugin extends Container
 
     public function env($key, $default = null)
     {
-        if (!isset($this->env[$key])) {
-            return $default;
+        if (isset($this->env[$key])) {
+            return $this->env[$key];
         }
 
-        return $this->env[$key];
+        if (isset($_SERVER[$key])) {
+            return $_SERVER[$key];
+        }
+
+        return $default;
+    }
+
+    protected function getUrl()
+    {
+        if (!function_exists('get_site_url')) {
+            return null;
+        }
+        return get_site_url() . '/wp-content/plugins/' . $this->slug;
     }
 }

@@ -168,7 +168,7 @@ abstract class BasePlugin extends Container
 
     public function bindInstance()
     {
-        $this->instance(BasePlugin::class, $this);
+        $this->instance(BasePlugin::class, static::$pluginInstance);
     }
 
     public function config($key, $default = null)

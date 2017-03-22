@@ -27,6 +27,7 @@ abstract class BasePlugin extends Container
     public $path;
     public $slug;
     public $namespace;
+    public $uri;
 
     /**
      * The current globally available plugin instance (if any).
@@ -54,6 +55,7 @@ abstract class BasePlugin extends Container
         $this->namespace = substr(get_called_class(), 0, strrpos(get_called_class(), "\\"));
         $this->path = $this->env('PLUGIN_PATH', dirname($this->filename) . '/');
         $this->slug = $this->env('PLUGIN_SLUG', pathinfo($this->filename, PATHINFO_FILENAME));
+        $this->uri = $this->env('PLUGIN_URI', $this->getUrl());
 
         $this->setPluginContainerInstance($this);
         $this->bindInstance();

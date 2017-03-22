@@ -13,12 +13,10 @@ require_once __DIR__ . '/../vendor/autoload.php';
 WP_Mock::bootstrap();
 
 $_SERVER['PLUGIN_URI'] = 'test.dev/wp-content/plugins/test/';
-if (!defined(DB_NAME)) {
-    define('DB_NAME', '');
-    define('DB_USER', '');
-    define('DB_PASSWORD', '');
-    define('DB_COLLATE', '');
-}
+define('DB_NAME', '');
+define('DB_USER', '');
+define('DB_PASSWORD', '');
+define('DB_COLLATE', '');
 
 // Define essential wordpress functions
 function plugins_url()

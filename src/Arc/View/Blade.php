@@ -2,6 +2,7 @@
 
 namespace Arc\View;
 
+use Arc\BasePlugin;
 use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
@@ -44,9 +45,9 @@ class Blade {
      * @param string $cachePath
      * @param Illuminate\Events\Dispatcher $events
      */
-    function __construct($viewPaths = array(), $cachePath, Dispatcher $events = null) {
+    function __construct($viewPaths = array(), $cachePath, Dispatcher $events = null, BasePlugin $plugin) {
 
-        $this->container = app();
+        $this->container = $plugin;
 
         $this->viewPaths = (array) $viewPaths;
 

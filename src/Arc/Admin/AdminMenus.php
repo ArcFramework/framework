@@ -2,7 +2,7 @@
 
 namespace Arc\Admin;
 
-use Arc\Application;
+use Arc\BasePlugin;
 use Arc\Http\Controllers\ControllerHandler;
 use Arc\View\Builder;
 
@@ -22,19 +22,19 @@ class AdminMenus
     private $settings = [];
 
     public function __construct(
-        Application $app,
+        BasePlugin $plugin,
         Builder $viewBuilder,
         ControllerHandler $controllerHandler
     )
     {
-        $this->app = $app;
+        $this->plugin = $plugin;
         $this->controllerHandler = $controllerHandler;
         $this->viewBuilder = $viewBuilder;
     }
 
     public function register()
     {
-        $adminRegistrarClassName = config('plugin_namespace') . '\\Admin\\RegistersAdminMenus';
+        $adminRegistrarClassName = $this->plugin->namespace . '\\Admin\\RegistersAdminMenus';
 
         // If no activator class has been defined we can return early
         if (!class_exists($adminRegistrarClassName)) {
@@ -129,7 +129,7 @@ class AdminMenus
 
     public function withIcon($icon)
     {
-        $this->icon = config('plugin_path') . '/src/assets/images/' . $icon;
+        $this->icon = $this->plugin->path . '/src/assets/images/' . $icon;
         return $this;
     }
 

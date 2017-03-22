@@ -21,87 +21,85 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\MySqlBuilder;
 
-class BasePlugin
+abstract class BasePlugin extends Container
 {
-    private $activationHooks;
-    private $adminMenus;
-    private $assets;
-    private $cronSchedules;
-    private $providers;
-    private $router;
-    private $shortcodes;
-    private $validator;
+    public $filename;
+    public $namespace;
+    public $path;
+    public $slug;
+    public $uri;
+
+    /**
+     * The current globally available plugin instance (if any).
+     *
+     * @var static
+     */
+    protected static $pluginInstance;
+
+    protected $activationHooks;
+    protected $adminMenus;
+    protected $assets;
+    protected $cronSchedules;
+    protected $env;
+    protected $providers;
+    protected $router;
+    protected $shortcodes;
+    protected $validator;
 
     /**
      * Instantiate the class
      **/
     public function __construct($pluginFilename)
     {
-        // Instantiate IoC container
-        $this->app = new Container;
-        $this->app->instance(Container::class, $this->app);
-        Container::setInstance($this->app);
+        $this->filename = $pluginFilename;
+        $this->namespace = substr(get_called_class(), 0, strrpos(get_called_class(), "\\"));
+        $this->path = $this->env('PLUGIN_PATH', dirname($this->filename) . '/');
+        $this->slug = $this->env('PLUGIN_SLUG', pathinfo($this->filename, PATHINFO_FILENAME));
+        $this->uri = $this->env('PLUGIN_URI', $this->getUrl());
 
-        // Get environment variables
-        if (file_exists(dirname($pluginFilename) . '/.env')) {
-            $dotenv = new Dotenv(dirname($pluginFilename));
-            $dotenv->load();
-        }
+        $this->setPluginContainerInstance($this);
+        $this->bindInstance();
 
         // Bind config object
-        $this->app->singleton('configuration', function() {
-            return app(Config::class);
+        $this->singleton('configuration', function() {
+            return $this->make(Config::class);
         });
+
         // Bind WPOptions object
-        $this->app->singleton(WPOptions::class, function() {
+        $this->singleton(WPOptions::class, function() {
             return new WPOptions;
         });
 
         // Bind Exception Handler
-        $this->app->singleton(
+        $this->singleton(
             ExceptionHandler::class,
             Handler::class
         );
 
         // Bind HTTP Request validator
-        $this->validator = $this->app->make(ValidatesRequests::class);
-        $this->app->instance(
+        $this->validator = $this->make(ValidatesRequests::class);
+        $this->instance(
             ValidatesRequests::class,
             $this->validator
         );
 
         // Bind filesystem
-        $this->app->bind(
+        $this->bind(
             \Illuminate\Contracts\Filesystem\Filesystem::class,
             \Illuminate\Filesystem\Filesystem::class
         );
 
-        $this->app->bind('blade', function() {
-            return new \Arc\View\Blade(config('plugin_path') . '/assets/views', config('plugin_path') . '/cache');
+        $this->bind('blade', function() {
+            return new \Arc\View\Blade($this->path . '/assets/views', $this->path . '/cache', null, $this);
         });
 
-        $this->capsule = app(Capsule::class);
-        $this->adminMenus = app(AdminMenus::class);
-        $this->assets = app(Assets::class);
-        $this->cronSchedules = app(CronSchedules::class);
-        $this->providers = app(Providers::class);
-        $this->router = app(Router::class);
-        $this->shortcodes = app(Shortcodes::class);
-        $this->app->bind('pluginFilename', function() use ($pluginFilename) {
-            return $pluginFilename;
-        });
-        $this->pluginFilename = $pluginFilename;
-    }
-
-    /**
-     * Boots the plugin
-     **/
-    public function boot()
-    {
-        // Bind version
-        app()->bind('version', function() {
-            return get_plugin_data($this->pluginFilename)['Version'];
-        });
+        $this->capsule = $this->make(Capsule::class);
+        $this->adminMenus = $this->make(AdminMenus::class);
+        $this->assets = $this->make(Assets::class);
+        $this->cronSchedules = $this->make(CronSchedules::class);
+        $this->providers = $this->make(Providers::class);
+        $this->router = $this->make(Router::class);
+        $this->shortcodes = $this->make(Shortcodes::class);
 
         global $wpdb;
 
@@ -111,7 +109,7 @@ class BasePlugin
             'username' => DB_USER,
             'password' => DB_PASSWORD,
             'host' => '127.0.0.1',
-            'prefix' => $wpdb->base_prefix,
+            'prefix' => $wpdb->base_prefix ?? null,
             'collation' => !empty(DB_COLLATE) ? DB_COLLATE : 'utf8_unicode_ci'
         ]);
 
@@ -123,17 +121,79 @@ class BasePlugin
         $this->capsule->setAsGlobal();
         // Bind schema instance
         $this->schema = $this->capsule->schema();
-        app()->instance(MySqlBuilder::class, $this->schema);
+        $this->instance(MySqlBuilder::class, $this->schema);
 
         // Bind Mailer concretion
-        app()->bind(MailerContract::class, Mailer::class);
+        $this->bind(MailerContract::class, Mailer::class);
 
-        $this->providers->register();
+        // Bind version
+        $this->bind('version', function() {
+            return get_plugin_data($this->filename)['Version'];
+        });
+    }
+
+    /**
+     * Set the shared instance of the plugin.
+     *
+     * @param  BasePlugin|null  $container
+     * @return static
+     */
+    public static function setPluginContainerInstance(BasePlugin $plugin = null)
+    {
+        if (!is_null(static::$pluginInstance)) {
+            return;
+        }
+        return static::$pluginInstance = $plugin;
+    }
+
+    public static function plugin()
+    {
+        return static::$pluginInstance;
+    }
+
+    /**
+     * Boots the plugin
+     **/
+    public function boot()
+    {
+
+        $this->make(Providers::class)->register();
 
         $this->cronSchedules->register();
         $this->shortcodes->register();
         $this->adminMenus->register();
         $this->assets->enqueue();
         $this->router->boot();
+    }
+
+    public function bindInstance()
+    {
+        $this->instance(BasePlugin::class, static::$pluginInstance);
+    }
+
+    public function config($key, $default = null)
+    {
+        return $this->make('configuration')->get($key, $default);
+    }
+
+    public function env($key, $default = null)
+    {
+        if (isset($this->env[$key])) {
+            return $this->env[$key];
+        }
+
+        if (isset($_SERVER[$key])) {
+            return $_SERVER[$key];
+        }
+
+        return $default;
+    }
+
+    protected function getUrl()
+    {
+        if (!function_exists('get_site_url')) {
+            return null;
+        }
+        return get_site_url() . '/wp-content/plugins/' . $this->slug;
     }
 }

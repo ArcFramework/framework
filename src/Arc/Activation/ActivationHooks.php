@@ -2,10 +2,15 @@
 
 namespace Arc\Activation;
 
-use Arc\Application;
+use Arc\BasePlugin;
 
 class ActivationHooks
 {
+    public function __construct(BasePlugin $plugin)
+    {
+        $this->plugin = $plugin;
+    }
+
     /**
      * Register an activation hook with WordPress to Execute the callable when the plugin
      * is activated
@@ -13,7 +18,7 @@ class ActivationHooks
     public function whenPluginIsActivated($callable)
     {
         register_activation_hook(
-            config('plugin_file'),
+            $this->plugin->filename,
             $callable
         );
     }
@@ -25,7 +30,7 @@ class ActivationHooks
     public function whenPluginIsDeactivated($callable)
     {
         register_deactivation_hook(
-            config('plugin_slug') . '/' . config('plugin_filename'),
+            $this->plugin->filename,
             $callable
         );
     }

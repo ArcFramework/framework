@@ -2,7 +2,7 @@
 
 namespace Arc\Providers;
 
-use Arc\Application;
+use Arc\BasePlugin;
 use Arc\Config\FlatFileParser;
 
 class Providers
@@ -10,9 +10,9 @@ class Providers
     private $app;
     private $parser;
 
-    public function __construct(Application $app, FlatFileParser $parser)
+    public function __construct(BasePlugin $plugin, FlatFileParser $parser)
     {
-        $this->app = $app;
+        $this->plugin = $plugin;
         $this->parser = $parser;
     }
 
@@ -22,11 +22,11 @@ class Providers
     public function register()
     {
         foreach ($this->parser->parse('providers') as $providerClass) {
-            $provider = $this->app->make($providerClass);
+            $provider = $this->plugin->make($providerClass);
             $provider->register();
         }
         foreach ($this->parser->parse('providers') as $providerClass) {
-            $provider = $this->app->make($providerClass);
+            $provider = $this->plugin->make($providerClass);
             $provider->boot();
         }
     }

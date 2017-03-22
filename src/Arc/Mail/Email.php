@@ -2,6 +2,7 @@
 
 namespace Arc\Mail;
 
+use Arc\BasePlugin;
 use Illuminate\Support\Str;
 use Illuminate\View\ViewBuilder;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
@@ -14,8 +15,14 @@ class Email
     public $subject;
     public $to;
 
+    protected $plugin;
     protected $template;
     protected $css;
+
+    public function __construct(BasePlugin $plugin)
+    {
+        $this->plugin = $plugin;
+    }
 
     public function withTemplate($template)
     {
@@ -71,12 +78,12 @@ class Email
             $message = $this->message;
         }
         else {
-            $message = app('blade')->view()->make($this->template)->render();
+            $message = $this->plugin->make('blade')->view()->make($this->template)->render();
         }
 
         // If CSS has been applied, fetch that
         if (isset($this->css)) {
-            $message = app(CssToInlineStyles::class)->convert($message, $this->css);
+            $message = $this->plugin->make(CssToInlineStyles::class)->convert($message, $this->css);
         }
 
         return $message;

@@ -2,16 +2,19 @@
 
 abstract class FrameworkTestCase extends PHPUnit_Framework_TestCase
 {
+    public static $functions;
+
     public function setUp()
     {
-        \WP_Mock::setUp();
+        WP_Mock::setUp();
 
-        $this->plugin = new Arc\BasePlugin(__FILE__);
-        $this->app = $this->plugin->app;
+        self::$functions = Mockery::mock();
+
+        $this->plugin = new TestPlugin(__FILE__);
     }
 
     public function tearDown()
     {
-        \WP_Mock::tearDown();
+        WP_Mock::tearDown();
     }
 }

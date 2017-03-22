@@ -41,7 +41,7 @@ class MailerTest extends FrameworkTestCase
             ]
         ]);
 
-        $mailer = $this->app->make(Mailer::class);
+        $mailer = $this->plugin->make(Mailer::class);
         $mailer->send($email);
     }
 }

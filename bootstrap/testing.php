@@ -12,6 +12,12 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // // Now call the bootstrap method of WP Mock
 WP_Mock::bootstrap();
 
+$_SERVER['PLUGIN_URI'] = 'test.dev/wp-content/plugins/test/';
+define('DB_NAME', '');
+define('DB_USER', '');
+define('DB_PASSWORD', '');
+define('DB_COLLATE', '');
+
 // Define essential wordpress functions
 function plugins_url()
 {

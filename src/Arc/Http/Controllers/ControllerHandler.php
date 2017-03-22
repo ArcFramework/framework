@@ -2,16 +2,16 @@
 
 namespace Arc\Http\Controllers;
 
-use Arc\Application;
+use Arc\BasePlugin;
 use Arc\Exceptions\ValidationException;
 
 class ControllerHandler
 {
-    public $app;
+    protected $plugin;
 
-    public function __construct(Application $app)
+    public function __construct(BasePlugin $plugin)
     {
-        $this->app = $app;
+        $this->plugin = $plugin;
     }
 
     /**
@@ -22,7 +22,7 @@ class ControllerHandler
      */
     public function call($className, $methodName, $argument = null)
     {
-        $fullyQualifiedClassName = config('plugin_namespace') . '\\Http\\Controllers\\' . $className;
+        $fullyQualifiedClassName = $this->plugin->namespace . '\\Http\\Controllers\\' . $className;
 
         // If we're in ajax mode we need to cache the output
         if (defined('DOING_AJAX') && DOING_AJAX) {
@@ -30,7 +30,13 @@ class ControllerHandler
         }
 
         try {
-            $response = app($fullyQualifiedClassName)->$methodName($argument);
+            $controller = $this->plugin->make($fullyQualifiedClassName);
+
+            // We do it this way to avoid having to inject the plugin into every controller
+            // or call the parent constructor in every controller
+            $controller->setPluginInstance($this->plugin);
+
+            $controller->$methodName($argument);
         }
         catch (ValidationException $e) {
             wp_send_json([

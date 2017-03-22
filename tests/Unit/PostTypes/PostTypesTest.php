@@ -2,34 +2,29 @@
 
 use Arc\PostTypes\PostTypes;
 
+function register_post_type(...$args)
+{
+    return PostTypesTest::$functions->register_post_type(...$args);
+}
+
 class PostTypesTest extends FrameworkTestCase
 {
     /** @test */
     public function a_post_type_can_be_added_using_the_post_types_class()
     {
-        $this->markTestIncomplete();
+        self::$functions->shouldReceive('register_post_type')->once();
 
-        WP_Mock::wpFunction('register_post_type', [
-            'times' => 1,
-            'args' => [
-                'residential_property',
-                [
-                    'labels' => [
-                        'name' => 'Residential Property',
-                        'plural' => 'Residential Properties'
-                    ],
-                    'public' => true
-                ]
-            ]
-        ]);
-
-        $postTypes = $this->app->make(PostTypes::class);
+        $postTypes = $this->plugin->make(PostTypes::class);
 
         $postTypes->createPublic()
             ->withSlug('residential_property')
             ->withPluralName('Residential Properties')
             ->withName('Residential Property')
-            ->register();
+            ->add();
+
+        $postTypes->register();
+
+        call_user_func($postTypes->init);
     }
 }
 

@@ -30,7 +30,13 @@ class ControllerHandler
         }
 
         try {
-            $response = $this->plugin->make($fullyQualifiedClassName)->$methodName($argument);
+            $controller = $this->plugin->make($fullyQualifiedClassName);
+
+            // We do it this way to avoid having to inject the plugin into every controller
+            // or call the parent constructor in every controller
+            $controller->setPluginInstance($this->plugin);
+
+            $controller->$methodName($argument);
         }
         catch (ValidationException $e) {
             wp_send_json([

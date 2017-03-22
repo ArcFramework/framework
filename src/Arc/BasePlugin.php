@@ -109,7 +109,7 @@ abstract class BasePlugin extends Container
             'username' => DB_USER,
             'password' => DB_PASSWORD,
             'host' => '127.0.0.1',
-            'prefix' => $wpdb->base_prefix,
+            'prefix' => $wpdb->base_prefix ?? null,
             'collation' => !empty(DB_COLLATE) ? DB_COLLATE : 'utf8_unicode_ci'
         ]);
 

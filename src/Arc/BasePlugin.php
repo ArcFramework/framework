@@ -100,9 +100,6 @@ abstract class BasePlugin extends Container
         $this->providers = $this->make(Providers::class);
         $this->router = $this->make(Router::class);
         $this->shortcodes = $this->make(Shortcodes::class);
-        $this->bind('pluginFilename', function() use ($pluginFilename) {
-            return $pluginFilename;
-        });
 
         global $wpdb;
 

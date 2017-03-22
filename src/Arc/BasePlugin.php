@@ -126,7 +126,6 @@ abstract class BasePlugin extends Container
         // Bind Mailer concretion
         $this->bind(MailerContract::class, Mailer::class);
 
-        $this->providers->register();
         // Bind version
         $this->bind('version', function() {
             return get_plugin_data($this->filename)['Version'];

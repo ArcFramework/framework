@@ -2,6 +2,7 @@
 
 namespace Arc\Assets;
 
+use Arc\BasePlugin;
 use Arc\Config\FlatFileParser;
 
 class Assets
@@ -15,8 +16,9 @@ class Assets
     private $adminScripts = [];
     private $adminStyles = [];
 
-    public function __construct(FlatFileParser $parser)
+    public function __construct(BasePlugin $plugin, FlatFileParser $parser)
     {
+        $this->plugin = $plugin;
         $this->parser = $parser;
     }
 
@@ -167,6 +169,6 @@ class Assets
             return null;
         }
 
-        return config('plugin_uri') . '/assets/' . $path;
+        return $this->plugin->uri . '/assets/' . $path;
     }
 }

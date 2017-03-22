@@ -27,6 +27,13 @@ abstract class BasePlugin extends Container
     public $path;
     public $slug;
 
+    /**
+     * The current globally available plugin instance (if any).
+     *
+     * @var static
+     */
+    protected static $pluginInstance;
+
     protected $activationHooks;
     protected $adminMenus;
     protected $assets;
@@ -46,6 +53,7 @@ abstract class BasePlugin extends Container
         $this->path = $this->env('PLUGIN_PATH', dirname($this->filename) . '/');
         $this->slug = $this->env('PLUGIN_SLUG', pathinfo($this->filename, PATHINFO_FILENAME));
 
+        $this->setPluginContainerInstance($this);
         $this->bindInstance();
     }
 
@@ -124,6 +132,24 @@ abstract class BasePlugin extends Container
         $this->bind(MailerContract::class, Mailer::class);
 
         $this->providers->register();
+    /**
+     * Set the shared instance of the plugin.
+     *
+     * @param  BasePlugin|null  $container
+     * @return static
+     */
+    public static function setPluginContainerInstance(BasePlugin $plugin = null)
+    {
+        if (!is_null(static::$pluginInstance)) {
+            return;
+        }
+        return static::$pluginInstance = $plugin;
+    }
+
+    public static function plugin()
+    {
+        return static::$pluginInstance;
+    }
 
         $this->cronSchedules->register();
         $this->shortcodes->register();

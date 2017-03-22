@@ -90,7 +90,7 @@ abstract class BasePlugin extends Container
         );
 
         $this->bind('blade', function() {
-            return new \Arc\View\Blade(config('plugin_path') . '/assets/views', config('plugin_path') . '/cache');
+            return new \Arc\View\Blade($this->path . '/assets/views', $this->path . '/cache', null, $this);
         });
 
         $this->capsule = $this->make(Capsule::class);

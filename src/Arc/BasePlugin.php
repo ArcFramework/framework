@@ -59,13 +59,7 @@ abstract class BasePlugin extends Container
 
         $this->setPluginContainerInstance($this);
         $this->bindInstance();
-    }
 
-    /**
-     * Boots the plugin
-     **/
-    public function boot()
-    {
         // Bind config object
         $this->singleton('configuration', function() {
             return $this->make(Config::class);
@@ -154,6 +148,14 @@ abstract class BasePlugin extends Container
     {
         return static::$pluginInstance;
     }
+
+    /**
+     * Boots the plugin
+     **/
+    public function boot()
+    {
+
+        $this->make(Providers::class)->register();
 
         $this->cronSchedules->register();
         $this->shortcodes->register();

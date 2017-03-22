@@ -847,7 +847,7 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
      **/
     public function assertTableDoesNotExist($table)
     {
-        $database = app()->make(MySqlBuilder::class);
+        $database = $this->app->make(MySqlBuilder::class);
 
         $this->assertFalse(
             $database->hasTable($table),
@@ -861,7 +861,7 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
      **/
     public function assertTableExists($table)
     {
-        $database = app()->make(MySqlBuilder::class);
+        $database = $this->app->make(MySqlBuilder::class);
 
         $this->assertTrue(
             $database->hasTable($table),

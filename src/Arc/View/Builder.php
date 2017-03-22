@@ -21,7 +21,7 @@ class Builder
      **/
     public function build($view, $parameters = [])
     {
-        return app('blade')->view()->make($view, $parameters);
+        return $this->plugin->make('blade')->view()->make($view, $parameters);
     }
 
     public function render($view)

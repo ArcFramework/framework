@@ -22,7 +22,7 @@ class ControllerHandler
      */
     public function call($className, $methodName, $argument = null)
     {
-        $fullyQualifiedClassName = config('plugin_namespace') . '\\Http\\Controllers\\' . $className;
+        $fullyQualifiedClassName = $this->plugin->namespace . '\\Http\\Controllers\\' . $className;
 
         // If we're in ajax mode we need to cache the output
         if (defined('DOING_AJAX') && DOING_AJAX) {

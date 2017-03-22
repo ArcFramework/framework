@@ -22,11 +22,11 @@ class Providers
     public function register()
     {
         foreach ($this->parser->parse('providers') as $providerClass) {
-            $provider = $this->app->make($providerClass);
+            $provider = $this->plugin->make($providerClass);
             $provider->register();
         }
         foreach ($this->parser->parse('providers') as $providerClass) {
-            $provider = $this->app->make($providerClass);
+            $provider = $this->plugin->make($providerClass);
             $provider->boot();
         }
     }

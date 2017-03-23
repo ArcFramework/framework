@@ -71,6 +71,11 @@ abstract class BasePlugin extends Container
             return new WPOptions;
         });
 
+        // Bind Actions object
+        $this->singleton('actions', function() {
+            return new Actions;
+        });
+
         // Bind Exception Handler
         $this->singleton(
             ExceptionHandler::class,

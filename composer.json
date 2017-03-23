@@ -21,7 +21,8 @@
         "mnapoli/silly": "^1.5",
         "acclimate/container": "~1.0",
         "symfony/var-dumper": "^3.2",
-        "tijsverkoyen/css-to-inline-styles": "^2.2"
+        "tijsverkoyen/css-to-inline-styles": "^2.2",
+        "soundasleep/html2text": "~0.3"
     },
     "autoload": {
         "psr-4":{

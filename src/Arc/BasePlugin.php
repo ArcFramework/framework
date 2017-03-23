@@ -3,6 +3,7 @@
 namespace Arc;
 
 use Arc\Activation\ActivationHooks;
+use Arc\Hooks\Actions;
 use Arc\Admin\AdminMenus;
 use Arc\Assets\Assets;
 use Arc\Exceptions\Handler;

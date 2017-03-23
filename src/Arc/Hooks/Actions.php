@@ -1,10 +1,10 @@
 <?php
 
-namespace Arc\Actions;
+namespace Arc\Hooks;
 
 class Actions
 {
-    private $hook;
+    protected $hook;
 
     /**
      * Set the hook for the action
@@ -14,6 +14,16 @@ class Actions
     {
         $this->hook = $hook;
         return $this;
+    }
+
+    /**
+     * Run the actions for the given hook and return the result
+     * @param string $hook
+     * @return mixed
+     **/
+    public function do($hook)
+    {
+        return do_action($hook);
     }
 
     /**

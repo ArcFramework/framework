@@ -1,6 +1,6 @@
 <?php
 
-use Arc\Actions\Actions;
+use Arc\Hooks\Actions;
 
 class ActionsTest extends FrameworkTestCase
 {

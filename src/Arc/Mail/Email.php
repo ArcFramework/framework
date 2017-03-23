@@ -4,8 +4,6 @@ namespace Arc\Mail;
 
 use Arc\BasePlugin;
 use Illuminate\Support\Str;
-use Illuminate\View\ViewBuilder;
-use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
 class Email
 {
@@ -15,13 +13,25 @@ class Email
     public $subject;
     public $to;
 
-    protected $plugin;
     protected $template;
     protected $css;
 
-    public function __construct(BasePlugin $plugin)
+    /**
+     * Gets the email attachments for the email
+     * TODO
+     **/
+    public function getAttachments()
     {
-        $this->plugin = $plugin;
+
+    }
+
+    /**
+     * Returns the CSS styles if they have been set
+     * @return string
+     **/
+    public function getCSS()
+    {
+        return $this->css;
     }
 
     public function withTemplate($template)
@@ -42,6 +52,17 @@ class Email
     }
 
     /**
+     * Sets the subject for the message
+     * @param string $subject
+     * @return $this
+     **/
+    public function withSubject($subject)
+    {
+        $this->subject = $subject;
+        return $this;
+    }
+
+    /**
      * Sets the CSS styling rules to be applied to the HTML text in the message
      * @param string $css
      * @return $this
@@ -53,19 +74,11 @@ class Email
     }
 
     /**
-     * Gets the email attachments for the email
-     **/
-    public function getAttachments()
-    {
-
-    }
-
-    /**
      * Gets the email headers for the email
      **/
     public function getHeaders()
     {
-
+        return ['Content-Type: text/html; charset=UTF-8'];
     }
 
     /**
@@ -73,20 +86,16 @@ class Email
      **/
     public function getMessage()
     {
-        // Render message as HTML
-        if (!empty($this->message)) {
-            $message = $this->message;
-        }
-        else {
-            $message = $this->plugin->make('blade')->view()->make($this->template)->render();
-        }
+        return $this->message;
+    }
 
-        // If CSS has been applied, fetch that
-        if (isset($this->css)) {
-            $message = $this->plugin->make(CssToInlineStyles::class)->convert($message, $this->css);
-        }
-
-        return $message;
+    /**
+     * Returns the name of the blade template
+     * @return string
+     **/
+    public function getTemplate()
+    {
+        return $this->template;
     }
 
     /**
@@ -105,6 +114,33 @@ class Email
     public function getTo()
     {
         return $this->to;
+    }
+
+    /**
+     * Returns true if the email has CSS styles
+     * @return bool
+     **/
+    public function hasCSS()
+    {
+        return !empty($this->css);
+    }
+
+    /**
+     * Returns true if the email has a plain text message
+     * @return bool
+     **/
+    public function hasMessage()
+    {
+        return !empty($this->message);
+    }
+
+    /**
+     * Returns true if the email has a blade template
+     * @return bool
+     **/
+    public function hasTemplate()
+    {
+        return !empty($this->template);
     }
 
     /**

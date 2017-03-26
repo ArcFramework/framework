@@ -18,9 +18,39 @@ class WPOptionsTest extends FrameworkTestCase
     }
 
     /** @test */
-    public function the_set_method_calls_the_set_option_function()
+    public function the_set_method_calls_the_add_option_function_when_there_is_no_existing_option()
     {
+        WP_Mock::wpFunction('get_option', [
+            'times' => 1,
+            'args' => [
+                'key',
+            ],
+            'return' => false
+        ]);
+
         WP_Mock::wpFunction('add_option', [
+            'times' => 1,
+            'args' => [
+                'key',
+                'value',
+            ]
+        ]);
+
+        (new WPOptions)->set('key', 'value');
+    }
+
+    /** @test */
+    public function the_set_method_calls_the_update_option_function_when_there_is_an_existing_option()
+    {
+        WP_Mock::wpFunction('get_option', [
+            'times' => 1,
+            'args' => [
+                'key',
+            ],
+            'return' => true
+        ]);
+
+        WP_Mock::wpFunction('update_option', [
             'times' => 1,
             'args' => [
                 'key',

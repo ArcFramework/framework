@@ -30,6 +30,9 @@ class WPOptions
 
     public function set($key, $value)
     {
+        if ($this->isAlreadySet($key)) {
+            return update_option($key, $value);
+        }
         return add_option($key, $value);
     }
 

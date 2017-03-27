@@ -21,8 +21,9 @@ use Illuminate\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\MySqlBuilder;
+use Interop\Container\ContainerInterface;
 
-abstract class BasePlugin extends Container
+abstract class BasePlugin extends Container implements ContainerInterface
 {
     public $filename;
     public $namespace;
@@ -201,5 +202,24 @@ abstract class BasePlugin extends Container
             return null;
         }
         return get_site_url() . '/wp-content/plugins/' . $this->slug;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function get($id)
+    {
+        try {
+            return $this->make($id);
+        } catch (\Exception $e) {
+            throw ContainerException::fromPrevious($id, $e);
+        }
+    }
+    /**
+     * @inheritdoc
+     */
+    public function has($id)
+    {
+        return $this->bound($id);
     }
 }

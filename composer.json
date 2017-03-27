@@ -18,10 +18,10 @@
         "illuminate/support": "^5.3",
         "tightenco/collect": "^5.3",
         "mnapoli/silly": "^1.5",
-        "acclimate/container": "~1.0",
         "symfony/var-dumper": "^3.2",
         "tijsverkoyen/css-to-inline-styles": "^2.2",
-        "soundasleep/html2text": "~0.3"
+        "soundasleep/html2text": "~0.3",
+        "container-interop/container-interop": "^1.2"
     },
     "autoload": {
         "psr-4":{

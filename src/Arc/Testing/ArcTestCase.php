@@ -2,6 +2,7 @@
 
 namespace Arc\Testing;
 
+use Arc\View\Builder;
 use PHPUnit_Framework_TestCase;
 use PHPUnit_Util_Test;
 use RecursiveDirectoryIterator;
@@ -867,5 +868,16 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
             $database->hasTable($table),
             'Failed asserting that table ' . $table . ' exists in the database ' . $database->getConnection()->getDatabaseName()
         );
+    }
+
+    /**
+     * Renders the given view with the given paramaters and outputs the result as a string
+     * @param string $view
+     * @param array $parameters (optional)
+     * @return string
+     **/
+    public function renderView($view, $parameters = [])
+    {
+        return (string) $this->app->make(Builder::class)->build($view, $parameters);
     }
 }

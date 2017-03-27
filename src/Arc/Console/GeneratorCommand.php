@@ -2,6 +2,7 @@
 
 namespace Arc\Console;
 
+use Arc\BasePlugin;
 use Illuminate\Support\Str;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputArgument;
@@ -28,9 +29,9 @@ abstract class GeneratorCommand extends Command
      * @param  \Illuminate\Filesystem\Filesystem  $files
      * @return void
      */
-    public function __construct(Filesystem $files)
+    public function __construct(BasePlugin $plugin, Filesystem $files)
     {
-        parent::__construct();
+        parent::__construct($plugin);
 
         $this->files = $files;
     }
@@ -125,7 +126,7 @@ abstract class GeneratorCommand extends Command
     {
         $name = str_replace_first($this->rootNamespace(), '', $name);
 
-        return env('PLUGIN_PATH') .'/src/'.str_replace('\\', '/', $name).'.php';
+        return $this->plugin->path .'/app/'.str_replace('\\', '/', $name).'.php';
     }
 
     /**
@@ -216,7 +217,7 @@ abstract class GeneratorCommand extends Command
      */
     protected function rootNamespace()
     {
-        return env('PLUGIN_NAMESPACE');
+        return $this->plugin->namespace;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Arc\Console;
 
+use Arc\BasePlugin;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
@@ -61,6 +62,12 @@ abstract class Command extends SymfonyCommand
     protected $verbosity = OutputInterface::VERBOSITY_NORMAL;
 
     /**
+     * The instance of the Arc framework application
+     * @var \Arc\BasePlugin
+     **/
+    protected $plugin;
+
+    /**
      * Invoke the class as a function
      **/
     public function __invoke(ArgvInput $input, ConsoleOutput $output)
@@ -68,7 +75,7 @@ abstract class Command extends SymfonyCommand
         return self::run($input, $output);
     }
 
-    public function __construct()
+    public function __construct(BasePlugin $plugin)
     {
         parent::__construct($this->name);
 
@@ -78,6 +85,7 @@ abstract class Command extends SymfonyCommand
         $this->setDescription($this->description);
         $this->setHidden($this->hidden);
         $this->specifyParameters();
+        $this->plugin = $plugin;
     }
 
     /**

@@ -41,8 +41,7 @@ class AdminMenus
             return;
         }
 
-        $registrar = new $adminRegistrarClassName($this);
-        $registrar->register();
+        $this->plugin->make($adminRegistrarClassName)->register();
     }
 
     public function add()

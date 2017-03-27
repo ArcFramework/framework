@@ -20,6 +20,7 @@ class GenerateProviderCommand extends GeneratorCommand
      * @var string
      */
     protected $description = 'Create a new service provider class';
+
     /**
      * The type of class being generated.
      *

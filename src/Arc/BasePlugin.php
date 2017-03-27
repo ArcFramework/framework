@@ -209,12 +209,9 @@ abstract class BasePlugin extends Container implements ContainerInterface
      */
     public function get($id)
     {
-        try {
-            return $this->make($id);
-        } catch (\Exception $e) {
-            throw ContainerException::fromPrevious($id, $e);
-        }
+        return $this->make($id);
     }
+
     /**
      * @inheritdoc
      */

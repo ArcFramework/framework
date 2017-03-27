@@ -56,10 +56,10 @@ class ValidatesRequests
     }
 
     // Ensures one of the field and the extra given fields is submitted
-    private function requiredWith($data, $fieldName, $parameters)
+    private function requiredWith($data, $fieldSlug, $parameters)
     {
         $fields = explode(',', $parameters);
-        $fields[] = $fieldName;
+        $fields[] = $fieldSlug;
 
         foreach($fields as $field) {
             if (!empty($data[$field])) {
@@ -68,7 +68,10 @@ class ValidatesRequests
             }
         }
 
-        return 'You must select at least one of the following: ' . implode($fields, ',');
+        $fields = collect($fields)->map(function ($fieldSlug) {
+            return $this->unslugify($fieldSlug);
+        })->implode(', ');
+        return "You must select at least one of the following: $fields";
     }
 
     private function failValidation($errors)
@@ -110,5 +113,10 @@ class ValidatesRequests
     public function setCustomFieldName($field, $name)
     {
         $this->customFieldNames[$field] = $name;
+    }
+
+    protected function unslugify($slug)
+    {
+        return ucfirst(str_replace('-', ' ', $slug));
     }
 }

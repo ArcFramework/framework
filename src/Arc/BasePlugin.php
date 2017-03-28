@@ -159,9 +159,35 @@ abstract class BasePlugin extends Container implements ContainerInterface
     }
 
     /**
-     * Boots the plugin
+     * Boots and runs the plugin
      **/
     public function boot()
+    {
+        $this->init();
+
+        // Exit early if we are testing
+        if (defined('ARC_TESTING')) {
+            return;
+        }
+
+        $this->callRun();
+    }
+
+    /**
+     * Call the 'run' method on the plugin class if it exists, injecting any dependencies
+     **/
+    public function callRun()
+    {
+        // Run plugin
+        if (method_exists($this, 'run')) {
+            $this->call([$this, 'run']);
+        }
+    }
+
+    /**
+     * Initialises the plugin but doesn't run it
+     **/
+    public function init()
     {
 
         $this->make(Providers::class)->register();
@@ -171,11 +197,6 @@ abstract class BasePlugin extends Container implements ContainerInterface
         $this->adminMenus->register();
         $this->assets->enqueue();
         $this->router->boot();
-
-        // Run plugin
-        if (method_exists($this, 'run')) {
-            $this->call([$this, 'run']);
-        }
     }
 
     public function bindInstance()

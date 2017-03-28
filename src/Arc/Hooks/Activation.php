@@ -1,10 +1,10 @@
 <?php
 
-namespace Arc\Activation;
+namespace Arc\Hooks;
 
 use Arc\BasePlugin;
 
-class ActivationHooks
+class Activation
 {
     public function __construct(BasePlugin $plugin)
     {

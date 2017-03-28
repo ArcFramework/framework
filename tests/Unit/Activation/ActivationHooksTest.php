@@ -1,11 +1,15 @@
 <?php
 
-use Arc\Activation\ActivationHooks;
+use Arc\Hooks\Activation;
 use Arc\Config\Config;
 
 class ActivationHooksTest extends FrameworkTestCase
 {
-    /** @test */
+    /**
+     * @test
+     *
+     * Feature documented at arcframework.github.io/hooks.html
+     **/
     public function an_activation_hook_can_be_registered()
     {
         $doThis = ['object' => 'method'];
@@ -18,10 +22,14 @@ class ActivationHooksTest extends FrameworkTestCase
             ]
         ]);
 
-        $this->plugin->make(ActivationHooks::class)->whenPluginIsActivated($doThis);
+        $this->plugin->make(Activation::class)->whenPluginIsActivated($doThis);
     }
 
-    /** @test */
+    /**
+     * @test
+     *
+     * Feature documented at arcframework.github.io/hooks.html
+     **/
     public function a_deactivation_hook_can_be_registered()
     {
         $doThis = ['object' => 'method'];
@@ -34,6 +42,6 @@ class ActivationHooksTest extends FrameworkTestCase
             ]
         ]);
 
-        $this->plugin->make(ActivationHooks::class)->whenPluginIsDeactivated($doThis);
+        $this->plugin->make(Activation::class)->whenPluginIsDeactivated($doThis);
     }
 }

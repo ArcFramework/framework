@@ -171,6 +171,11 @@ abstract class BasePlugin extends Container implements ContainerInterface
         $this->adminMenus->register();
         $this->assets->enqueue();
         $this->router->boot();
+
+        // Run plugin
+        if (method_exists($this, 'run')) {
+            $this->call([$this, 'run']);
+        }
     }
 
     public function bindInstance()

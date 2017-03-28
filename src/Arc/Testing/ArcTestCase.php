@@ -880,4 +880,12 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
     {
         return (string) $this->app->make(Builder::class)->build($view, $parameters);
     }
+
+    /**
+     * Activate the plugin
+     **/
+    protected function activatePlugin()
+    {
+        do_action('activate_' . ltrim($this->app->filename, '/'));
+    }
 }

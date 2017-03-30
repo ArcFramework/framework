@@ -14,7 +14,7 @@ class WPOptionsTest extends FrameworkTestCase
             ]
         ]);
 
-        (new WPOptions)->get('key');
+        $this->app->make(WPOptions::class)->get('key');
     }
 
     /** @test */
@@ -36,7 +36,7 @@ class WPOptionsTest extends FrameworkTestCase
             ]
         ]);
 
-        (new WPOptions)->set('key', 'value');
+        $this->app->make(WPOptions::class)->set('key', 'value');
     }
 
     /** @test */
@@ -58,7 +58,7 @@ class WPOptionsTest extends FrameworkTestCase
             ]
         ]);
 
-        (new WPOptions)->set('key', 'value');
+        $this->app->make(WPOptions::class)->set('key', 'value');
     }
 
     /** @test */
@@ -68,7 +68,7 @@ class WPOptionsTest extends FrameworkTestCase
             'times' => 0,
         ]);
 
-        $wpOptions = new WPOptions;
+        $wpOptions = $this->app->make(WPOptions::class);
         $wpOptions->setTest('key', 'value');
 
         $this->assertEquals('value', $wpOptions->get('key'));
@@ -85,7 +85,7 @@ class WPOptionsTest extends FrameworkTestCase
             ]
         ]);
 
-        (new WPOptions)->setDefault('key', 'value');
+        $this->app->make(WPOptions::class)->set('key', 'value');
     }
 
     /** @test */
@@ -99,7 +99,7 @@ class WPOptionsTest extends FrameworkTestCase
             ]
         ]);
 
-        $wpOptions = new WPOptions;
+        $wpOptions = $this->app->make(WPOptions::class);
 
         $wpOptions->setTest('key', 'value');
         $wpOptions->setDefault('key', 'alternative_value');
@@ -110,7 +110,7 @@ class WPOptionsTest extends FrameworkTestCase
     /** @test */
     public function the_is_already_set_function_returns_true_if_a_config_value_already_exists_for_the_key()
     {
-        $wpOptions = new WPOptions;
+        $wpOptions = $this->app->make(WPOptions::class);
         $wpOptions->setTest('key', 'value');
         $this->assertTrue($wpOptions->isAlreadySet('key'));
     }

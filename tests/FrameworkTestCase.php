@@ -10,7 +10,7 @@ abstract class FrameworkTestCase extends PHPUnit_Framework_TestCase
 
         self::$functions = Mockery::mock();
 
-        $this->plugin = new TestPlugin(__FILE__);
+        $this->app = new TestPlugin(__FILE__);
     }
 
     public function tearDown()

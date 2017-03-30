@@ -17,12 +17,12 @@ class ActivationHooksTest extends FrameworkTestCase
         WP_Mock::wpFunction('register_activation_hook', [
             'times' => 1,
             'args' => [
-                $this->plugin->filename,
+                $this->app->filename,
                 $doThis
             ]
         ]);
 
-        $this->plugin->make(Activation::class)->whenPluginIsActivated($doThis);
+        $this->app->make(Activation::class)->whenPluginIsActivated($doThis);
     }
 
     /**
@@ -37,11 +37,11 @@ class ActivationHooksTest extends FrameworkTestCase
         WP_Mock::wpFunction('register_deactivation_hook', [
             'times' => 1,
             'args' => [
-                $this->plugin->filename,
+                $this->app->filename,
                 $doThis
             ]
         ]);
 
-        $this->plugin->make(Activation::class)->whenPluginIsDeactivated($doThis);
+        $this->app->make(Activation::class)->whenPluginIsDeactivated($doThis);
     }
 }

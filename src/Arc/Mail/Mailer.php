@@ -18,7 +18,14 @@ class Mailer implements MailerContract
     protected $cssInliner;
     protected $wpOptions;
 
-    public function __construct(Actions $actions, Email $email, Builder $viewBuilder, CssToInlineStyles $cssInliner, Filters $filters, WPOptions $wpOptions)
+    public function __construct(
+        Actions $actions,
+        Builder $viewBuilder,
+        CssToInlineStyles $cssInliner,
+        Email $email,
+        Filters $filters,
+        WPOptions $wpOptions
+    )
     {
         $this->actions = $actions;
         $this->filters = $filters;
@@ -35,10 +42,7 @@ class Mailer implements MailerContract
 
     public function send(Email $email)
     {
-        // If no from address is set in wordpress we'll use the default for the site
-        if (!$this->fromAddressIsSet()) {
-            $this->setFromAddress($this->wpOptions->get('admin_email'), $this->wpOptions->get('blogname'));
-        }
+        $this->setFromAddress($this->getFromAddress($email));
 
         // Render the message
         $message = $this->renderMessage($email);
@@ -91,26 +95,32 @@ class Mailer implements MailerContract
     }
 
     /**
-     * Returns true if a from address has been set for outgoing mail
-     * @return bool
-     **/
-    protected function fromAddressIsSet()
-    {
-        return !empty($this->filters->apply('wp_mail_from', ''));
-    }
-
-    /**
      * Set the from address for outgoing mail
      * @param string $address The email address
      * @param string $name (optional) The from name
      **/
-    protected function setFromAddress($address, $name = null)
+    public function setFromAddress($address, $name = null)
     {
-        $this->filters->forHook('wp_mail_from')->doThis(function() use ($address) {
-            return $address;
-        });
-        $this->filters->forHook('wp_mail_from_name')->doThis(function() use ($name) {
-            return $name;
-        });
+    }
+
+    /**
+     * Returns the appropriate from address that we should use to send this email
+     * @param Arc\Mail\Email
+     * @return string
+     **/
+    public function getFromAddress(Email $email)
+    {
+        // If the email has a from address we should use that above all else
+        if ($email->hasFromAddress()) {
+            return $email->getFromAddress();
+        }
+
+        // Return the default wordpress from address if it is set
+        if ($this->wpOptions->defaultFromAddressIsSet()) {
+            return $this->wpOptions->getDefaultFromAddress();
+        }
+
+        // Since no from address is set in wordpress we'll use the default for the site
+        return $this->wpOptions->get('admin_email');
     }
 }

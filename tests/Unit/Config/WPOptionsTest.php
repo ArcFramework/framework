@@ -1,6 +1,7 @@
 <?php
 
 use Arc\Config\WPOptions;
+use Arc\Hooks\Filters;
 
 class WPOptionsTest extends FrameworkTestCase
 {
@@ -113,5 +114,36 @@ class WPOptionsTest extends FrameworkTestCase
         $wpOptions = $this->app->make(WPOptions::class);
         $wpOptions->setTest('key', 'value');
         $this->assertTrue($wpOptions->isAlreadySet('key'));
+    }
+
+    /** @test */
+    public function the_set_default_from_address_method_sets_the_default_wordpress_from_email_address()
+    {
+        $filters = Mockery::mock(Filters::class);
+        $filters->shouldReceive('forHook')->with('wp_mail_from')->once()->andReturn($filters);
+        $filters->shouldReceive('doThis')
+            ->with(\Mockery::on(function($arg) {
+                return call_user_func($arg) == 'from@domain.com';
+            }))
+            ->once()
+            ->andReturn($filters);
+        $filters->shouldReceive('forHook')->with('wp_mail_from_name')->once()->andReturn($filters);
+        $filters->shouldReceive('doThis')->once();
+        $this->app->instance(Filters::class, $filters);
+
+        $this->app->forgetInstance(WPOptions::class);
+
+        $wpOptions = $this->app->make(WPOptions::class);
+        $wpOptions->setDefaultFromAddress('from@domain.com');
+    }
+
+    /** @test */
+    public function the_default_from_address_is_set_method_returns_true_if_the_default_wordpress_address_is_set()
+    {
+        WP_Mock::onFilter('wp_mail_from')
+            ->with('')
+            ->reply('some@address.com');
+
+        $this->assertTrue($this->app->make(WPOptions::class)->defaultFromAddressIsSet());
     }
 }

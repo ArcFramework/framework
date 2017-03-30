@@ -14,7 +14,7 @@ class PostTypesTest extends FrameworkTestCase
     {
         self::$functions->shouldReceive('register_post_type')->once();
 
-        $postTypes = $this->plugin->make(PostTypes::class);
+        $postTypes = $this->app->make(PostTypes::class);
 
         $postTypes->createPublic()
             ->withSlug('residential_property')

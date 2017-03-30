@@ -2,8 +2,15 @@
 
 namespace Arc\Config;
 
+use Arc\Hooks\Filters;
+
 class WPOptions
 {
+    public function __construct(Filters $filters)
+    {
+        $this->filters = $filters;
+    }
+
     protected $testConfig = [];
 
     public function get($key)
@@ -39,5 +46,37 @@ class WPOptions
     public function setTest($key, $value)
     {
         $this->testConfig[$key] = $value;
+    }
+
+    /**
+     * Sets the default sending address for wordpress emails
+     * @param string $email
+     * @param string $name (optional)
+     **/
+    public function setDefaultFromAddress($email, $name = null)
+    {
+        $this->filters->forHook('wp_mail_from')->doThis(function() use ($email) {
+            return $email;
+        });
+        $this->filters->forHook('wp_mail_from_name')->doThis(function() use ($name) {
+            return $name;
+        });
+    }
+
+    /**
+     * Returns true if a from address has been set for outgoing mail
+     * @return bool
+     **/
+    public function defaultFromAddressIsSet()
+    {
+        return !empty($this->getDefaultFromAddress());
+    }
+
+    /**
+     * Returns the default from address for outgoing mail if it is set
+     **/
+    public function getDefaultFromAddress()
+    {
+        return $this->filters->apply('wp_mail_from', '');
     }
 }

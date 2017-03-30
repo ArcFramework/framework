@@ -74,7 +74,17 @@ class Email
     }
 
     /**
+     * Returns the from address set for the email if it exists
+     * @erturn string|null
+     **/
+    public function getFromAddress()
+    {
+        return $this->from;
+    }
+
+    /**
      * Gets the email headers for the email
+     * @return array
      **/
     public function getHeaders()
     {
@@ -126,6 +136,15 @@ class Email
     }
 
     /**
+     * Returns true if a from address has been set for the email
+     * @erturn bool
+     **/
+    public function hasFromAddress()
+    {
+        return !empty($this->from);
+    }
+
+    /**
      * Returns true if the email has a plain text message
      * @return bool
      **/
@@ -162,6 +181,17 @@ class Email
     public function to($email)
     {
         $this->to = $email;
+        return $this;
+    }
+
+    /**
+     * Set the sender address of the email
+     * @param string $email An email address
+     * @return $this
+     **/
+    public function from($email)
+    {
+        $this->from = $email;
         return $this;
     }
 }

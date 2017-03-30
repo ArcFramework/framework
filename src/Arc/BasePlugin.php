@@ -68,9 +68,8 @@ abstract class BasePlugin extends Container implements ContainerInterface
         });
 
         // Bind WPOptions object
-        $this->singleton(WPOptions::class, function() {
-            return new WPOptions;
-        });
+        $wpOptions = $this->make(WPOptions::class);
+        $this->instance(WPOptions::class, $wpOptions);
 
         // Bind Actions object
         $this->singleton('actions', function() {

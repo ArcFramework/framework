@@ -101,6 +101,7 @@ class Mailer implements MailerContract
      **/
     public function setFromAddress($address, $name = null)
     {
+        $this->wpOptions->setDefaultFromAddress($address);
     }
 
     /**

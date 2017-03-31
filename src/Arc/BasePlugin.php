@@ -11,6 +11,7 @@ use Arc\Config\Config;
 use Arc\Config\WPOptions;
 use Arc\Contracts\Mail\Mailer as MailerContract;
 use Arc\Cron\CronSchedules;
+use Arc\Events\NonDispatcher;
 use Arc\Http\ValidatesRequests;
 use Arc\Mail\Mailer;
 use Arc\Providers\Providers;
@@ -19,6 +20,7 @@ use Arc\Shortcodes\Shortcodes;
 use Dotenv\Dotenv;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\MySqlBuilder;
 use Interop\Container\ContainerInterface;
@@ -244,4 +246,7 @@ abstract class BasePlugin extends Container implements ContainerInterface
     {
         return $this->bound($id);
     }
+
+        // Bind event dispatcher
+        $this->bind(DispatcherContract::class, NonDispatcher::class);
 }

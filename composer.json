@@ -10,6 +10,7 @@
         }
     ],
     "require": {
+        "php": ">=5.5.9",
         "illuminate/view": "^5.3",
         "illuminate/container": "^5.3",
         "illuminate/database": "^5.3",
@@ -21,7 +22,8 @@
         "tijsverkoyen/css-to-inline-styles": "^2.2",
         "soundasleep/html2text": "~0.3",
         "container-interop/container-interop": "^1.2",
-        "illuminate/http": "^5.4"
+        "illuminate/http": "^5.4",
+        "illuminate/routing": "^5.4"
     },
     "autoload": {
         "psr-4":{
@@ -39,6 +41,8 @@
     },
     "require-dev": {
         "10up/wp_mock": "dev-master",
-        "mockery/mockery": "^0.9.9"
+        "mockery/mockery": "^0.9.9",
+        "symfony/css-selector": "~3.1",
+        "symfony/dom-crawler": "~3.1"
     }
 }

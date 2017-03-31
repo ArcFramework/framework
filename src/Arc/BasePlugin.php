@@ -12,17 +12,28 @@ use Arc\Config\WPOptions;
 use Arc\Contracts\Mail\Mailer as MailerContract;
 use Arc\Cron\CronSchedules;
 use Arc\Events\NonDispatcher;
+use Arc\Http\Kernel;
+use Arc\Http\Response;
+use Arc\Http\Request;
+use Arc\Http\Router;
 use Arc\Http\ValidatesRequests;
 use Arc\Mail\Mailer;
 use Arc\Providers\Providers;
-use Arc\Routing\Router;
 use Arc\Shortcodes\Shortcodes;
+use Arc\View\ViewFinder;
 use Dotenv\Dotenv;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
+use Illuminate\Contracts\Http\Kernel as KernelContract;
+use Illuminate\View\ViewFinderInterface;
+use Illuminate\View\Factory as ViewFactory;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\MySqlBuilder;
+use Illuminate\Http\Response as IlluminateResponse;
+use Illuminate\Http\Request as IlluminateRequest;
+use Illuminate\Routing\RouteCollection;
+use Illuminate\Routing\UrlGenerator;
 use Interop\Container\ContainerInterface;
 
 abstract class BasePlugin extends Container implements ContainerInterface
@@ -55,89 +66,29 @@ abstract class BasePlugin extends Container implements ContainerInterface
      **/
     public function __construct($pluginFilename)
     {
-        $this->filename = $pluginFilename;
-        $this->namespace = substr(get_called_class(), 0, strrpos(get_called_class(), "\\"));
-        $this->path = $this->env('PLUGIN_PATH', dirname($this->filename) . '/');
-        $this->slug = $this->env('PLUGIN_SLUG', pathinfo($this->filename, PATHINFO_FILENAME));
-        $this->uri = $this->env('PLUGIN_URI', $this->getUrl());
+        $this->setPaths($pluginFilename);
+        $this->bindImportantInterfaces();
+    }
 
-        $this->setPluginContainerInstance($this);
-        $this->bindInstance();
+    /**
+     * Boots and runs the plugin
+     **/
+    public function boot()
+    {
+        $this->init();
+        $this->callRun();
+    }
 
-        // Bind config object
-        $this->singleton('configuration', function() {
-            return $this->make(Config::class);
-        });
-
-        // Bind WPOptions object
-        $wpOptions = $this->make(WPOptions::class);
-        $this->instance(WPOptions::class, $wpOptions);
-
-        // Bind Actions object
-        $this->singleton('actions', function() {
-            return new Actions;
-        });
-
-        // Bind Exception Handler
-        $this->singleton(
-            ExceptionHandler::class,
-            Handler::class
-        );
-
-        // Bind HTTP Request validator
-        $this->validator = $this->make(ValidatesRequests::class);
-        $this->instance(
-            ValidatesRequests::class,
-            $this->validator
-        );
-
-        // Bind filesystem
-        $this->bind(
-            \Illuminate\Contracts\Filesystem\Filesystem::class,
-            \Illuminate\Filesystem\Filesystem::class
-        );
-
-        $this->bind('blade', function() {
-            return new \Arc\View\Blade($this->path . '/assets/views', $this->path . '/cache', null, $this);
-        });
-
-        $this->capsule = $this->make(Capsule::class);
-        $this->adminMenus = $this->make(AdminMenus::class);
-        $this->assets = $this->make(Assets::class);
-        $this->cronSchedules = $this->make(CronSchedules::class);
-        $this->providers = $this->make(Providers::class);
-        $this->router = $this->make(Router::class);
-        $this->shortcodes = $this->make(Shortcodes::class);
-
-        global $wpdb;
-
-        $this->capsule->addConnection([
-            'driver' => 'mysql',
-            'database' => DB_NAME,
-            'username' => DB_USER,
-            'password' => DB_PASSWORD,
-            'host' => '127.0.0.1',
-            'prefix' => $wpdb->base_prefix ?? null,
-            'collation' => !empty(DB_COLLATE) ? DB_COLLATE : 'utf8_unicode_ci'
-        ]);
-
-        $this->capsule->getContainer()->singleton(
-            ExceptionHandler::class,
-            Handler::class
-        );
-        $this->capsule->bootEloquent();
-        $this->capsule->setAsGlobal();
-        // Bind schema instance
-        $this->schema = $this->capsule->schema();
-        $this->instance(MySqlBuilder::class, $this->schema);
-
-        // Bind Mailer concretion
-        $this->bind(MailerContract::class, Mailer::class);
-
-        // Bind version
-        $this->bind('version', function() {
-            return get_plugin_data($this->filename)['Version'];
-        });
+    /**
+     * Initialises the plugin but doesn't run it
+     **/
+    public function init()
+    {
+        $this->make(Providers::class)->register();
+        $this->cronSchedules->register();
+        $this->shortcodes->register();
+        $this->adminMenus->register();
+        $this->assets->enqueue();
     }
 
     /**
@@ -160,21 +111,6 @@ abstract class BasePlugin extends Container implements ContainerInterface
     }
 
     /**
-     * Boots and runs the plugin
-     **/
-    public function boot()
-    {
-        $this->init();
-
-        // Exit early if we are testing
-        if (defined('ARC_TESTING')) {
-            return;
-        }
-
-        $this->callRun();
-    }
-
-    /**
      * Call the 'run' method on the plugin class if it exists, injecting any dependencies
      **/
     public function callRun()
@@ -183,21 +119,18 @@ abstract class BasePlugin extends Container implements ContainerInterface
         if (method_exists($this, 'run')) {
             $this->call([$this, 'run']);
         }
-    }
 
-    /**
-     * Initialises the plugin but doesn't run it
-     **/
-    public function init()
-    {
+        // Handle request through http kernel
+        $this->actions->forHook('parse_request')->doThis(function() {
+            $kernel = $this->make(KernelContract::class);
 
-        $this->make(Providers::class)->register();
+            $response = $kernel->handle(
+                $request = \Illuminate\Http\Request::capture()
+            );
 
-        $this->cronSchedules->register();
-        $this->shortcodes->register();
-        $this->adminMenus->register();
-        $this->assets->enqueue();
-        $this->router->boot();
+            $response->send();
+            $kernel->terminate($request, $response);
+        });
     }
 
     public function bindInstance()
@@ -247,6 +180,153 @@ abstract class BasePlugin extends Container implements ContainerInterface
         return $this->bound($id);
     }
 
+    public function shouldSkipMiddleware()
+    {
+        return false;
+    }
+
+    /**
+     * Generate the URL to a named route.
+     *
+     * @param  string  $name
+     * @param  array   $parameters
+     * @param  bool    $absolute
+     * @return string
+     */
+    public function route($name, $parameters = [], $absolute = true)
+    {
+        return $this->make(UrlGenerator::class)->route($name, $parameters, $absolute);
+    }
+
+    /**
+     * Get the evaluated view contents for the given view.
+     *
+     * @param  string  $view
+     * @param  array   $data
+     * @param  array   $mergeData
+     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     */
+    public function view($view = null, $data = [], $mergeData = [])
+    {
+        $factory = $this->make('blade')->view();
+        if (func_num_args() === 0) {
+            return $factory;
+        }
+        return $factory->make($view, $data, $mergeData);
+    }
+
+    /**
+     * Set all the relative paths and other constants for the application
+     * @param string $pluginFilename the fully path to the plugin file
+     **/
+    protected function setPaths($pluginFilename)
+    {
+        $this->filename = $pluginFilename;
+        $this->namespace = substr(get_called_class(), 0, strrpos(get_called_class(), "\\"));
+        $this->path = $this->env('PLUGIN_PATH', dirname($this->filename) . '/');
+        $this->assetsPath = $this->path . '/assets';
+        $this->slug = $this->env('PLUGIN_SLUG', pathinfo($this->filename, PATHINFO_FILENAME));
+        $this->uri = $this->env('PLUGIN_URI', $this->getUrl());
+    }
+
+    /**
+     * Bind implementations of critical interfaces to the service container
+     **/
+    protected function bindImportantInterfaces()
+    {
+        $this->setPluginContainerInstance($this);
+        $this->bindInstance();
+
+        $this->singleton(
+            KernelContract::class,
+            Kernel::class
+        );
+        $this->singleton(
+            ExceptionHandler::class,
+            Handler::class
+        );
+
+        // Bind config object
+        $this->singleton('configuration', Config::class);
+
+        // Bind WPOptions object
+        $wpOptions = $this->make(WPOptions::class);
+        $this->instance(WPOptions::class, $wpOptions);
+
+        // Bind Actions object
+        $this->singleton('actions', function() {
+            return new Actions;
+        });
+
         // Bind event dispatcher
         $this->bind(DispatcherContract::class, NonDispatcher::class);
+
+        // Bind HTTP Response
+        $this->bind(IlluminateResponse::class, Response::class);
+
+        // Bind HTTP Request
+        $this->bind(IlluminateRequest::class, Request::class);
+
+        // Bind HTTP Request validator
+        $this->validator = $this->make(ValidatesRequests::class);
+        $this->instance(
+            ValidatesRequests::class,
+            $this->validator
+        );
+
+        // Bind filesystem
+        $this->bind(
+            \Illuminate\Contracts\Filesystem\Filesystem::class,
+            \Illuminate\Filesystem\Filesystem::class
+        );
+
+        $this->bind('blade', function() {
+            return new \Arc\View\Blade($this->path . '/assets/views', $this->path . '/cache', null, $this);
+        });
+
+        // Bind Mailer concretion
+        $this->bind(MailerContract::class, Mailer::class);
+
+        // Bind version
+        $this->bind('version', function() {
+            return get_plugin_data($this->filename)['Version'];
+        });
+        $router = $this->make(Router::class);
+        $this->instance(Router::class, $router);
+        $this->instance(RouteCollection::class, $router->getRoutes());
+
+        $this->capsule = $this->make(Capsule::class);
+        $this->adminMenus = $this->make(AdminMenus::class);
+        $this->assets = $this->make(Assets::class);
+        $this->cronSchedules = $this->make(CronSchedules::class);
+        $this->providers = $this->make(Providers::class);
+        $this->shortcodes = $this->make(Shortcodes::class);
+
+        global $wpdb;
+
+        $this->capsule->addConnection([
+            'driver' => 'mysql',
+            'database' => DB_NAME,
+            'username' => DB_USER,
+            'password' => DB_PASSWORD,
+            'host' => '127.0.0.1',
+            'prefix' => $wpdb->base_prefix ?? null,
+            'collation' => !empty(DB_COLLATE) ? DB_COLLATE : 'utf8_unicode_ci'
+        ]);
+
+        $this->capsule->getContainer()->singleton(
+            ExceptionHandler::class,
+            Handler::class
+        );
+        $this->capsule->bootEloquent();
+        $this->capsule->setAsGlobal();
+        // Bind schema instance
+        $this->schema = $this->capsule->schema();
+        $this->instance(MySqlBuilder::class, $this->schema);
+    }
+
+    public function terminate()
+    {
+
+    }
 }

@@ -12,6 +12,8 @@ use WP;
 use WP_Query;
 use Illuminate\Database\Schema\MySqlBuilder;
 
+use Arc\Testing\Concerns\MakesHttpRequests;
+
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 if ( ! $_tests_dir ) {
     $_tests_dir = posix_getpwuid(posix_getuid())['dir'] . '/.arc/wordpress-tests-lib';
@@ -22,6 +24,10 @@ require_once $_tests_dir . '/includes/trac.php';
 
 class ArcTestCase extends PHPUnit_Framework_TestCase
 {
+    use MakesHttpRequests;
+
+    public $baseUrl = 'http://localhost';
+
     protected static $forced_tickets = array();
     protected $expected_deprecated = array();
     protected $caught_deprecated = array();
@@ -141,6 +147,14 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
         $this->start_transaction();
         $this->expectDeprecated();
         add_filter( 'wp_die_handler', array( $this, 'get_wp_die_handler' ) );
+
+        // The tests fail if we don't explicitly set the port, not sure what I'm missing
+        $this->app->when(\Arc\Http\Request::class)
+            ->needs('$server')
+            ->give(['SERVER_PORT' => 80]);
+        $this->app->when(\Arc\Http\Request::class)
+            ->needs('$server')
+            ->give(['HTTP_HOST' => 'localhost']);
     }
 
     /**

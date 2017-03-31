@@ -20,9 +20,21 @@ class ControllerHandler
      * @param string $className The short name of the controller class
      * @param string $methodName The name of the controller method
      */
-    public function call($className, $methodName, $argument = null)
+    public function call($classAndMethod, $arguments = null)
     {
-        $fullyQualifiedClassName = $this->plugin->namespace . '\\Http\\Controllers\\' . $className;
+        if (is_object($classAndMethod[0])) {
+            $classAndMethod[0] = get_class($classAndMethod[0]);
+        }
+
+        if (class_exists($classAndMethod[0])) {
+            $className = $classAndMethod[0];
+        }
+        else {
+            // Try fully qualified class name
+            $className = $this->plugin->namespace . '\\Http\\Controllers\\' . $classAndMethod[0];
+        }
+
+        $methodName = $classAndMethod[1];
 
         // If we're in ajax mode we need to cache the output
         if (defined('DOING_AJAX') && DOING_AJAX) {
@@ -36,7 +48,7 @@ class ControllerHandler
             // or call the parent constructor in every controller
             $controller->setPluginInstance($this->plugin);
 
-            $controller->$methodName($argument);
+            $response = $this->plugin->call([$controller, $methodName], [$argument]);
         }
         catch (ValidationException $e) {
             wp_send_json([

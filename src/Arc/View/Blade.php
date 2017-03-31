@@ -75,6 +75,7 @@ class Blade {
             return new Filesystem;
         });
     }
+
     public function registerEvents(Dispatcher $events)
     {
         $this->container->singleton('events', function() use ($events)
@@ -189,5 +190,10 @@ class Blade {
     public function getCompiler()
     {
         return $this->container['blade.compiler'];
+    }
+
+    public function getViewFactory()
+    {
+        return $this->container['view.factory'];
     }
 }

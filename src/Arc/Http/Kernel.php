@@ -116,6 +116,7 @@ class Kernel implements KernelContract
     protected function sendRequestThroughRouter($request)
     {
         $this->app->instance('request', $request);
+        $this->app->instance(Request::class, $request);
         $this->bootstrap();
         return (new Pipeline($this->app))
                     ->send($request)

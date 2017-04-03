@@ -277,6 +277,9 @@ abstract class BasePlugin extends Container implements ContainerInterface
             $this->validator
         );
 
+        // Bind route URL generator
+        $this->bind('url', UrlGenerator::class);
+
         // Bind filesystem
         $this->bind(
             \Illuminate\Contracts\Filesystem\Filesystem::class,

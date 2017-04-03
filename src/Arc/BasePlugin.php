@@ -223,6 +223,10 @@ abstract class BasePlugin extends Container implements ContainerInterface
      **/
     protected function setPaths($pluginFilename)
     {
+        if (!file_exists($pluginFilename)) {
+            throw new \Exception('Plugin file must exist.');
+        }
+
         $this->filename = $pluginFilename;
         $this->namespace = substr(get_called_class(), 0, strrpos(get_called_class(), "\\"));
         $this->path = $this->env('PLUGIN_PATH', dirname($this->filename) . '/');

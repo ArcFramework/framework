@@ -4,6 +4,7 @@ namespace Arc\Assets;
 
 use Arc\BasePlugin;
 use Arc\Config\FlatFileParser;
+use Illuminate\Support\Str;
 
 class Assets
 {
@@ -167,6 +168,11 @@ class Assets
         // If no relative path has been specified the script has no path
         if (empty($path)) {
             return null;
+        }
+
+        // If a protocol is specified, the path is external
+        if (Str::contains($path, 'http')) {
+            return $path;
         }
 
         return $this->plugin->uri . '/assets/' . $path;

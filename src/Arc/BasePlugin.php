@@ -23,6 +23,7 @@ use Arc\Shortcodes\Shortcodes;
 use Arc\View\ViewFinder;
 use Dotenv\Dotenv;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\Container as ContainerContract;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
@@ -136,6 +137,8 @@ abstract class BasePlugin extends Container implements ContainerInterface
     public function bindInstance()
     {
         $this->instance(BasePlugin::class, static::$pluginInstance);
+        $this->instance(Container::class, static::$pluginInstance);
+        $this->instance(ContainerContract::class, static::$pluginInstance);
     }
 
     public function config($key, $default = null)

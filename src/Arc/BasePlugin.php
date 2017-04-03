@@ -27,8 +27,8 @@ use Illuminate\Contracts\Container\Container as ContainerContract;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
+use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\View\ViewFinderInterface;
-use Illuminate\View\Factory as ViewFactory;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\MySqlBuilder;
 use Illuminate\Http\Response as IlluminateResponse;
@@ -286,6 +286,7 @@ abstract class BasePlugin extends Container implements ContainerInterface
         $this->bind('blade', function() {
             return new \Arc\View\Blade($this->path . '/assets/views', $this->path . '/cache', null, $this);
         });
+        $this->instance(ViewFactory::class, $this->make('blade')->view());
 
         // Bind Mailer concretion
         $this->bind(MailerContract::class, Mailer::class);

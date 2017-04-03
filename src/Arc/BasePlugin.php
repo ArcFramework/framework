@@ -327,6 +327,9 @@ abstract class BasePlugin extends Container implements ContainerInterface
         );
         $this->capsule->bootEloquent();
         $this->capsule->setAsGlobal();
+
+        $this->instance('db', $this->capsule->getDatabaseManager());
+
         // Bind schema instance
         $this->schema = $this->capsule->schema();
         $this->instance(MySqlBuilder::class, $this->schema);

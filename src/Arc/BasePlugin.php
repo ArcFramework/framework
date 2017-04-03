@@ -102,9 +102,6 @@ abstract class BasePlugin extends Container implements ContainerInterface
      */
     public static function setPluginContainerInstance(BasePlugin $plugin = null)
     {
-        if (!is_null(static::$pluginInstance)) {
-            return;
-        }
         return static::$pluginInstance = $plugin;
     }
 

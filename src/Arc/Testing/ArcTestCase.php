@@ -41,6 +41,9 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
     protected static $hooks_saved = array();
     protected static $ignore_files;
 
+
+    abstract function createApplication();
+
     function __isset( $name ) {
         return 'factory' === $name;
     }
@@ -150,7 +153,12 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
 
         $this->start_transaction();
         $this->expectDeprecated();
+
         add_filter( 'wp_die_handler', array( $this, 'get_wp_die_handler' ) );
+
+        if (! $this->app) {
+            $this->createApplication();
+        }
 
         // The tests fail if we don't explicitly set the port, not sure what I'm missing
         $this->app->when(\Arc\Http\Request::class)
@@ -198,6 +206,10 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
         remove_filter( 'wp_die_handler', array( $this, 'get_wp_die_handler' ) );
         $this->_restore_hooks();
         wp_set_current_user( 0 );
+        if ($this->app) {
+            $this->app->flush();
+            $this->app = null;
+        }
     }
 
     function clean_up_global_scope() {

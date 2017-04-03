@@ -17,6 +17,22 @@ class BaseController
         $this->app = $app;
     }
 
+    /**
+     * Throw an HttpException with the given data.
+     *
+     * @param  int     $code
+     * @param  string  $message
+     * @param  array   $headers
+     * @return void
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function abort($code, $message = '', array $headers = [])
+    {
+        $this->app->abort($code, $message, $headers);
+    }
+
     public function validate($request, $rules)
     {
         $this->app->make(ValidatesRequests::class)->validate($request, $rules);

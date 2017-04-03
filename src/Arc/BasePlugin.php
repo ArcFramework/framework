@@ -36,6 +36,8 @@ use Illuminate\Http\Request as IlluminateRequest;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\UrlGenerator;
 use Interop\Container\ContainerInterface;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class BasePlugin extends Container implements ContainerInterface
 {
@@ -338,5 +340,23 @@ abstract class BasePlugin extends Container implements ContainerInterface
     public function terminate()
     {
 
+    }
+
+    /**
+     * Throw an HttpException with the given data.
+     *
+     * @param  int     $code
+     * @param  string  $message
+     * @param  array   $headers
+     * @return void
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function abort($code, $message = '', array $headers = [])
+    {
+        if ($code == 404) {
+            throw new NotFoundHttpException($message);
+        }
+        throw new HttpException($code, $message, null, $headers);
     }
 }

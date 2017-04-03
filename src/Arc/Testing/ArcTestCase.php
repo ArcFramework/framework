@@ -13,8 +13,10 @@ use WP_Query;
 use Illuminate\Database\Schema\MySqlBuilder;
 
 use Arc\Testing\Concerns\MakesHttpRequests;
+use Arc\Testing\DatabaseTransactions;
 use Laravel\BrowserKitTesting\Concerns\InteractsWithDatabase;
 use Laravel\BrowserKitTesting\Concerns\InteractsWithSession;
+
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 if ( ! $_tests_dir ) {
@@ -24,7 +26,7 @@ if ( ! $_tests_dir ) {
 require_once $_tests_dir . '/includes/factory.php';
 require_once $_tests_dir . '/includes/trac.php';
 
-class ArcTestCase extends PHPUnit_Framework_TestCase
+abstract class ArcTestCase extends PHPUnit_Framework_TestCase
 {
     use InteractsWithDatabase;
     use InteractsWithSession;
@@ -41,6 +43,19 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
     protected static $hooks_saved = array();
     protected static $ignore_files;
 
+    /**
+     * The callbacks that should be run after the application is created.
+     *
+     * @var array
+     */
+    protected $afterApplicationCreatedCallbacks = [];
+
+    /**
+     * The callbacks that should be run before the application is destroyed.
+     *
+     * @var array
+     */
+    protected $beforeApplicationDestroyedCallbacks = [];
 
     abstract function createApplication();
 
@@ -167,6 +182,14 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
         $this->app->when(\Arc\Http\Request::class)
             ->needs('$server')
             ->give(['HTTP_HOST' => 'localhost']);
+
+        // Boot test helper traits
+        $this->setUpTraits();
+
+        // Run after application created callbacks
+        foreach ($this->afterApplicationCreatedCallbacks as $callback) {
+            call_user_func($callback);
+        }
     }
 
     /**
@@ -206,10 +229,17 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
         remove_filter( 'wp_die_handler', array( $this, 'get_wp_die_handler' ) );
         $this->_restore_hooks();
         wp_set_current_user( 0 );
+
         if ($this->app) {
+            foreach ($this->beforeApplicationDestroyedCallbacks as $callback) {
+                call_user_func($callback);
+            }
             $this->app->flush();
             $this->app = null;
         }
+
+        $this->afterApplicationCreatedCallbacks = [];
+        $this->beforeApplicationDestroyedCallbacks = [];
     }
 
     function clean_up_global_scope() {
@@ -917,5 +947,38 @@ class ArcTestCase extends PHPUnit_Framework_TestCase
     protected function activatePlugin()
     {
         do_action('activate_' . ltrim($this->app->filename, '/'));
+    }
+
+    /**
+     * Boot the testing helper traits.
+     *
+     * @return void
+     */
+    protected function setUpTraits()
+    {
+        $uses = array_flip(class_uses_recursive(static::class));
+        if (isset($uses[DatabaseMigrations::class])) {
+            $this->runDatabaseMigrations();
+        }
+        if (isset($uses[DatabaseTransactions::class])) {
+            $this->beginDatabaseTransaction();
+        }
+        if (isset($uses[WithoutMiddleware::class])) {
+            $this->disableMiddlewareForAllTests();
+        }
+        if (isset($uses[WithoutEvents::class])) {
+            $this->disableEventsForAllTests();
+        }
+    }
+
+    /**
+     * Register a callback to be run before the application is destroyed.
+     *
+     * @param  callable  $callback
+     * @return void
+     */
+    protected function beforeApplicationDestroyed(callable $callback)
+    {
+        $this->beforeApplicationDestroyedCallbacks[] = $callback;
     }
 }

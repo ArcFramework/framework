@@ -2,6 +2,9 @@
 
 A simple modern plugin framework for developing WordPress plugins
 
+## Documentation
+
+You can find the documentation [here](http://arcframework.github.io)
 
 ## Project Aims
 

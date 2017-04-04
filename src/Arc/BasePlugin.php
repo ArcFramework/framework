@@ -154,7 +154,7 @@ abstract class BasePlugin extends Container implements ContainerInterface
 
     public function config($key, $default = null)
     {
-        return $this->make('configuration')->get($key, $default);
+        return $this->make('config')->get($key, $default);
     }
 
     public function env($key, $default = null)
@@ -269,7 +269,7 @@ abstract class BasePlugin extends Container implements ContainerInterface
         );
 
         // Bind config object
-        $this->singleton('configuration', Config::class);
+        $this->singleton('config', Config::class);
 
         // Bind WPOptions object
         $wpOptions = $this->make(WPOptions::class);

@@ -2,9 +2,10 @@
 
 namespace Arc\Config;
 
+use ArrayAccess;
 use Arc\BasePlugin;
 
-class Config
+class Config implements ArrayAccess
 {
     protected $plugin;
     protected $testConfig;
@@ -30,9 +31,42 @@ class Config
         $configValues = (file_exists($configPath)) ? include($configPath) : [];
 
         if (!isset($configValues[$key])) {
-            throw new \Exception('No config value for key: "' . $key . '" exists');
+            $configValues = $this->values;
+        }
+        if (!isset($configValues[$key])) {
+            return null;
         }
 
         return $configValues[$key];
+    }
+
+    public function set($key, $value)
+    {
+        $this->values[$key] = $value;
+    }
+
+    public function has($key)
+    {
+        return !empty($this->get($key));
+    }
+
+    public function offsetExists($offset)
+    {
+        return $this->has($offset);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->get($offset);
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        return $this->set($offset, $value);
+    }
+
+    public function offsetUnset($offset)
+    {
+        return $this->unset($offset);
     }
 }

@@ -301,6 +301,8 @@ abstract class BasePlugin extends Container implements ContainerInterface
 
         // Bind HTTP Response
         $this->bind(IlluminateResponse::class, Response::class);
+        $response = $this->make(Response::class);
+        $this->instance('response', $response);
 
         // Bind HTTP Request
         $this->bind(IlluminateRequest::class, Request::class);

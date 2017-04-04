@@ -3,6 +3,7 @@
 namespace Arc\Http;
 
 use Arc\BasePlugin;
+use Arc\Exceptions\Handler;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
 use Illuminate\Pipeline\Pipeline;
 
@@ -73,7 +74,9 @@ class Kernel implements KernelContract
         try {
             $request->enableHttpMethodParameterOverride();
             $response = $this->sendRequestThroughRouter($request);
-        } catch (Exception $e) {
+        } catch (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e) {
+            $response = new DeferToWordpress;
+        } catch (\Exception $e) {
             $this->reportException($e);
             $response = $this->renderException($request, $e);
         } catch (Throwable $e) {
@@ -133,17 +136,23 @@ class Kernel implements KernelContract
     {
         return function ($request) {
             $this->app->instance('request', $request);
-            try {
-                return $this->router->dispatch($request);
-            }
-            catch (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e) {
-                   return new DeferToWordpress;
-            }
+
+            return $this->router->dispatch($request);
         };
     }
 
     public function gatherRouteMiddlewares()
     {
         return $this->routeMiddleware;
+    }
+
+    public function renderException($request, \Exception $e)
+    {
+        $this->app->make(Handler::class)->render($request, $e);
+    }
+
+    public function reportException(\Exception $e)
+    {
+        $this->app->make(Handler::class)->report($e);
     }
 }

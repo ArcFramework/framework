@@ -35,7 +35,12 @@ class Handler implements ExceptionHandlerContract
      *
      * @var array
      */
-    protected $dontReport = [];
+    protected $dontReport = [
+        AuthorizationException::class,
+        HttpException::class,
+        ModelNotFoundException::class,
+        ValidationException::class,
+    ];
 
     /**
      * Create a new exception handler instance.
@@ -186,12 +191,12 @@ class Handler implements ExceptionHandlerContract
     {
         $status = $e->getStatusCode();
 
-        view()->replaceNamespace('errors', [
-            resource_path('views/errors'),
+        $this->container->view()->replaceNamespace('errors', [
+            $this->container->resourcePath('views/errors'),
             __DIR__.'/views',
         ]);
 
-        if (view()->exists("errors::{$status}")) {
+        if ($this->container->view()->exists("errors::{$status}")) {
             return response()->view("errors::{$status}", ['exception' => $e], $status, $e->getHeaders());
         } else {
             return $this->convertExceptionToResponse($e);
@@ -208,7 +213,7 @@ class Handler implements ExceptionHandlerContract
     {
         $e = FlattenException::create($e);
 
-        $handler = new SymfonyExceptionHandler(config('app.debug', false));
+        $handler = new SymfonyExceptionHandler($this->container['config']['app.debug'] ?? false);
 
         return SymfonyResponse::create($handler->getHtml($e), $e->getStatusCode(), $e->getHeaders());
     }

@@ -38,12 +38,16 @@ use Illuminate\Http\Response as IlluminateResponse;
 use Illuminate\Http\Request as IlluminateRequest;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\UrlGenerator;
+use Illuminate\Session\CookieSessionHandler;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Session\SessionManager;
 use Illuminate\Translation\Translator as IlluminateTranslator;
 use Illuminate\Translation\FileLoader;
 use Illuminate\Translation\LoaderInterface;
 use Illuminate\Validation\Factory as IlluminateValidationFactory;
 use Illuminate\Validation\Validator as IlluminateValidator;
 use Interop\Container\ContainerInterface;
+use SessionHandlerInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -276,6 +280,22 @@ abstract class BasePlugin extends Container implements ContainerInterface
             return new Actions;
         });
 
+        // Bind session handler
+        $this->singleton('session', function ($app) {
+            return new SessionManager($app);
+        });
+
+        // Set default session driver
+        $this['config']['session.driver'] = 'file';
+
+        $this->singleton('session.store', function ($app) {
+            // First, we will create the session manager which is responsible for the
+            // creation of the various session drivers when they are needed by the
+            // application instance, and will resolve them on a lazy load basis.
+            return $app->make('session')->driver();
+        });
+        $this->singleton(StartSession::class);
+
         // Bind event dispatcher
         $this->bind(DispatcherContract::class, NonDispatcher::class);
 
@@ -378,5 +398,25 @@ abstract class BasePlugin extends Container implements ContainerInterface
             throw new NotFoundHttpException($message);
         }
         throw new HttpException($code, $message, null, $headers);
+    }
+
+    /**
+     * Get / set the specified session value.
+     *
+     * If an array is passed as the key, we will assume you want to set an array of values.
+     *
+     * @param  array|string  $key
+     * @param  mixed  $default
+     * @return mixed
+     */
+    public function session($key = null, $default = null)
+    {
+        if (is_null($key)) {
+            return $this->make('session');
+        }
+        if (is_array($key)) {
+            return $this->make('session')->put($key);
+        }
+        return make('session')->get($key, $default);
     }
 }

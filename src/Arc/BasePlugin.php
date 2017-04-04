@@ -419,4 +419,9 @@ abstract class BasePlugin extends Container implements ContainerInterface
         }
         return make('session')->get($key, $default);
     }
+
+    public function resourcePath($path)
+    {
+        return $this->path.DIRECTORY_SEPARATOR.'resources'.($path ? DIRECTORY_SEPARATOR.$path : $path);
+    }
 }

@@ -27,6 +27,9 @@ use Illuminate\Contracts\Container\Container as ContainerContract;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
+use Illuminate\Contracts\Translation\Translator as Translator;
+use Illuminate\Contracts\Validation\Factory as ValidationFactory;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\View\ViewFinderInterface;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -35,6 +38,11 @@ use Illuminate\Http\Response as IlluminateResponse;
 use Illuminate\Http\Request as IlluminateRequest;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\UrlGenerator;
+use Illuminate\Translation\Translator as IlluminateTranslator;
+use Illuminate\Translation\FileLoader;
+use Illuminate\Translation\LoaderInterface;
+use Illuminate\Validation\Factory as IlluminateValidationFactory;
+use Illuminate\Validation\Validator as IlluminateValidator;
 use Interop\Container\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -233,6 +241,10 @@ abstract class BasePlugin extends Container implements ContainerInterface
         $this->assetsPath = $this->path . '/assets';
         $this->slug = $this->env('PLUGIN_SLUG', pathinfo($this->filename, PATHINFO_FILENAME));
         $this->uri = $this->env('PLUGIN_URI', $this->getUrl());
+        $this->arcDirectory = dirname((new \ReflectionObject($this))
+            ->getMethod('__construct')
+            ->getDeclaringClass()
+            ->getFilename());
     }
 
     /**
@@ -273,12 +285,19 @@ abstract class BasePlugin extends Container implements ContainerInterface
         // Bind HTTP Request
         $this->bind(IlluminateRequest::class, Request::class);
 
-        // Bind HTTP Request validator
-        $this->validator = $this->make(ValidatesRequests::class);
-        $this->instance(
-            ValidatesRequests::class,
-            $this->validator
-        );
+        // HTTP Validation
+        $this->bind(ValidationFactory::class, IlluminateValidationFactory::class);
+        $this->bind(Validator::class, IlluminateValidator::class);
+
+        // Translation
+        $this->bind(Translator::class, IlluminateTranslator::class);
+        $this->when(IlluminateTranslator::class)
+            ->needs('$locale')
+            ->give('en');
+        $this->bind(LoaderInterface::class, FileLoader::class);
+        $this->when(FileLoader::class)
+            ->needs('$path')
+            ->give(realpath($this->arcDirectory . '/../../lang'));
 
         // Bind route URL generator
         $this->bind('url', UrlGenerator::class);

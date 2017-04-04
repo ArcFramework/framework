@@ -3,7 +3,6 @@
 namespace Arc\Http\Controllers;
 
 use Arc\BasePlugin;
-use Arc\Http\ValidatesRequests;
 use Illuminate\Routing\Redirector;
 use Illuminate\Routing\ResponseFactory;
 
@@ -31,11 +30,6 @@ class BaseController
     public function abort($code, $message = '', array $headers = [])
     {
         $this->app->abort($code, $message, $headers);
-    }
-
-    public function validate($request, $rules)
-    {
-        $this->app->make(ValidatesRequests::class)->validate($request, $rules);
     }
 
     public function response($content = null, $status = null, $headers = null)

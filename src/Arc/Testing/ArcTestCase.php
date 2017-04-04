@@ -36,6 +36,8 @@ abstract class ArcTestCase extends PHPUnit_Framework_TestCase
     protected static $hooks_saved = array();
     protected static $ignore_files;
 
+    protected $app;
+
     /**
      * The callbacks that should be run after the application is created.
      *
@@ -56,10 +58,17 @@ abstract class ArcTestCase extends PHPUnit_Framework_TestCase
         return 'factory' === $name;
     }
 
-    function __get( $name ) {
+    public function __get($name)
+    {
         if ( 'factory' === $name ) {
             return self::factory();
         }
+
+        if (!isset($this->app)) {
+            $this->createApplication();
+        }
+
+        return $this->app->make($name);
     }
 
     protected static function factory() {

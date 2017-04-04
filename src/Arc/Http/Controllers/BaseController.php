@@ -55,8 +55,13 @@ class BaseController
     public function redirect($to = null, $status = 302, $headers = [], $secure = null)
     {
         if (is_null($to)) {
-            return $this->app->make(Redirector::class);
+            $redirect = $this->app->make(Redirector::class);
         }
-        return $this->app->make(Redirector::class)->to($to, $status, $headers, $secure);
+        else {
+            $redirect = $this->app->make(Redirector::class)->to($to, $status, $headers, $secure);
+        }
+        $redirect->setSession($this->app->make('session.store'));
+
+        return $redirect;
     }
 }

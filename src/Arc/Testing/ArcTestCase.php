@@ -12,12 +12,6 @@ use WP;
 use WP_Query;
 use Illuminate\Database\Schema\MySqlBuilder;
 
-use Arc\Testing\Concerns\MakesHttpRequests;
-use Arc\Testing\DatabaseTransactions;
-use Laravel\BrowserKitTesting\Concerns\InteractsWithDatabase;
-use Laravel\BrowserKitTesting\Concerns\InteractsWithSession;
-
-
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 if ( ! $_tests_dir ) {
     $_tests_dir = posix_getpwuid(posix_getuid())['dir'] . '/.arc/wordpress-tests-lib';
@@ -28,9 +22,8 @@ require_once $_tests_dir . '/includes/trac.php';
 
 abstract class ArcTestCase extends PHPUnit_Framework_TestCase
 {
-    use InteractsWithDatabase;
-    use InteractsWithSession;
-    use MakesHttpRequests;
+    use Concerns\InteractsWithDatabase,
+        Concerns\MakesHttpRequests;
 
     public $baseUrl = 'http://localhost';
 

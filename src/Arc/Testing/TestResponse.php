@@ -591,4 +591,13 @@ class TestResponse
     {
         return $this->app->make($key);
     }
+
+    public function assertDeferredToWordpress()
+    {
+        if (method_exists($this->baseResponse, 'shouldBeDeferredToWordpress')) {
+            return $this->baseResponse->shouldBeDeferredToWordpress();
+        }
+
+        return false;
+    }
 }

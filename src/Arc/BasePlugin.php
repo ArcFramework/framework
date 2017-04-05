@@ -8,6 +8,7 @@ use Arc\Admin\AdminMenus;
 use Arc\Assets\Assets;
 use Arc\Exceptions\Handler;
 use Arc\Config\Config;
+use Arc\Config\Env;
 use Arc\Config\WPOptions;
 use Arc\Contracts\Mail\Mailer as MailerContract;
 use Arc\Cron\CronSchedules;
@@ -21,7 +22,6 @@ use Arc\Mail\Mailer;
 use Arc\Providers\Providers;
 use Arc\Shortcodes\Shortcodes;
 use Arc\View\ViewFinder;
-use Dotenv\Dotenv;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\Container as ContainerContract;
 use Illuminate\Contracts\Debug\ExceptionHandler;
@@ -161,6 +161,13 @@ abstract class BasePlugin extends Container implements ContainerInterface
     {
         if (isset($this->env[$key])) {
             return $this->env[$key];
+        }
+
+        $environmentFile = $this->make(Env::class);
+        $environmentFile->setDirectory($this->path);
+
+        if ($environmentFile->get($key)) {
+            return $environmentFile->get($key);
         }
 
         if (isset($_SERVER[$key])) {

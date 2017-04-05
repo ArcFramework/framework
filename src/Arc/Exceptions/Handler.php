@@ -39,6 +39,7 @@ class Handler implements ExceptionHandlerContract
         AuthorizationException::class,
         HttpException::class,
         ModelNotFoundException::class,
+        NotFoundException::class,
         ValidationException::class,
     ];
 

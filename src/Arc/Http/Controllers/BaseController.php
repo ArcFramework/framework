@@ -5,6 +5,7 @@ namespace Arc\Http\Controllers;
 use Arc\BasePlugin;
 use Illuminate\Routing\Redirector;
 use Illuminate\Routing\ResponseFactory;
+use Illuminate\Validation\Factory;
 
 class BaseController
 {
@@ -63,5 +64,10 @@ class BaseController
         $redirect->setSession($this->app->make('session.store'));
 
         return $redirect;
+    }
+
+    public function makeValidator($request, $rules)
+    {
+        return $this->app->make(Factory::class)->make($request, $rules);
     }
 }

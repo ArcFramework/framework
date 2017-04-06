@@ -75,8 +75,8 @@ class Kernel implements KernelContract
         try {
             $request->enableHttpMethodParameterOverride();
             $response = $this->sendRequestThroughRouter($request);
-        } catch (NotFoundException $e) {
-            $reponse = new DeferToWordpress;
+        } catch (NotFoundHttpException $e) {
+            $response = new DeferToWordpress;
         } catch (\Exception $e) {
             $this->reportException($e);
             $response = $this->renderException($request, $e);
@@ -164,7 +164,8 @@ class Kernel implements KernelContract
         if (!isset($response->exception)) {
             return $response;
         }
-        if (!is_subclass_of(NotFoundException::class, $response->exception)) {
+
+        if (!is_a($response->exception, NotFoundException::class)) {
             return $response;
         }
 

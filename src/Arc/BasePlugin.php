@@ -258,7 +258,7 @@ abstract class BasePlugin extends Container implements ContainerInterface
             ->getMethod('__construct')
             ->getDeclaringClass()
             ->getFilename());
-        $this->testsDirectory = $this->arcDirectory . '/tests';
+        $this->testsDirectory = $this->path . 'tests';
     }
 
     /**

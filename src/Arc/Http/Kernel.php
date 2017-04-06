@@ -85,6 +85,7 @@ class Kernel implements KernelContract
             $this->reportException($e);
             $response = $this->renderException($request, $e);
         }
+
         $response = $this->filterOutNotFound($response);
 
         return $response;
@@ -163,7 +164,7 @@ class Kernel implements KernelContract
         if (!isset($response->exception)) {
             return $response;
         }
-        if (is_subclass_of($response->exception, NotFoundException::class)) {
+        if (!is_subclass_of(NotFoundException::class, $response->exception)) {
             return $response;
         }
 

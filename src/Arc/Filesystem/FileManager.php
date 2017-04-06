@@ -113,14 +113,38 @@ class FileManager
     }
 
     /**
-     * Get the given file and return a File object
+     * Get the given file and return a File object or null if no file exists
      *
      * @param string $filePath The full path to the file
      * @return array
      **/
     public function getFile($filePath)
     {
+        if (!file_exists($filePath)) {
+            return null;
+        }
+
         return new File($filePath);
+    }
+
+    /**
+     * Delete the directory or file at the given path or file object
+     * (Directories will be deleted recursively)
+     **/
+    public function delete($file)
+    {
+        if (is_subclass_of($file, \SplFileObject::class)) {
+            return $this->delete($file->getPathname());
+        }
+
+        if (is_dir($file)) {
+            $this->deleteDirectory();
+        }
+
+        if (!file_exists($file)) {
+            return;
+        }
+        unlink($file);
     }
 
     /**

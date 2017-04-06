@@ -6,6 +6,7 @@ use Arc\BasePlugin;
 use Arc\Exceptions\Handler;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Http\Request as IlluminateRequest;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Kernel implements KernelContract
@@ -123,6 +124,7 @@ class Kernel implements KernelContract
     {
         $this->app->instance('request', $request);
         $this->app->instance(Request::class, $request);
+        $this->app->instance(IlluminateRequest::class, $request);
         $this->bootstrap();
         return (new Pipeline($this->app))
                     ->send($request)

@@ -248,17 +248,18 @@ abstract class BasePlugin extends Container implements ContainerInterface
             throw new \Exception('Plugin file must exist.');
         }
 
-        $this->filename = $pluginFilename;
-        $this->namespace = substr(get_called_class(), 0, strrpos(get_called_class(), "\\"));
-        $this->path = $this->env('PLUGIN_PATH', dirname($this->filename) . '/');
-        $this->assetsPath = $this->path . '/assets';
-        $this->slug = $this->env('PLUGIN_SLUG', pathinfo($this->filename, PATHINFO_FILENAME));
-        $this->uri = $this->env('PLUGIN_URI', $this->getUrl());
         $this->arcDirectory = dirname((new \ReflectionObject($this))
             ->getMethod('__construct')
             ->getDeclaringClass()
             ->getFilename());
+        $this->assetsPath = $this->path . '/assets';
+        $this->filename = $pluginFilename;
+        $this->namespace = substr(get_called_class(), 0, strrpos(get_called_class(), "\\"));
+        $this->path = $this->env('PLUGIN_PATH', dirname($this->filename) . '/');
+        $this->slug = $this->env('PLUGIN_SLUG', pathinfo($this->filename, PATHINFO_FILENAME));
         $this->testsDirectory = $this->path . 'tests';
+        $this->uri = $this->env('PLUGIN_URI', $this->getUrl());
+        $this->wordpressPath = $this->env('WORDPRESS_PATH', ABSPATH);
     }
 
     /**

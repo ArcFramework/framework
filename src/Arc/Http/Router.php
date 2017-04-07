@@ -4,7 +4,6 @@ namespace Arc\Http;
 
 use Illuminate\Container\Container;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Routing\Router as IlluminateRouter;
 use Illuminate\Routing\RouteCollection;
 

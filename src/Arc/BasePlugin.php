@@ -53,10 +53,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class BasePlugin extends Container implements ContainerInterface
 {
+    public $arcDirectory;
     public $filename;
     public $namespace;
     public $path;
     public $slug;
+    public $testsDirectory;
     public $uri;
 
     /**
@@ -256,6 +258,7 @@ abstract class BasePlugin extends Container implements ContainerInterface
             ->getMethod('__construct')
             ->getDeclaringClass()
             ->getFilename());
+        $this->testsDirectory = $this->path . 'tests';
     }
 
     /**

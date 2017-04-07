@@ -6,6 +6,7 @@ use Arc\BasePlugin;
 use Arc\Exceptions\Handler;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Http\Request as IlluminateRequest;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Kernel implements KernelContract
@@ -75,8 +76,8 @@ class Kernel implements KernelContract
         try {
             $request->enableHttpMethodParameterOverride();
             $response = $this->sendRequestThroughRouter($request);
-        } catch (NotFoundException $e) {
-            $reponse = new DeferToWordpress;
+        } catch (NotFoundHttpException $e) {
+            $response = new DeferToWordpress;
         } catch (\Exception $e) {
             $this->reportException($e);
             $response = $this->renderException($request, $e);
@@ -85,6 +86,7 @@ class Kernel implements KernelContract
             $this->reportException($e);
             $response = $this->renderException($request, $e);
         }
+
         $response = $this->filterOutNotFound($response);
 
         return $response;
@@ -122,6 +124,7 @@ class Kernel implements KernelContract
     {
         $this->app->instance('request', $request);
         $this->app->instance(Request::class, $request);
+        $this->app->instance(IlluminateRequest::class, $request);
         $this->bootstrap();
         return (new Pipeline($this->app))
                     ->send($request)
@@ -163,7 +166,8 @@ class Kernel implements KernelContract
         if (!isset($response->exception)) {
             return $response;
         }
-        if (is_subclass_of($response->exception, NotFoundException::class)) {
+
+        if (!is_a($response->exception, NotFoundException::class)) {
             return $response;
         }
 

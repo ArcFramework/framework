@@ -128,7 +128,7 @@ class AdminMenus
 
     public function withIcon($icon)
     {
-        $this->icon = $this->plugin->path . '/src/assets/images/' . $icon;
+        $this->icon = $this->plugin->uri . '/assets/images/' . $icon;
         return $this;
     }
 

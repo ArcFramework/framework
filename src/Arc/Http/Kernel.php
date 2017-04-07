@@ -111,7 +111,8 @@ class Kernel implements KernelContract
                 $instance->terminate($request, $response);
             }
         }
-        $this->app->terminate();
+
+        wp_die();
     }
 
     /**

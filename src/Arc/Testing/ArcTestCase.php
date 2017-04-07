@@ -386,21 +386,22 @@ abstract class ArcTestCase extends PHPUnit_Framework_TestCase
         return $query;
     }
 
-    function get_wp_die_handler( $handler )
+    public function get_wp_die_handler( $handler )
     {
-        if ($this->isAjaxRequest()) {
+        if ($this->request->ajax() || $this->request->wantsJson()) {
             return [$this, 'ajaxDieHandler'];
         }
-        return array( $this, 'wp_die_handler' );
+        return array( $this, 'wpDieHandler' );
     }
 
-    function wp_die_handler( $message ) {
+    public function wpDieHandler($message)
+    {
 
-        if ( ! is_scalar( $message ) ) {
-            $message = '0';
-        }
+    }
 
-        throw new WPDieException( $message );
+    public function ajaxDieHandler()
+    {
+
     }
 
     function expectDeprecated() {

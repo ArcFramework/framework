@@ -1,7 +1,7 @@
 {
     "name": "arc-framework/framework",
     "description": "A simple modern framework for building WordPress plugins",
-    "version": "0.2.2-alpha",
+    "version": "0.2.3-alpha",
     "type": "library",
     "license": "MIT",
     "authors": [

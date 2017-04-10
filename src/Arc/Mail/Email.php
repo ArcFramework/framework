@@ -14,6 +14,7 @@ class Email
     public $to;
 
     protected $template;
+    protected $templateParameters;
     protected $css;
 
     /**
@@ -34,9 +35,10 @@ class Email
         return $this->css;
     }
 
-    public function withTemplate($template)
+    public function withTemplate($template, $parameters = [])
     {
         $this->template = $template;
+        $this->templateParameters = $parameters;
         return $this;
     }
 
@@ -106,6 +108,15 @@ class Email
     public function getTemplate()
     {
         return $this->template;
+    }
+
+    /**
+     * Returns the parameters being passed into the blade template
+     * @return array
+     **/
+    public function getTemplateParameters()
+    {
+        return $this->templateParameters;
     }
 
     /**

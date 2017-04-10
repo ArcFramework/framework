@@ -73,7 +73,7 @@ class Mailer implements MailerContract
     {
         // If a template is set, we'll default to that
         if ($email->hasTemplate()) {
-            $message = $this->viewBuilder->render($email->getTemplate());
+            $message = $this->viewBuilder->build($email->getTemplate(), $email->getTemplateParameters());
         }
 
         // If a plain text message is set, that overrides any templates
@@ -86,10 +86,8 @@ class Mailer implements MailerContract
             throw new \Exception('Email does not have any content.');
         }
 
-        // If CSS has been applied, fetch that
-        if ($email->hasCSS()) {
-            $message = $this->cssInliner->convert($message, $email->getCSS());
-        }
+        // Inline the email with any CSS
+        $message = $this->cssInliner->convert($message, $email->getCSS());
 
         return $message;
     }

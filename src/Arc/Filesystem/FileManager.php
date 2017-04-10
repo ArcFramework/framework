@@ -37,6 +37,9 @@ class FileManager
             return;
         }
 
+        if (!is_writeable(dirname($dirPath))) {
+            throw new \Exception('Insufficient permissions to create directory ' . $dirPath);
+        }
         mkdir($dirPath, $permissions ?? 0777, $recursive);
     }
 
@@ -150,7 +153,7 @@ class FileManager
     /**
      * Removes double forward slashes from the given path and returns the result
      **/
-    protected function removeDoubleSlashes($path)
+    public function removeDoubleSlashes($path)
     {
         return preg_replace('#/+#','/', $path);
     }

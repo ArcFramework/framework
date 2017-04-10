@@ -112,7 +112,9 @@ class Kernel implements KernelContract
             }
         }
 
-        wp_die();
+        if (!defined('ARC_TESTING')) {
+            die();
+        }
     }
 
     /**

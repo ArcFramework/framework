@@ -33,7 +33,7 @@ class BaseController
         $this->app->abort($code, $message, $headers);
     }
 
-    public function response($content = null, $status = null, $headers = null)
+    public function response($content = null, $status = null, $headers = [])
     {
         $factory = $this->app->make(ResponseFactory::class);
 

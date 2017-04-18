@@ -31,5 +31,26 @@ class User extends Model
     {
         return self::whereUserLogin($username)->first();
     }
+
+    /**
+     * Set the role of the user to 'administrator'
+     **/
+    public function makeAdministrator()
+    {
+        $this->setRole('administrator');
+    }
+
+    /**
+     * Set the user's role to the given role
+     * @param string $role
+     * @return mixed
+     **/
+    public function setRole($role)
+    {
+        return wp_update_user([
+            'ID' => $this->ID,
+            'role' => $role
+        ]);
+    }
 }
 

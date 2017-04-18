@@ -173,7 +173,7 @@ abstract class ArcTestCase extends PHPUnit_Framework_TestCase
 
         add_filter( 'wp_die_handler', array( $this, 'get_wp_die_handler' ) );
 
-        if (! $this->app) {
+        if (!$this->app) {
             $this->createApplication();
         }
 

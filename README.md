@@ -1,6 +1,6 @@
 # Arc Framework
 
-A simple modern plugin framework for developing WordPress plugins
+WordPress plugin development framework for Laravel developers.
 
 ## Documentation
 

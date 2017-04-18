@@ -10,6 +10,8 @@ class User extends Model
 
     protected $guarded = [];
 
+    protected $primaryKey = 'ID';
+
     /**
      * Returns the user matching the given email address or null if none exists
      * @param string $email

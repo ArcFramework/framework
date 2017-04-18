@@ -19,5 +19,15 @@ class User extends Model
     {
         return self::whereUserEmail($email)->first();
     }
+
+    /**
+     * Returns the user matching the given username (user_login) or null if none exists
+     * @param string $username
+     * @return \Arc\Models\User|null
+     **/
+    public static function findByUsername($username)
+    {
+        return self::whereUserLogin($username)->first();
+    }
 }
 

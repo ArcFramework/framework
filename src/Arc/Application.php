@@ -68,7 +68,14 @@ abstract class Application extends Container implements ApplicationContract, Con
      *
      * @var static
      */
-    protected static $pluginInstance;
+    protected static $instance;
+
+    /**
+     * All of the registered service providers.
+     *
+     * @var array
+     */
+    protected $serviceProviders = [];
 
     protected $activationHooks;
     protected $adminMenus;
@@ -119,6 +126,19 @@ abstract class Application extends Container implements ApplicationContract, Con
     protected function registerBaseServiceProviders()
     {
         $this->register(new RoutingServiceProvider($this));
+    }
+
+    /**
+     * Mark the given provider as registered.
+     *
+     * @param  \Illuminate\Support\ServiceProvider  $provider
+     * @return void
+     */
+    protected function markAsRegistered($provider)
+    {
+        $this->serviceProviders[] = $provider;
+
+        $this->loadedProviders[get_class($provider)] = true;
     }
 
     /**

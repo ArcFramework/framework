@@ -2,12 +2,14 @@
 
 namespace Arc\Config;
 
+use Arc\Application;
 use Arc\Hooks\Filters;
 
 class WPOptions
 {
-    public function __construct(Filters $filters)
+    public function __construct(Application $app, Filters $filters)
     {
+        $this->app = $app;
         $this->filters = $filters;
     }
 

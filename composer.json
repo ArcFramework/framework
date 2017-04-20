@@ -11,21 +11,23 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "illuminate/view": "^5.3",
+        "container-interop/container-interop": "^1.2",
+        "illuminate/config": "^5.4",
         "illuminate/container": "^5.3",
         "illuminate/database": "^5.3",
         "illuminate/filesystem": "^5.3",
-        "illuminate/support": "^5.3",
-        "tightenco/collect": "^5.3",
-        "mnapoli/silly": "^1.5",
-        "symfony/var-dumper": "^3.2",
-        "tijsverkoyen/css-to-inline-styles": "^2.2",
-        "soundasleep/html2text": "~0.3",
-        "container-interop/container-interop": "^1.2",
         "illuminate/http": "^5.4",
         "illuminate/routing": "^5.4",
+        "illuminate/support": "^5.3",
+        "illuminate/translation": "^5.4",
         "illuminate/validation": "^5.4",
-        "illuminate/translation": "^5.4"
+        "illuminate/view": "^5.3",
+        "mnapoli/silly": "^1.5",
+        "soundasleep/html2text": "~0.3",
+        "symfony/var-dumper": "^3.2",
+        "tightenco/collect": "^5.3",
+        "tijsverkoyen/css-to-inline-styles": "^2.2",
+        "vlucas/phpdotenv": "^2.4"
     },
     "autoload": {
         "psr-4":{

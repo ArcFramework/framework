@@ -33,6 +33,7 @@ class Kernel implements KernelContract
     protected $bootstrappers = [
         \Arc\Bootstrap\RegisterProviders::class,
         \Arc\Bootstrap\BootProviders::class,
+        \Arc\Bootstrap\LoadConfiguration::class,
     ];
 
     /**

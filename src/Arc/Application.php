@@ -77,6 +77,20 @@ abstract class Application extends Container implements ApplicationContract, Con
      */
     protected $serviceProviders = [];
 
+    /**
+     * The names of the loaded service providers.
+     *
+     * @var array
+     */
+    protected $loadedProviders = [];
+
+    /**
+     * Indicates if the application has "booted".
+     *
+     * @var bool
+     */
+    protected $booted = false;
+
     protected $activationHooks;
     protected $adminMenus;
     protected $assets;

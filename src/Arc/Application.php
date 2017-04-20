@@ -42,6 +42,7 @@ use Illuminate\Routing\RoutingServiceProvider;
 use Illuminate\Session\CookieSessionHandler;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Session\SessionManager;
+use Illuminate\Support\Arr;
 use Illuminate\Translation\Translator as IlluminateTranslator;
 use Illuminate\Translation\FileLoader;
 use Illuminate\Translation\LoaderInterface;
@@ -118,6 +119,21 @@ abstract class Application extends Container implements ApplicationContract, Con
     protected function registerBaseServiceProviders()
     {
         $this->register(new RoutingServiceProvider($this));
+    }
+
+    /**
+     * Get the registered service provider instance if it exists.
+     *
+     * @param  \Illuminate\Support\ServiceProvider|string  $provider
+     * @return \Illuminate\Support\ServiceProvider|null
+     */
+    public function getProvider($provider)
+    {
+        $name = is_string($provider) ? $provider : get_class($provider);
+
+        return Arr::first($this->serviceProviders, function ($value) use ($name) {
+            return $value instanceof $name;
+        });
     }
 
     /**

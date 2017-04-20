@@ -411,13 +411,13 @@ abstract class Application extends Container implements ApplicationContract, Con
     protected function bindImportantInterfaces()
     {
         $this->singleton(
-            Illuminate\Contracts\Http\Kernel::class,
-            Arc\Http\Kernel::class
+            KernelContract::class,
+            Kernel::class
         );
 
         $this->singleton(
-            Illuminate\Contracts\Debug\ExceptionHandler::class,
-            Arc\Exceptions\Handler::class
+            ExceptionHandler::class,
+            Handler::class
         );
     }
 
@@ -622,14 +622,6 @@ abstract class Application extends Container implements ApplicationContract, Con
      **/
     protected function oldbindImportantInterfaces()
     {
-        $this->singleton(
-            KernelContract::class,
-            Kernel::class
-        );
-        $this->singleton(
-            ExceptionHandler::class,
-            Handler::class
-        );
 
         // Bind config object
         $this->singleton('config', Config::class);

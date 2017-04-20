@@ -31,6 +31,8 @@ class Kernel implements KernelContract
      * @var array
      */
     protected $bootstrappers = [
+        \Arc\Bootstrap\RegisterProviders::class,
+        \Arc\Bootstrap\BootProviders::class,
     ];
 
     /**
@@ -58,7 +60,19 @@ class Kernel implements KernelContract
 
     public function bootstrap()
     {
+        if (! $this->app->hasBeenBootstrapped()) {
+            $this->app->bootstrapWith($this->bootstrappers());
+        }
+    }
 
+    /**
+     * Get the bootstrap classes for the application.
+     *
+     * @return array
+     */
+    protected function bootstrappers()
+    {
+        return $this->bootstrappers;
     }
 
     public function getApplication()

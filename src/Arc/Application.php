@@ -38,6 +38,7 @@ use Illuminate\Http\Response as IlluminateResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\UrlGenerator;
+use Illuminate\Routing\RoutingServiceProvider;
 use Illuminate\Session\CookieSessionHandler;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Session\SessionManager;

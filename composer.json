@@ -40,7 +40,7 @@
     "autoload-dev": {
         "classmap": [
             "tests/FrameworkTestCase.php",
-            "tests/TestPlugin.php"
+            "tests/test-plugin/src/TestPlugin.php"
         ]
     },
     "require-dev": {

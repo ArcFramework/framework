@@ -15,7 +15,6 @@ use Arc\Cron\CronSchedules;
 use Arc\Events\NonDispatcher;
 use Arc\Http\Kernel;
 use Arc\Http\Response;
-use Arc\Http\Request;
 use Arc\Http\Router;
 use Arc\Http\ValidatesRequests;
 use Arc\Mail\Mailer;
@@ -24,6 +23,7 @@ use Arc\Shortcodes\Shortcodes;
 use Arc\View\ViewFinder;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\Container as ContainerContract;
+use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
@@ -35,7 +35,7 @@ use Illuminate\View\ViewFinderInterface;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\MySqlBuilder;
 use Illuminate\Http\Response as IlluminateResponse;
-use Illuminate\Http\Request as IlluminateRequest;
+use Illuminate\Http\Request;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Session\CookieSessionHandler;
@@ -51,7 +51,7 @@ use SessionHandlerInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-abstract class BasePlugin extends Container implements ContainerInterface
+abstract class Application extends Container implements ApplicationContract, ContainerInterface
 {
     public $arcDirectory;
     public $filename;
@@ -79,21 +79,274 @@ abstract class BasePlugin extends Container implements ContainerInterface
     protected $validator;
 
     /**
+     * The base path for the plugin.
+     *
+     * @var string
+     */
+    protected $basePath;
+
+    /**
+     * Indicates if the application has been bootstrapped before.
+     *
+     * @var bool
+     */
+    protected $hasBeenBootstrapped = false;
+
+    /**
      * Instantiate the class
+     * @param string $pluginFilename Full qualified path to plugin file
      **/
     public function __construct($pluginFilename)
     {
         $this->setPaths($pluginFilename);
+
         $this->bindImportantInterfaces();
+
+        $this->registerBaseBindings();
+
+
+        $this->registerBaseServiceProviders();
+
+        $this->registerCoreContainerAliases();
     }
+
+    /**
+     * Get the version number of the application.
+     *
+     * @return string
+     */
+    public function version()
+    {
+        return get_plugin_data($this->filename)['Version'];
+    }
+
+    /**
+     * Get the base path of the Arc installation.
+     *
+     * @return string
+     */
+    public function basePath()
+    {
+        return $this->basePath;
+    }
+
+    /**
+     * Get or check the current application environment.
+     *
+     * @return string
+     */
+    public function environment()
+    {
+        return $this->env(func_get_args());
+    }
+
+    /**
+     * Determine if the application is currently down for maintenance.
+     *
+     * @return bool
+     */
+    public function isDownForMaintenance()
+    {
+        return false;
+    }
+
+    /**
+     * Register all of the configured providers.
+     *
+     * @return void
+     */
+    public function registerConfiguredProviders()
+    {
+        $this->make(Providers::class)->register();
+    }
+
+    /**
+     * Register a service provider with the application.
+     *
+     * @param  \Illuminate\Support\ServiceProvider|string  $provider
+     * @param  array  $options
+     * @param  bool   $force
+     * @return \Illuminate\Support\ServiceProvider
+     */
+    public function register($provider, $options = [], $force = false)
+    {
+        if (($registered = $this->getProvider($provider)) && ! $force) {
+            return $registered;
+        }
+        // If the given "provider" is a string, we will resolve it, passing in the
+        // application instance automatically for the developer. This is simply
+        // a more convenient way of specifying your service provider classes.
+        if (is_string($provider)) {
+            $provider = $this->resolveProviderClass($provider);
+        }
+        $provider->register();
+        // Once we have registered the service we will iterate through the options
+        // and set each of them on the application so they will be available on
+        // the actual loading of the service objects and for developer usage.
+        foreach ($options as $key => $value) {
+            $this[$key] = $value;
+        }
+        $this->markAsRegistered($provider);
+        // If the application has already booted, we will call this boot method on
+        // the provider class so it has an opportunity to do its boot logic and
+        // will be ready for any usage by the developer's application logics.
+        if ($this->booted) {
+            $this->bootProvider($provider);
+        }
+        return $provider;
+    }
+
+    /**
+     * Register a deferred provider and service.
+     *
+     * @param  string  $provider
+     * @param  string  $service
+     * @return void
+     */
+    public function registerDeferredProvider($provider, $service = null)
+    {
+        // Once the provider that provides the deferred service has been registered we
+        // will remove it from our local list of the deferred services with related
+        // providers so that this container does not try to resolve it out again.
+        if ($service) {
+            unset($this->deferredServices[$service]);
+        }
+        $this->register($instance = new $provider($this));
+        if (! $this->booted) {
+            $this->booting(function () use ($instance) {
+                $this->bootProvider($instance);
+            });
+        }
+    }
+
+    /**
+     * Boot the application's service providers.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        if ($this->booted) {
+            return;
+        }
+
+        // Once the application has booted we will also fire some "booted" callbacks
+        // for any listeners that need to do work after this initial booting gets
+        // finished. This is useful when ordering the boot-up processes we run.
+        $this->fireAppCallbacks($this->bootingCallbacks);
+        array_walk($this->serviceProviders, function ($p) {
+            $this->bootProvider($p);
+        });
+
+        $this->booted = true;
+        $this->fireAppCallbacks($this->bootedCallbacks);
+    }
+
+    /**
+     * Register a new boot listener.
+     *
+     * @param  mixed  $callback
+     * @return void
+     */
+    public function booting($callback)
+    {
+        $this->bootingCallbacks[] = $callback;
+    }
+
+    /**
+     * Register a new "booted" listener.
+     *
+     * @param  mixed  $callback
+     * @return void
+     */
+    public function booted($callback)
+    {
+        $this->bootedCallbacks[] = $callback;
+
+        if ($this->isBooted()) {
+            $this->fireAppCallbacks([$callback]);
+        }
+    }
+
+    /**
+     * Get the path to the cached services.php file.
+     *
+     * @return string
+     */
+    public function getCachedServicesPath()
+    {
+        return $this->basePath().'/bootstrap/cache/services.json';
+    }
+
+    /**
+     * Register the basic bindings into the container.
+     *
+     * @return void
+     */
+    protected function registerBaseBindings()
+    {
+        $this->instance('app', $this);
+
+        $this->bind(ContainerContract::class, Application::class);
+
+        $this->instance(Container::class, $this);
+
+        $this->instance(Application::class, $this);
+    }
+
+    /**
+     * Bind Important Interfaces to the container so we will be able to resolve them when needed.
+     */
+    protected function bindImportantInterfaces()
+    {
+        $this->singleton(
+            Illuminate\Contracts\Http\Kernel::class,
+            Arc\Http\Kernel::class
+        );
+
+        $this->singleton(
+            Illuminate\Contracts\Debug\ExceptionHandler::class,
+            Arc\Exceptions\Handler::class
+        );
+    }
+
 
     /**
      * Boots and runs the plugin
      **/
-    public function boot()
+    public function start()
     {
         $this->init();
         $this->callRun();
+    }
+
+    /**
+     * Determine if the application has been bootstrapped before.
+     *
+     * @return bool
+     */
+    public function hasBeenBootstrapped()
+    {
+        return $this->hasBeenBootstrapped;
+    }
+
+    /**
+     * Run the given array of bootstrap classes.
+     *
+     * @param  array  $bootstrappers
+     * @return void
+     */
+    public function bootstrapWith(array $bootstrappers)
+    {
+        $this->hasBeenBootstrapped = true;
+
+        foreach ($bootstrappers as $bootstrapper) {
+            $this['events']->fire('bootstrapping: '.$bootstrapper, [$this]);
+
+            $this->make($bootstrapper)->bootstrap($this);
+
+            $this['events']->fire('bootstrapped: '.$bootstrapper, [$this]);
+        }
     }
 
     /**
@@ -101,7 +354,6 @@ abstract class BasePlugin extends Container implements ContainerInterface
      **/
     public function init()
     {
-        $this->make(Providers::class)->register();
         $this->cronSchedules->register();
         $this->shortcodes->register();
         $this->adminMenus->register();
@@ -109,20 +361,19 @@ abstract class BasePlugin extends Container implements ContainerInterface
     }
 
     /**
-     * Set the shared instance of the plugin.
+     * Set the shared instance of the application.
      *
-     * @param  BasePlugin|null  $container
+     * @param  Application|null  $container
      * @return static
      */
-    public static function setPluginContainerInstance(BasePlugin $plugin = null)
-    {
-        return static::$pluginInstance = $plugin;
-    }
+    public abstract static function setApplicationInstance(Application $application);
 
-    public static function plugin()
-    {
-        return static::$pluginInstance;
-    }
+    /**
+     * Get the shared instance of the application.
+     *
+     * @return static
+     */
+    public abstract static function app();
 
     /**
      * Call the 'run' method on the plugin class if it exists, injecting any dependencies
@@ -145,13 +396,6 @@ abstract class BasePlugin extends Container implements ContainerInterface
             $response->send();
             $kernel->terminate($request, $response);
         });
-    }
-
-    public function bindInstance()
-    {
-        $this->instance(BasePlugin::class, static::$pluginInstance);
-        $this->instance(Container::class, static::$pluginInstance);
-        $this->instance(ContainerContract::class, static::$pluginInstance);
     }
 
     public function config($key, $default = null)
@@ -255,7 +499,7 @@ abstract class BasePlugin extends Container implements ContainerInterface
         $this->assetsPath = $this->path . '/assets';
         $this->filename = $pluginFilename;
         $this->namespace = substr(get_called_class(), 0, strrpos(get_called_class(), "\\"));
-        $this->path = $this->env('PLUGIN_PATH', dirname($this->filename) . '/');
+        $this->basePath = $this->env('PLUGIN_BASE_PATH', dirname($this->filename) . '/');
         $this->slug = $this->env('PLUGIN_SLUG', pathinfo($this->filename, PATHINFO_FILENAME));
         $this->testsDirectory = $this->path . 'tests';
         $this->uri = $this->env('PLUGIN_URI', $this->getUrl());
@@ -265,11 +509,8 @@ abstract class BasePlugin extends Container implements ContainerInterface
     /**
      * Bind implementations of critical interfaces to the service container
      **/
-    protected function bindImportantInterfaces()
+    protected function oldbindImportantInterfaces()
     {
-        $this->setPluginContainerInstance($this);
-        $this->bindInstance();
-
         $this->singleton(
             KernelContract::class,
             Kernel::class
@@ -315,9 +556,6 @@ abstract class BasePlugin extends Container implements ContainerInterface
         $response = $this->make(Response::class);
         $this->instance('response', $response);
 
-        // Bind HTTP Request
-        $this->bind(IlluminateRequest::class, Request::class);
-
         // HTTP Validation
         $this->bind(ValidationFactory::class, IlluminateValidationFactory::class);
         $this->bind(Validator::class, IlluminateValidator::class);
@@ -349,10 +587,6 @@ abstract class BasePlugin extends Container implements ContainerInterface
         // Bind Mailer concretion
         $this->bind(MailerContract::class, Mailer::class);
 
-        // Bind version
-        $this->bind('version', function() {
-            return get_plugin_data($this->filename)['Version'];
-        });
         $router = $this->make(Router::class);
         $this->instance(Router::class, $router);
         $this->instance(RouteCollection::class, $router->getRoutes());

@@ -2,7 +2,7 @@
 
 namespace Arc\Http;
 
-use Arc\BasePlugin;
+use Arc\Application;
 use Arc\Exceptions\Handler;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
 use Illuminate\Pipeline\Pipeline;
@@ -49,7 +49,7 @@ class Kernel implements KernelContract
      */
     protected $routeMiddleware = [];
 
-    public function __construct(BasePlugin $plugin, Router $router)
+    public function __construct(Application $plugin, Router $router)
     {
         $this->app = $plugin;
         $this->router = $router;

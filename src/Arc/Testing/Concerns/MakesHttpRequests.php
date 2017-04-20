@@ -2,10 +2,10 @@
 
 namespace Arc\Testing\Concerns;
 
-use Arc\Http\Request;
 use Arc\Testing\TestResponse;
-use Illuminate\Support\Str;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpFoundation\File\UploadedFile as SymfonyUploadedFile;
 

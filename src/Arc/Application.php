@@ -9,6 +9,7 @@ use Arc\Assets\Assets;
 use Arc\Exceptions\Handler;
 use Arc\Config\Config;
 use Arc\Config\Env;
+use Arc\Config\EnvironmentDetector;
 use Arc\Config\WPOptions;
 use Arc\Contracts\Mail\Mailer as MailerContract;
 use Arc\Cron\CronSchedules;
@@ -18,9 +19,10 @@ use Arc\Http\Response;
 use Arc\Http\Router;
 use Arc\Http\ValidatesRequests;
 use Arc\Mail\Mailer;
-use Arc\Providers\Providers;
+use Arc\Providers\ProviderRepository;
 use Arc\Shortcodes\Shortcodes;
 use Arc\View\ViewFinder;
+use Closure;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\Container as ContainerContract;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
@@ -31,9 +33,10 @@ use Illuminate\Contracts\Translation\Translator as Translator;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Contracts\View\Factory as ViewFactory;
-use Illuminate\View\ViewFinderInterface;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\MySqlBuilder;
+use Illuminate\Events\EventServiceProvider;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Response as IlluminateResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\RouteCollection;
@@ -43,17 +46,22 @@ use Illuminate\Session\CookieSessionHandler;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Arr;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Illuminate\Translation\Translator as IlluminateTranslator;
 use Illuminate\Translation\FileLoader;
 use Illuminate\Translation\LoaderInterface;
 use Illuminate\Validation\Factory as IlluminateValidationFactory;
 use Illuminate\Validation\Validator as IlluminateValidator;
+use Illuminate\View\ViewFinderInterface;
 use Interop\Container\ContainerInterface;
 use SessionHandlerInterface;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-abstract class Application extends Container implements ApplicationContract, ContainerInterface
+abstract class Application extends Container implements ApplicationContract, ContainerInterface, HttpKernelInterface
 {
     public $arcDirectory;
     public $filename;
@@ -85,21 +93,46 @@ abstract class Application extends Container implements ApplicationContract, Con
     protected $loadedProviders = [];
 
     /**
+     * The deferred services and their providers.
+     *
+     * @var array
+     */
+    protected $deferredServices = [];
+
+    /**
      * Indicates if the application has "booted".
      *
      * @var bool
      */
     protected $booted = false;
 
-    protected $activationHooks;
-    protected $adminMenus;
-    protected $assets;
-    protected $cronSchedules;
-    protected $env;
-    protected $providers;
-    protected $router;
-    protected $shortcodes;
-    protected $validator;
+    /**
+     * The array of booted callbacks.
+     *
+     * @var array
+     */
+    protected $bootedCallbacks = [];
+
+    /**
+     * The custom environment path defined by the developer.
+     *
+     * @var string
+     */
+    protected $environmentPath;
+
+    /**
+     * The environment file to load during bootstrapping.
+     *
+     * @var string
+     */
+    protected $environmentFile = '.env';
+
+    /**
+     * The array of booting callbacks.
+     *
+     * @var array
+     */
+    protected $bootingCallbacks = [];
 
     /**
      * The base path for the plugin.
@@ -130,6 +163,59 @@ abstract class Application extends Container implements ApplicationContract, Con
         $this->registerBaseServiceProviders();
 
         $this->registerCoreContainerAliases();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function handle(SymfonyRequest $request, $type = self::MASTER_REQUEST, $catch = true)
+    {
+        return $this[HttpKernelContract::class]->handle(Request::createFromBase($request));
+    }
+
+    /**
+     * Get the path to the bootstrap directory.
+     *
+     * @param string $path Optionally, a path to append to the bootstrap path
+     * @return string
+     */
+    public function bootstrapPath($path = '')
+    {
+        return $this->basePath.DIRECTORY_SEPARATOR.'bootstrap'.($path ? DIRECTORY_SEPARATOR.$path : $path);
+    }
+
+    /**
+     * Call the booting callbacks for the application.
+     *
+     * @param  array  $callbacks
+     * @return void
+     */
+    protected function fireAppCallbacks(array $callbacks)
+    {
+        foreach ($callbacks as $callback) {
+            call_user_func($callback, $this);
+        }
+    }
+
+
+    /**
+     * Get the path to the configuration cache file.
+     *
+     * @return string
+     */
+    public function getCachedConfigPath()
+    {
+        return $this->bootstrapPath().'/cache/config.php';
+    }
+
+    /**
+     * Determine if the application configuration is cached.
+     *
+     * @return bool
+     */
+    public function configurationIsCached()
+    {
+        return file_exists($this->getCachedConfigPath());
     }
 
     /**
@@ -190,6 +276,8 @@ abstract class Application extends Container implements ApplicationContract, Con
      */
     protected function registerBaseServiceProviders()
     {
+        $this->register(new EventServiceProvider($this));
+
         $this->register(new RoutingServiceProvider($this));
     }
 
@@ -238,7 +326,21 @@ abstract class Application extends Container implements ApplicationContract, Con
      */
     public function basePath()
     {
+        $this->basePath = $this->env('PLUGIN_BASE_PATH', dirname($this->filename));
         return $this->basePath;
+    }
+
+    /**
+     * Detect the application's current environment.
+     *
+     * @param  \Closure  $callback
+     * @return string
+     */
+    public function detectEnvironment(Closure $callback)
+    {
+        $args = isset($_SERVER['argv']) ? $_SERVER['argv'] : null;
+
+        return $this['env'] = (new EnvironmentDetector())->detect($callback, $args);
     }
 
     /**
@@ -248,7 +350,50 @@ abstract class Application extends Container implements ApplicationContract, Con
      */
     public function environment()
     {
-        return $this->env(func_get_args());
+        if (func_num_args() > 0) {
+            $patterns = is_array(func_get_arg(0)) ? func_get_arg(0) : func_get_args();
+
+            foreach ($patterns as $pattern) {
+                if (Str::is($pattern, $this['env'])) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return $this['env'];
+    }
+
+    /**
+     * Get the path to the application configuration files.
+     *
+     * @param string $path Optionally, a path to append to the config path
+     * @return string
+     */
+    public function configPath($path = '')
+    {
+        return $this->basePath().DIRECTORY_SEPARATOR.'config'.($path ? DIRECTORY_SEPARATOR.$path : $path);
+    }
+
+    /**
+     * Get the environment file the application is using.
+     *
+     * @return string
+     */
+    public function environmentFile()
+    {
+        return $this->environmentFile ?: '.env';
+    }
+
+    /**
+     * Get the path to the environment file directory.
+     *
+     * @return string
+     */
+    public function environmentPath()
+    {
+        return $this->environmentPath ?: $this->basePath;
     }
 
     /**
@@ -262,13 +407,25 @@ abstract class Application extends Container implements ApplicationContract, Con
     }
 
     /**
+     * Add an array of services to the application's deferred services.
+     *
+     * @param  array  $services
+     * @return void
+     */
+    public function addDeferredServices(array $services)
+    {
+        $this->deferredServices = array_merge($this->deferredServices, $services);
+    }
+
+    /**
      * Register all of the configured providers.
      *
      * @return void
      */
     public function registerConfiguredProviders()
     {
-        $this->make(Providers::class)->register();
+        (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPath()))
+                    ->load($this->config['app.providers']);
     }
 
     /**
@@ -327,6 +484,19 @@ abstract class Application extends Container implements ApplicationContract, Con
             $this->booting(function () use ($instance) {
                 $this->bootProvider($instance);
             });
+        }
+    }
+
+    /**
+     * Boot the given service provider.
+     *
+     * @param  \Illuminate\Support\ServiceProvider  $provider
+     * @return mixed
+     */
+    protected function bootProvider(ServiceProvider $provider)
+    {
+        if (method_exists($provider, 'boot')) {
+            return $this->call([$provider, 'boot']);
         }
     }
 
@@ -516,22 +686,33 @@ abstract class Application extends Container implements ApplicationContract, Con
 
     public function env($key, $default = null)
     {
-        if (isset($this->env[$key])) {
-            return $this->env[$key];
+        $value = getenv($key);
+
+        if ($value === false) {
+            return value($default);
         }
 
-        $environmentFile = $this->make(Env::class);
-        $environmentFile->setDirectory($this->path);
-
-        if ($environmentFile->get($key)) {
-            return $environmentFile->get($key);
+        switch (strtolower($value)) {
+            case 'true':
+            case '(true)':
+                return true;
+            case 'false':
+            case '(false)':
+                return false;
+            case 'empty':
+            case '(empty)':
+                return '';
+            case 'null':
+            case '(null)':
+                return;
         }
 
-        if (isset($_SERVER[$key])) {
-            return $_SERVER[$key];
+        if (strlen($value) > 1 && Str::startsWith($value, '"') && Str::endsWith($value, '"')) {
+            return substr($value, 1, -1);
         }
 
-        return $default;
+        return $value;
+        return $this->environment($key, $default);
     }
 
     protected function getUrl()
@@ -607,14 +788,43 @@ abstract class Application extends Container implements ApplicationContract, Con
             ->getMethod('__construct')
             ->getDeclaringClass()
             ->getFilename());
-        $this->assetsPath = $this->path . '/assets';
         $this->filename = $pluginFilename;
         $this->namespace = substr(get_called_class(), 0, strrpos(get_called_class(), "\\"));
-        $this->basePath = $this->env('PLUGIN_BASE_PATH', dirname($this->filename) . '/');
-        $this->slug = $this->env('PLUGIN_SLUG', pathinfo($this->filename, PATHINFO_FILENAME));
-        $this->testsDirectory = $this->path . 'tests';
-        $this->uri = $this->env('PLUGIN_URI', $this->getUrl());
-        $this->wordpressPath = $this->env('WORDPRESS_PATH', ABSPATH);
+    }
+
+    public function namespace()
+    {
+        return $this->namespace;
+    }
+
+    public function wordpressPath()
+    {
+        return $this->wordpressPath ?? $this->wordpressPath = $this->env('WORDPRESS_PATH', ABSPATH);
+    }
+
+    public function uri()
+    {
+        return $this->uri ?? $this->uri = $this->uri = $this->env('PLUGIN_URI', $this->getUrl());
+    }
+
+    public function testsDirectory()
+    {
+        return $this->basePath() . 'tests';
+    }
+
+    public function slug()
+    {
+        return $this->slug ?? $this->slug = $this->env('PLUGIN_SLUG', pathinfo($this->filename, PATHINFO_FILENAME));
+    }
+
+    public function assetsPath()
+    {
+        return $this->assetsPath ?? $this->assetsPath = $this->basePath.'/assets';
+    }
+
+    public function filename()
+    {
+        return $this->filename;
     }
 
     /**

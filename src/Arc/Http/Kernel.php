@@ -31,9 +31,12 @@ class Kernel implements KernelContract
      * @var array
      */
     protected $bootstrappers = [
+        \Arc\Bootstrap\LoadEnvironmentVariables::class,
+        \Arc\Bootstrap\LoadConfiguration::class,
+        \Arc\Bootstrap\HandleExceptions::class,
+        \Arc\Bootstrap\RegisterFacades::class,
         \Arc\Bootstrap\RegisterProviders::class,
         \Arc\Bootstrap\BootProviders::class,
-        \Arc\Bootstrap\LoadConfiguration::class,
     ];
 
     /**

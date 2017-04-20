@@ -2,7 +2,7 @@
 
 namespace Arc\Providers;
 
-use Arc\BasePlugin;
+use Arc\Application;
 use Arc\Config\FlatFileParser;
 
 class ServiceProvider
@@ -10,7 +10,7 @@ class ServiceProvider
     protected $app;
     protected $parser;
 
-    public function __construct(BasePlugin $app)
+    public function __construct(Application $app)
     {
         $this->app = $app;
         $this->parser = $this->app->make(FlatFileParser::class);

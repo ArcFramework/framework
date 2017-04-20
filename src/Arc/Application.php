@@ -104,10 +104,19 @@ abstract class Application extends Container implements ApplicationContract, Con
 
         $this->registerBaseBindings();
 
-
         $this->registerBaseServiceProviders();
 
         $this->registerCoreContainerAliases();
+    }
+
+    /**
+     * Register all of the base service providers.
+     *
+     * @return void
+     */
+    protected function registerBaseServiceProviders()
+    {
+        $this->register(new RoutingServiceProvider($this));
     }
 
     /**

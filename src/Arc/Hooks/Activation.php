@@ -2,13 +2,13 @@
 
 namespace Arc\Hooks;
 
-use Arc\BasePlugin;
+use Arc\Application;
 
 class Activation
 {
-    public function __construct(BasePlugin $plugin)
+    public function __construct(Application $plugin)
     {
-        $this->plugin = $plugin;
+        $this->app = $plugin;
     }
 
     /**
@@ -18,7 +18,7 @@ class Activation
     public function whenPluginIsActivated($callable)
     {
         register_activation_hook(
-            $this->plugin->filename,
+            $this->app->filename,
             $callable
         );
     }
@@ -30,7 +30,7 @@ class Activation
     public function whenPluginIsDeactivated($callable)
     {
         register_deactivation_hook(
-            $this->plugin->filename,
+            $this->app->filename,
             $callable
         );
     }

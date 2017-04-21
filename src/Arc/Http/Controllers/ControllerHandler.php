@@ -2,16 +2,16 @@
 
 namespace Arc\Http\Controllers;
 
-use Arc\BasePlugin;
+use Arc\Application;
 use Arc\Exceptions\ValidationException;
 
 class ControllerHandler
 {
     protected $plugin;
 
-    public function __construct(BasePlugin $plugin)
+    public function __construct(Application $plugin)
     {
-        $this->plugin = $plugin;
+        $this->app = $plugin;
     }
 
     /**
@@ -31,7 +31,7 @@ class ControllerHandler
         }
         else {
             // Try fully qualified class name
-            $className = $this->plugin->namespace . '\\Http\\Controllers\\' . $classAndMethod[0];
+            $className = $this->app->namespace . '\\Http\\Controllers\\' . $classAndMethod[0];
         }
 
         $methodName = $classAndMethod[1];
@@ -42,13 +42,13 @@ class ControllerHandler
         }
 
         try {
-            $controller = $this->plugin->make($fullyQualifiedClassName);
+            $controller = $this->app->make($fullyQualifiedClassName);
 
             // We do it this way to avoid having to inject the plugin into every controller
             // or call the parent constructor in every controller
-            $controller->setPluginInstance($this->plugin);
+            $controller->setPluginInstance($this->app);
 
-            $response = $this->plugin->call([$controller, $methodName], [$argument]);
+            $response = $this->app->call([$controller, $methodName], [$argument]);
         }
         catch (ValidationException $e) {
             wp_send_json([

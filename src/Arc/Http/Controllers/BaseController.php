@@ -2,7 +2,7 @@
 
 namespace Arc\Http\Controllers;
 
-use Arc\BasePlugin;
+use Arc\Application;
 use Illuminate\Routing\Redirector;
 use Illuminate\Routing\ResponseFactory;
 use Illuminate\Validation\Factory;
@@ -12,7 +12,7 @@ class BaseController
     public $app;
     private $validator;
 
-    public function __construct(BasePlugin $app)
+    public function __construct(Application $app)
     {
         $this->app = $app;
     }

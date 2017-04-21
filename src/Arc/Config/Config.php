@@ -3,16 +3,16 @@
 namespace Arc\Config;
 
 use ArrayAccess;
-use Arc\BasePlugin;
+use Arc\Application;
 
 class Config implements ArrayAccess
 {
     protected $plugin;
     protected $testConfig;
 
-    public function __construct(BasePlugin $plugin)
+    public function __construct(Application $plugin)
     {
-        $this->plugin = $plugin;
+        $this->app = $plugin;
     }
 
     public function useTestConfig($testConfig)
@@ -27,7 +27,7 @@ class Config implements ArrayAccess
             return $this->testConfig[$key];
         }
 
-        $configPath = $this->plugin->path . 'config/app.php';
+        $configPath = $this->app->path . 'config/app.php';
         $configValues = (file_exists($configPath)) ? include($configPath) : [];
 
         if (!isset($configValues[$key])) {

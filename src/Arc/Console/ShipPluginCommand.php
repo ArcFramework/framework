@@ -54,8 +54,8 @@ class ShipPluginCommand extends Command
         // Get the arc config file path
         $this->configFilePath = $this->getHomeDirectory() . '/.arc/config.php';
         $this->shippedPluginDirectory = $this->getConfig()['shippedPluginDirectory'];
-        $this->releaseDirectory = $this->shippedPluginDirectory . '/' . basename($this->plugin->slug);
-        $this->finalDestination = $this->releaseDirectory . '/' . basename($this->plugin->slug);
+        $this->releaseDirectory = $this->shippedPluginDirectory . '/' . basename($this->app->slug);
+        $this->finalDestination = $this->releaseDirectory . '/' . basename($this->app->slug);
 
         // Create the shipped plugin directory if it does not yet exist
         if (!file_exists($this->shippedPluginDirectory)) {
@@ -73,7 +73,7 @@ class ShipPluginCommand extends Command
 
         // Copy the files to their shipped location
         $this->line('Copying files to the final destination');
-        $this->xcopy($this->plugin->path, $this->finalDestination);
+        $this->xcopy($this->app->path, $this->finalDestination);
         $this->done();
 
         // Remove studio.json file if it exists
@@ -103,7 +103,7 @@ class ShipPluginCommand extends Command
         $this->done();
 
         $this->line('Zip up resulting folder');
-        $this->zipDir($this->finalDestination, $this->finalDestination . '-' . $this->plugin->version . '.zip');
+        $this->zipDir($this->finalDestination, $this->finalDestination . '-' . $this->app->version . '.zip');
         $this->done();
 
         // Delete the unzipped directory

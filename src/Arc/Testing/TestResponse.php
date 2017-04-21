@@ -2,7 +2,7 @@
 
 namespace Arc\Testing;
 
-use Arc\BasePlugin;
+use Arc\Application;
 use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -31,7 +31,7 @@ class TestResponse
      * @param  \Illuminate\Http\Response  $response
      * @return void
      */
-    public function __construct($response, BasePlugin $app)
+    public function __construct($response, Application $app)
     {
         $this->baseResponse = $response;
         $this->app = $app;

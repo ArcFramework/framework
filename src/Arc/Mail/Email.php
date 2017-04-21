@@ -2,7 +2,7 @@
 
 namespace Arc\Mail;
 
-use Arc\BasePlugin;
+use Arc\Application;
 use Illuminate\Support\Str;
 
 class Email

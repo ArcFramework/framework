@@ -23,7 +23,7 @@ class MailerTest extends FrameworkTestCase
             ->withSubject('Test Subject');
 
         $viewBuilder = Mockery::mock('Arc\View\Builder');
-        $viewBuilder->shouldReceive('render')
+        $viewBuilder->shouldReceive('build')
             ->once()
             ->andReturn('Rendered view');
 

@@ -53,6 +53,7 @@ use Illuminate\Translation\FileLoader;
 use Illuminate\Translation\LoaderInterface;
 use Illuminate\Validation\Factory as IlluminateValidationFactory;
 use Illuminate\Validation\Validator as IlluminateValidator;
+use Illuminate\View\Factory as ViewFactory;
 use Illuminate\View\ViewFinderInterface;
 use Interop\Container\ContainerInterface;
 use SessionHandlerInterface;
@@ -767,10 +768,12 @@ abstract class Application extends Container implements ApplicationContract, Con
      */
     public function view($view = null, $data = [], $mergeData = [])
     {
-        $factory = $this->make('blade')->view();
+        $factory = $this->make(ViewFactory::class);
+
         if (func_num_args() === 0) {
             return $factory;
         }
+
         return $factory->make($view, $data, $mergeData);
     }
 

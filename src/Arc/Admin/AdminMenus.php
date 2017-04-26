@@ -4,7 +4,7 @@ namespace Arc\Admin;
 
 use Arc\Application;
 use Arc\Http\Controllers\ControllerHandler;
-use Arc\View\Builder;
+use Illuminate\View\Factory;
 
 class AdminMenus
 {
@@ -15,7 +15,7 @@ class AdminMenus
     private $controllerMethod;
     private $slug;
     private $view;
-    private $viewBuilder;
+    private $viewFactory;
     private $viewParameters = [];
     private $icon;
     private $position;
@@ -23,13 +23,13 @@ class AdminMenus
 
     public function __construct(
         Application $plugin,
-        Builder $viewBuilder,
+        Factory $viewFactory,
         ControllerHandler $controllerHandler
     )
     {
         $this->app = $plugin;
         $this->controllerHandler = $controllerHandler;
-        $this->viewBuilder = $viewBuilder;
+        $this->viewFactory = $viewFactory;
     }
 
     public function register()
@@ -78,7 +78,7 @@ class AdminMenus
 
     public function render($view)
     {
-        echo($this->viewBuilder->build($view, $this->viewParameters));
+        echo($this->viewFactory->make($view, $this->viewParameters));
     }
 
     public function addMenuPageCalled($name)

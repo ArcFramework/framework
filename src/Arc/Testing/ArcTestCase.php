@@ -25,8 +25,6 @@ abstract class ArcTestCase extends PHPUnit_Framework_TestCase
     use Concerns\InteractsWithDatabase,
         Concerns\MakesHttpRequests;
 
-    public $baseUrl = 'http://localhost';
-
     protected static $forced_tickets = array();
     protected $expected_deprecated = array();
     protected $caught_deprecated = array();

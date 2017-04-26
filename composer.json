@@ -17,6 +17,7 @@
         "illuminate/database": "^5.3",
         "illuminate/filesystem": "^5.3",
         "illuminate/http": "^5.4",
+        "illuminate/log": "^5.4",
         "illuminate/routing": "^5.4",
         "illuminate/support": "^5.3",
         "illuminate/translation": "^5.4",

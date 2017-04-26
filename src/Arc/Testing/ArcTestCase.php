@@ -2,7 +2,8 @@
 
 namespace Arc\Testing;
 
-use Arc\View\Builder;
+use Illuminate\Database\Schema\MySqlBuilder;
+use Illuminate\View\Factory as ViewFactory;
 use PHPUnit_Framework_TestCase;
 use PHPUnit_Util_Test;
 use RecursiveDirectoryIterator;
@@ -10,7 +11,6 @@ use RecursiveIteratorIterator;
 use Text_Template;
 use WP;
 use WP_Query;
-use Illuminate\Database\Schema\MySqlBuilder;
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 if ( ! $_tests_dir ) {
@@ -939,7 +939,7 @@ abstract class ArcTestCase extends PHPUnit_Framework_TestCase
      **/
     public function renderView($view, $parameters = [])
     {
-        return (string) $this->app->make(Builder::class)->build($view, $parameters);
+        return (string) $this->app->make(ViewFactory::class)->make($view, $parameters);
     }
 
     /**

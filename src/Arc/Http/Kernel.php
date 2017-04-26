@@ -57,6 +57,7 @@ class Kernel implements KernelContract
     {
         $this->app = $plugin;
         $this->router = $router;
+
         foreach ($this->routeMiddleware as $key => $middleware) {
             $router->middleware($key, $middleware);
         }
@@ -144,8 +145,7 @@ class Kernel implements KernelContract
     protected function sendRequestThroughRouter($request)
     {
         $this->app->instance('request', $request);
-        $this->app->instance(Request::class, $request);
-        $this->app->instance(IlluminateRequest::class, $request);
+
         $this->bootstrap();
         return (new Pipeline($this->app))
                     ->send($request)

@@ -11,37 +11,39 @@ use Arc\Config\Config;
 use Arc\Config\Env;
 use Arc\Config\EnvironmentDetector;
 use Arc\Config\WPOptions;
+use Arc\Console\Kernel as ConsoleKernel;
 use Arc\Contracts\Mail\Mailer as MailerContract;
 use Arc\Cron\CronSchedules;
 use Arc\Events\NonDispatcher;
-use Arc\Http\Kernel;
+use Arc\Http\Kernel as HttpKernel;
 use Arc\Http\Response;
 use Arc\Http\Router;
 use Arc\Http\ValidatesRequests;
 use Arc\Mail\Mailer;
 use Arc\Providers\ProviderRepository;
+use Arc\Routing\RoutingServiceProvider;
 use Arc\Shortcodes\Shortcodes;
 use Arc\View\ViewFinder;
 use Closure;
+use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\Container as ContainerContract;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
-use Illuminate\Contracts\Http\Kernel as KernelContract;
+use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
 use Illuminate\Contracts\Translation\Translator as Translator;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Contracts\View\Factory as ViewFactory;
+use Illuminate\Contracts\View\Factory as ViewFactoryContract;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\MySqlBuilder;
 use Illuminate\Events\EventServiceProvider;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Response as IlluminateResponse;
 use Illuminate\Http\Request;
+use Illuminate\Log\LogServiceProvider;
 use Illuminate\Routing\RouteCollection;
-use Illuminate\Routing\UrlGenerator;
-use Illuminate\Routing\RoutingServiceProvider;
 use Illuminate\Session\CookieSessionHandler;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Session\SessionManager;
@@ -143,6 +145,13 @@ abstract class Application extends Container implements ApplicationContract, Con
     protected $basePath;
 
     /**
+     * The storage path for the plugin.
+     *
+     * @var string
+     */
+    protected $storagePath;
+
+    /**
      * Indicates if the application has been bootstrapped before.
      *
      * @var bool
@@ -164,6 +173,26 @@ abstract class Application extends Container implements ApplicationContract, Con
         $this->registerBaseServiceProviders();
 
         $this->registerCoreContainerAliases();
+    }
+
+    /**
+     * Determine if the application routes are cached.
+     *
+     * @return bool
+     */
+    public function routesAreCached()
+    {
+        return $this['files']->exists($this->getCachedRoutesPath());
+    }
+
+    /**
+     * Determine if the application has a custom Monolog configurator.
+     *
+     * @return bool
+     */
+    public function hasMonologConfigurator()
+    {
+        return ! is_null($this->monologConfigurator);
     }
 
     /**
@@ -207,6 +236,16 @@ abstract class Application extends Container implements ApplicationContract, Con
     public function getCachedConfigPath()
     {
         return $this->bootstrapPath().'/cache/config.php';
+    }
+
+    /**
+     * Get the path to the routes cache file.
+     *
+     * @return string
+     */
+    public function getCachedRoutesPath()
+    {
+        return $this->bootstrapPath().'/cache/routes.php';
     }
 
     /**
@@ -255,7 +294,12 @@ abstract class Application extends Container implements ApplicationContract, Con
             'redirect'             => [\Illuminate\Routing\Redirector::class],
             'redis'                => [\Illuminate\Redis\RedisManager::class, \Illuminate\Contracts\Redis\Factory::class],
             'request'              => [\Illuminate\Http\Request::class, \Symfony\Component\HttpFoundation\Request::class],
-            'router'               => [\Illuminate\Routing\Router::class, \Illuminate\Contracts\Routing\Registrar::class, \Illuminate\Contracts\Routing\BindingRegistrar::class],
+            'router'               => [
+                \Arc\Http\Router::class,
+                \Illuminate\Routing\Router::class,
+                \Illuminate\Contracts\Routing\Registrar::class,
+                \Illuminate\Contracts\Routing\BindingRegistrar::class
+            ],
             'session'              => [\Illuminate\Session\SessionManager::class],
             'session.store'        => [\Illuminate\Session\Store::class, \Illuminate\Contracts\Session\Session::class],
             'url'                  => [\Illuminate\Routing\UrlGenerator::class, \Illuminate\Contracts\Routing\UrlGenerator::class],
@@ -279,6 +323,8 @@ abstract class Application extends Container implements ApplicationContract, Con
     {
         $this->register(new EventServiceProvider($this));
 
+        $this->register(new LogServiceProvider($this));
+
         $this->register(new RoutingServiceProvider($this));
     }
 
@@ -291,7 +337,6 @@ abstract class Application extends Container implements ApplicationContract, Con
     protected function markAsRegistered($provider)
     {
         $this->serviceProviders[] = $provider;
-
         $this->loadedProviders[get_class($provider)] = true;
     }
 
@@ -311,6 +356,23 @@ abstract class Application extends Container implements ApplicationContract, Con
     }
 
     /**
+     * Load and boot all of the remaining deferred providers.
+     *
+     * @return void
+     */
+    public function loadDeferredProviders()
+    {
+        // We will simply spin through each of the deferred providers and register each
+        // one and boot them if the application has booted. This should make each of
+        // the remaining services available to this application for immediate use.
+        foreach ($this->deferredServices as $service => $provider) {
+            $this->loadDeferredProvider($service);
+        }
+
+        $this->deferredServices = [];
+    }
+
+    /**
      * Get the version number of the application.
      *
      * @return string
@@ -325,10 +387,11 @@ abstract class Application extends Container implements ApplicationContract, Con
      *
      * @return string
      */
-    public function basePath()
+    public function basePath($path = null)
     {
-        $this->basePath = $this->env('PLUGIN_BASE_PATH', dirname($this->filename));
-        return $this->basePath;
+        $basePath = $this->basePath ??
+            $this->basePath = $this->env('PLUGIN_BASE_PATH', dirname($this->filename));
+        return rtrim("$basePath/$path", "/");
     }
 
     /**
@@ -442,27 +505,39 @@ abstract class Application extends Container implements ApplicationContract, Con
         if (($registered = $this->getProvider($provider)) && ! $force) {
             return $registered;
         }
+
         // If the given "provider" is a string, we will resolve it, passing in the
         // application instance automatically for the developer. This is simply
         // a more convenient way of specifying your service provider classes.
         if (is_string($provider)) {
-            $provider = $this->resolveProviderClass($provider);
+            $provider = $this->resolveProvider($provider);
         }
-        $provider->register();
-        // Once we have registered the service we will iterate through the options
-        // and set each of them on the application so they will be available on
-        // the actual loading of the service objects and for developer usage.
-        foreach ($options as $key => $value) {
-            $this[$key] = $value;
+
+        if (method_exists($provider, 'register')) {
+            $provider->register();
         }
+
         $this->markAsRegistered($provider);
+
         // If the application has already booted, we will call this boot method on
         // the provider class so it has an opportunity to do its boot logic and
-        // will be ready for any usage by the developer's application logics.
+        // will be ready for any usage by this developer's application logic.
         if ($this->booted) {
             $this->bootProvider($provider);
         }
+
         return $provider;
+    }
+
+    /**
+     * Resolve a service provider instance from the class name.
+     *
+     * @param  string  $provider
+     * @return \Illuminate\Support\ServiceProvider
+     */
+    public function resolveProvider($provider)
+    {
+        return new $provider($this);
     }
 
     /**
@@ -551,6 +626,16 @@ abstract class Application extends Container implements ApplicationContract, Con
     }
 
     /**
+     * Determine if the application has booted.
+     *
+     * @return bool
+     */
+    public function isBooted()
+    {
+        return $this->booted;
+    }
+
+    /**
      * Get the path to the cached services.php file.
      *
      * @return string
@@ -582,8 +667,13 @@ abstract class Application extends Container implements ApplicationContract, Con
     protected function bindImportantInterfaces()
     {
         $this->singleton(
-            KernelContract::class,
-            Kernel::class
+            HttpKernelContract::class,
+            HttpKernel::class
+        );
+
+        $this->singleton(
+            ConsoleKernelContract::class,
+            ConsoleKernel::class
         );
 
         $this->singleton(
@@ -598,7 +688,6 @@ abstract class Application extends Container implements ApplicationContract, Con
      **/
     public function start()
     {
-        $this->init();
         $this->callRun();
     }
 
@@ -632,17 +721,6 @@ abstract class Application extends Container implements ApplicationContract, Con
     }
 
     /**
-     * Initialises the plugin but doesn't run it
-     **/
-    public function init()
-    {
-        $this->cronSchedules->register();
-        $this->shortcodes->register();
-        $this->adminMenus->register();
-        $this->assets->enqueue();
-    }
-
-    /**
      * Set the shared instance of the application.
      *
      * @param  Application|null  $container
@@ -668,8 +746,8 @@ abstract class Application extends Container implements ApplicationContract, Con
         }
 
         // Handle request through http kernel
-        $this->actions->forHook('parse_request')->doThis(function() {
-            $kernel = $this->make(KernelContract::class);
+        add_action('init', function() {
+            $kernel = $this->make(HttpKernelContract::class);
 
             $response = $kernel->handle(
                 $request = \Illuminate\Http\Request::capture()
@@ -755,7 +833,7 @@ abstract class Application extends Container implements ApplicationContract, Con
      */
     public function route($name, $parameters = [], $absolute = true)
     {
-        return $this->make(UrlGenerator::class)->route($name, $parameters, $absolute);
+        return $this->make('url')->route($name, $parameters, $absolute);
     }
 
     /**
@@ -822,122 +900,18 @@ abstract class Application extends Container implements ApplicationContract, Con
 
     public function assetsPath()
     {
-        return $this->assetsPath ?? $this->assetsPath = $this->basePath.'/assets';
+        return $this->assetsPath ?? $this->assetsPath = $this->basePath().'/assets';
+    }
+
+    public function storagePath($path = null)
+    {
+        return $this->storagePath ??
+            $this->storagePath = rtrim($this->basePath('storage')."/$path", '/');
     }
 
     public function filename()
     {
         return $this->filename;
-    }
-
-    /**
-     * Bind implementations of critical interfaces to the service container
-     **/
-    protected function oldbindImportantInterfaces()
-    {
-
-        // Bind config object
-        $this->singleton('config', Config::class);
-
-        // Bind WPOptions object
-        $wpOptions = $this->make(WPOptions::class);
-        $this->instance(WPOptions::class, $wpOptions);
-
-        // Bind Actions object
-        $this->singleton('actions', function() {
-            return new Actions;
-        });
-
-        // Bind session handler
-        $this->singleton('session', function ($app) {
-            return new SessionManager($app);
-        });
-
-        // Set default session driver
-        $this['config']['session.driver'] = 'file';
-
-        $this->singleton('session.store', function ($app) {
-            // First, we will create the session manager which is responsible for the
-            // creation of the various session drivers when they are needed by the
-            // application instance, and will resolve them on a lazy load basis.
-            return $app->make('session')->driver();
-        });
-        $this->singleton(StartSession::class);
-
-        // Bind event dispatcher
-        $this->bind(DispatcherContract::class, NonDispatcher::class);
-
-        // Bind HTTP Response
-        $this->bind(IlluminateResponse::class, Response::class);
-        $response = $this->make(Response::class);
-        $this->instance('response', $response);
-
-        // HTTP Validation
-        $this->bind(ValidationFactory::class, IlluminateValidationFactory::class);
-        $this->bind(Validator::class, IlluminateValidator::class);
-
-        // Translation
-        $this->bind(Translator::class, IlluminateTranslator::class);
-        $this->when(IlluminateTranslator::class)
-            ->needs('$locale')
-            ->give('en');
-        $this->bind(LoaderInterface::class, FileLoader::class);
-        $this->when(FileLoader::class)
-            ->needs('$path')
-            ->give(realpath($this->arcDirectory . '/../../lang'));
-
-        // Bind route URL generator
-        $this->bind('url', UrlGenerator::class);
-
-        // Bind filesystem
-        $this->bind(
-            \Illuminate\Contracts\Filesystem\Filesystem::class,
-            \Illuminate\Filesystem\Filesystem::class
-        );
-
-        $this->bind('blade', function() {
-            return new \Arc\View\Blade($this->path . '/assets/views', $this->path . '/cache', null, $this);
-        });
-        $this->instance(ViewFactory::class, $this->make('blade')->view());
-
-        // Bind Mailer concretion
-        $this->bind(MailerContract::class, Mailer::class);
-
-        $router = $this->make(Router::class);
-        $this->instance(Router::class, $router);
-        $this->instance(RouteCollection::class, $router->getRoutes());
-
-        $this->capsule = $this->make(Capsule::class);
-        $this->adminMenus = $this->make(AdminMenus::class);
-        $this->assets = $this->make(Assets::class);
-        $this->cronSchedules = $this->make(CronSchedules::class);
-        $this->providers = $this->make(Providers::class);
-        $this->shortcodes = $this->make(Shortcodes::class);
-
-        global $wpdb;
-
-        $this->capsule->addConnection([
-            'driver' => 'mysql',
-            'database' => DB_NAME,
-            'username' => DB_USER,
-            'password' => DB_PASSWORD,
-            'host' => '127.0.0.1',
-            'prefix' => $wpdb->base_prefix ?? null,
-            'collation' => !empty(DB_COLLATE) ? DB_COLLATE : 'utf8_unicode_ci'
-        ]);
-
-        $this->capsule->getContainer()->singleton(
-            ExceptionHandler::class,
-            Handler::class
-        );
-        $this->capsule->bootEloquent();
-        $this->capsule->setAsGlobal();
-
-        $this->instance('db', $this->capsule->getDatabaseManager());
-
-        // Bind schema instance
-        $this->schema = $this->capsule->schema();
-        $this->instance(MySqlBuilder::class, $this->schema);
     }
 
     public function terminate()
@@ -985,6 +959,6 @@ abstract class Application extends Container implements ApplicationContract, Con
 
     public function resourcePath($path)
     {
-        return $this->path.DIRECTORY_SEPARATOR.'resources'.($path ? DIRECTORY_SEPARATOR.$path : $path);
+        return $this->basePath().DIRECTORY_SEPARATOR.'resources'.($path ? DIRECTORY_SEPARATOR.$path : $path);
     }
 }

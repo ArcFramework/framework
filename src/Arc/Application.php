@@ -17,10 +17,10 @@ use Arc\Cron\CronSchedules;
 use Arc\Events\NonDispatcher;
 use Arc\Http\Kernel as HttpKernel;
 use Arc\Http\Response;
-use Arc\Http\Router;
 use Arc\Http\ValidatesRequests;
 use Arc\Mail\Mailer;
 use Arc\Providers\ProviderRepository;
+use Arc\Routing\Router;
 use Arc\Routing\RoutingServiceProvider;
 use Arc\Shortcodes\Shortcodes;
 use Arc\View\ViewFinder;
@@ -295,7 +295,7 @@ abstract class Application extends Container implements ApplicationContract, Con
             'redis'                => [\Illuminate\Redis\RedisManager::class, \Illuminate\Contracts\Redis\Factory::class],
             'request'              => [\Illuminate\Http\Request::class, \Symfony\Component\HttpFoundation\Request::class],
             'router'               => [
-                \Arc\Http\Router::class,
+                \Arc\Routing\Router::class,
                 \Illuminate\Routing\Router::class,
                 \Illuminate\Contracts\Routing\Registrar::class,
                 \Illuminate\Contracts\Routing\BindingRegistrar::class

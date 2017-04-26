@@ -2,7 +2,7 @@
 
 namespace Arc\Routing;
 
-use Arc\Http\Router;
+use Arc\Routing\Router;
 use Illuminate\Routing\RoutingServiceProvider as IlluminateRoutingServiceProvider;
 use Illuminate\Support\ServiceProvider;
 use Psr\Http\Message\ResponseInterface;
@@ -26,4 +26,3 @@ class RoutingServiceProvider extends IlluminateRoutingServiceProvider
         });
     }
 }
-

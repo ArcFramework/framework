@@ -1,6 +1,6 @@
 <?php
 
-namespace Arc\Http;
+namespace Arc\Routing;
 
 use Illuminate\Container\Container;
 use Illuminate\Http\Request;

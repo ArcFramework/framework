@@ -4,6 +4,7 @@ namespace Arc\Http;
 
 use Arc\Application;
 use Arc\Exceptions\Handler;
+use Arc\Routing\Router;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Http\Request as IlluminateRequest;

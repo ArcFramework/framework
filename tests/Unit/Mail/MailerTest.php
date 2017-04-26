@@ -5,7 +5,6 @@ use Arc\Hooks\Actions;
 use Arc\Hooks\Filters;
 use Arc\Mail\Email;
 use Arc\Mail\Mailer;
-use Arc\View\Builder;
 
 use Illuminate\Support\Str;
 
@@ -15,19 +14,12 @@ class MailerTest extends FrameworkTestCase
     public function send_method_calls_wp_mail_with_expected_arguments()
     {
         $email = (new Email)
-            ->withTemplate('email.template')
+            ->withTemplate('test')
             ->withMessage('<span class="red"> Test message. </span>')
             ->withCSS('.red { color: red; }')
             ->to('test@domain.com')
             ->from('from@domain.com')
             ->withSubject('Test Subject');
-
-        $viewBuilder = Mockery::mock('Arc\View\Builder');
-        $viewBuilder->shouldReceive('build')
-            ->once()
-            ->andReturn('Rendered view');
-
-        $this->app->instance(Builder::class, $viewBuilder);
 
         WP_Mock::wpFunction('wp_mail', [
             'times' => 1,

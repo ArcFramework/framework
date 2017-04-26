@@ -3,7 +3,7 @@
 namespace Arc\Admin;
 
 use Arc\Application;
-use Arc\Http\Controllers\ControllerHandler;
+use Illuminate\Routing\ControllerDispatcher;
 use Illuminate\View\Factory;
 
 class AdminMenus
@@ -24,11 +24,11 @@ class AdminMenus
     public function __construct(
         Application $plugin,
         Factory $viewFactory,
-        ControllerHandler $controllerHandler
+        ControllerDispatcher $controllerDispatcher
     )
     {
         $this->app = $plugin;
-        $this->controllerHandler = $controllerHandler;
+        $this->controllerDispatcher = $controllerDispatcher;
         $this->viewFactory = $viewFactory;
     }
 
@@ -136,7 +136,7 @@ class AdminMenus
     {
         if (!empty($this->controller)) {
             return function() {
-                $this->controllerHandler->call($this->controller, $this->controllerMethod);
+                $this->controllerDispatcher->call($this->controller, $this->controllerMethod);
             };
         }
         return !is_null($this->view) ? [$this, 'render' . $this->view] : function() {};

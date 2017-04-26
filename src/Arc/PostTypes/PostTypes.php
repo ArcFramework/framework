@@ -2,15 +2,15 @@
 
 namespace Arc\PostTypes;
 
-use Arc\Http\Controllers\ControllerHandler;
-use Arc\View\Builder;
+use Illuminate\Routing\ControllerDispatcher;
+use Illuminate\View\Factory;
 
 class PostTypes
 {
     public $init;
 
     protected $controllerMethod;
-    protected $controllerHandler;
+    protected $controllerDispatcher;
     protected $metaBoxes;
     protected $name;
     protected $pluralName;
@@ -19,10 +19,10 @@ class PostTypes
     protected $supports;
     protected $view;
 
-    public function __construct(Builder $viewBuilder, ControllerHandler $controllerHandler)
+    public function __construct(Factory $viewFactory, ControllerDispatcher $controllerDispatcher)
     {
-        $this->controllerHandler = $controllerHandler;
-        $this->viewBuilder = $viewBuilder;
+        $this->controllerDispatcher = $controllerDispatcher;
+        $this->viewFactory = $viewFactory;
     }
 
     public function createPublic()
@@ -84,21 +84,21 @@ class PostTypes
         // Register the template handler for a controller method
         if (!is_null($this->controllerMethod)) {
             app()->bind($this->slug, function() {
-                return $this->controllerHandler->parseControllerCall($this->controllerMethod);
+                return $this->controllerDispatcher->parseControllerCall($this->controllerMethod);
             });
-           return $this->registerTemplateHandler();
+           return $this->registerTemplateDispatcher();
         }
 
         // Register the template handler for a view
         if (!is_null($this->view)) {
             app()->bind($this->slug, function() {
-                return $this->viewBuilder->build($this->view, ['post' => get_post()]);
+                return $this->viewFactory->build($this->view, ['post' => get_post()]);
             });
-            return $this->registerTemplateHandler();
+            return $this->registerTemplateDispatcher();
         }
     }
 
-    public function registerTemplateHandler()
+    public function registerTemplateDispatcher()
     {
         add_filter('single_template', function() {
             global $post;

@@ -6,7 +6,7 @@ use Arc\Contracts\Mail\Mailer as MailerContract;
 use Arc\Hooks\Actions;
 use Arc\Hooks\Filters;
 use Arc\Config\WPOptions;
-use Arc\View\Builder;
+use Illuminate\View\Factory as ViewFactory;
 use Html2Text\Html2Text;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
@@ -14,13 +14,13 @@ class Mailer implements MailerContract
 {
     protected $filters;
     protected $blankEmail;
-    protected $viewBuilder;
+    protected $viewFactory;
     protected $cssInliner;
     protected $wpOptions;
 
     public function __construct(
         Actions $actions,
-        Builder $viewBuilder,
+        ViewFactory $viewFactory,
         CssToInlineStyles $cssInliner,
         Email $email,
         Filters $filters,
@@ -31,7 +31,7 @@ class Mailer implements MailerContract
         $this->filters = $filters;
         $this->blankEmail = $email;
         $this->cssInliner = $cssInliner;
-        $this->viewBuilder = $viewBuilder;
+        $this->viewFactory = $viewFactory;
         $this->wpOptions = $wpOptions;
     }
 
@@ -73,7 +73,7 @@ class Mailer implements MailerContract
     {
         // If a template is set, we'll default to that
         if ($email->hasTemplate()) {
-            $message = $this->viewBuilder->build($email->getTemplate(), $email->getTemplateParameters());
+            $message = $this->viewFactory->make($email->getTemplate(), $email->getTemplateParameters());
         }
 
         // If a plain text message is set, that overrides any templates

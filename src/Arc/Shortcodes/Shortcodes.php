@@ -2,18 +2,18 @@
 
 namespace Arc\Shortcodes;
 
-use Arc\View\Builder;
+use Illuminate\View\Factory;
 
 class Shortcodes
 {
     public $code;
-    private $plugin;
-    private $shortcodes = [];
-    private $viewBuilder;
+    protected $plugin;
+    protected $shortcodes = [];
+    protected $viewFactory;
 
-    public function __construct(Builder $viewBuilder)
+    public function __construct(Factory $viewFactory)
     {
-        $this->viewBuilder = $viewBuilder;
+        $this->viewFactory = $viewFactory;
     }
 
     public function code($code)
@@ -59,7 +59,7 @@ class Shortcodes
     {
         $shortcode = $this->shortcodes[$shortcodeName];
 
-        return $this->viewBuilder->build('shortcodes/' . $shortcode->partial, array_merge([
+        return $this->viewFactory->make($shortcode->partial, array_merge([
             'attributes' => $attributes,
             'content' => $content,
             'shortcodeName' => $shortcodeName

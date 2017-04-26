@@ -796,10 +796,7 @@ abstract class Application extends Container implements ApplicationContract, Con
 
     protected function getUrl()
     {
-        if (!function_exists('get_site_url')) {
-            return null;
-        }
-        return get_site_url() . '/wp-content/plugins/' . $this->slug;
+        return $this->baseUrl().'/wp-content/plugins/'.$this->slug;
     }
 
     /**
@@ -881,6 +878,17 @@ abstract class Application extends Container implements ApplicationContract, Con
     public function wordpressPath()
     {
         return $this->wordpressPath ?? $this->wordpressPath = $this->env('WORDPRESS_PATH', ABSPATH);
+    }
+
+    /**
+     * Get the base url of the site
+     **/
+    public function baseUrl()
+    {
+        if (!function_exists('get_site_url')) {
+            return 'http://localhost';
+        }
+        return get_site_url();
     }
 
     public function uri()

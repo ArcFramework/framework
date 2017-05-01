@@ -128,7 +128,7 @@ class AdminMenus
 
     public function withIcon($icon)
     {
-        $this->icon = $this->app->uri . '/assets/images/' . $icon;
+        $this->icon = $this->app->getUrl() . '/resources/assets/images/' . $icon;
         return $this;
     }
 

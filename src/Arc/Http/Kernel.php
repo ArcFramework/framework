@@ -9,6 +9,7 @@ use Illuminate\Contracts\Http\Kernel as KernelContract;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Http\Request as IlluminateRequest;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class Kernel implements KernelContract
 {
@@ -97,6 +98,8 @@ class Kernel implements KernelContract
             $request->enableHttpMethodParameterOverride();
             $response = $this->sendRequestThroughRouter($request);
         } catch (NotFoundHttpException $e) {
+            $response = new DeferToWordpress;
+        } catch (MethodNotAllowedHttpException $e) {
             $response = new DeferToWordpress;
         } catch (\Exception $e) {
             $this->reportException($e);

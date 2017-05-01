@@ -68,6 +68,6 @@ class BaseController
 
     public function makeValidator($request, $rules)
     {
-        return $this->app->make(Factory::class)->make($request, $rules);
+        return $this->app->make('validator')->make($request, $rules);
     }
 }

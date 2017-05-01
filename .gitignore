@@ -1,3 +1,4 @@
 vendor
 phpunit.xml
 tests/test-plugin/bootstrap/cache
+tests/test-plugin/storage

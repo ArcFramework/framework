@@ -845,9 +845,9 @@ abstract class Application extends Container implements ApplicationContract, Con
         return $this->environment($key, $default);
     }
 
-    protected function getUrl()
+    public function getUrl()
     {
-        return $this->baseUrl().'/wp-content/plugins/'.$this->slug;
+        return $this->baseUrl().'/wp-content/plugins/'.$this->slug();
     }
 
     /**
@@ -962,7 +962,7 @@ abstract class Application extends Container implements ApplicationContract, Con
 
     public function uri()
     {
-        return $this->uri ?? $this->uri = $this->uri = $this->env('PLUGIN_URI', $this->getUrl());
+        return $this->uri ?? $this->uri = $this->env('PLUGIN_URI', $this->getUrl());
     }
 
     public function testsDirectory()

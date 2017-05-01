@@ -919,6 +919,24 @@ abstract class Application extends Container implements ApplicationContract, Con
             ->getFilename());
         $this->filename = $pluginFilename;
         $this->namespace = substr(get_called_class(), 0, strrpos(get_called_class(), "\\"));
+
+        $this->bindPathsInContainer();
+    }
+
+    /**
+     * Bind all of the application paths in the container.
+     *
+     * @return void
+     */
+    protected function bindPathsInContainer()
+    {
+        $this->instance('path', $this->basePath());
+        $this->instance('path.base', $this->basePath());
+        $this->instance('path.lang', $this->langPath());
+        $this->instance('path.config', $this->configPath());
+        $this->instance('path.storage', $this->storagePath());
+        $this->instance('path.resources', $this->resourcePath());
+        $this->instance('path.bootstrap', $this->bootstrapPath());
     }
 
     public function namespace()

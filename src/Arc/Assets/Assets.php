@@ -174,7 +174,6 @@ class Assets
         if (Str::contains($path, 'http')) {
             return $path;
         }
-
-        return $this->app->uri . '/assets/' . $path;
+        return $this->app->uri().'/resources/assets/'.$path;
     }
 }

@@ -341,6 +341,25 @@ abstract class Application extends Container implements ApplicationContract, Con
     }
 
     /**
+     * Resolve the given type from the container.
+     *
+     * (Overriding Container::make)
+     *
+     * @param  string  $abstract
+     * @return mixed
+     */
+    public function make($abstract)
+    {
+        $abstract = $this->getAlias($abstract);
+
+        if (isset($this->deferredServices[$abstract])) {
+            $this->loadDeferredProvider($abstract);
+        }
+
+        return parent::make($abstract);
+    }
+
+    /**
      * Get the registered service provider instance if it exists.
      *
      * @param  \Illuminate\Support\ServiceProvider|string  $provider

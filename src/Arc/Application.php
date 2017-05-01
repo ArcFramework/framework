@@ -1034,7 +1034,7 @@ abstract class Application extends Container implements ApplicationContract, Con
         return make('session')->get($key, $default);
     }
 
-    public function resourcePath($path)
+    public function resourcePath($path = null)
     {
         return $this->basePath().DIRECTORY_SEPARATOR.'resources'.($path ? DIRECTORY_SEPARATOR.$path : $path);
     }

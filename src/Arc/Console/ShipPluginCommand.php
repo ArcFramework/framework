@@ -44,6 +44,11 @@ class ShipPluginCommand extends Command
      **/
     protected $finalDestination;
 
+    public function execute(InputInterface $input, OutputInterface $output)
+    {
+        return $this->fire();
+    }
+
     /**
      * Execute the console command.
      *

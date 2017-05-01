@@ -436,6 +436,16 @@ abstract class Application extends Container implements ApplicationContract, Con
     }
 
     /**
+     * Get the path to the language files.
+     *
+     * @return string
+     */
+    public function langPath()
+    {
+        return $this->resourcePath().DIRECTORY_SEPARATOR.'lang';
+    }
+
+    /**
      * Detect the application's current environment.
      *
      * @param  \Closure  $callback

@@ -110,7 +110,7 @@ class ShipPluginCommand extends Command
         $this->done();
 
         $this->line('Zip up resulting folder');
-        $this->zipDir($this->finalDestination, $this->finalDestination . '-' . $this->app->version . '.zip');
+        $this->zipDir($this->finalDestination, $this->finalDestination . '-' . $this->app->version() . '.zip');
         $this->done();
 
         // Delete the unzipped directory
@@ -242,9 +242,7 @@ class ShipPluginCommand extends Command
      */
     protected function getArguments()
     {
-        return [
-            ['command', InputArgument::REQUIRED, 'The name of the command'],
-        ];
+        return [];
     }
 
     /**

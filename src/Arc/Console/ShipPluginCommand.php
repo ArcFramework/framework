@@ -3,6 +3,8 @@
 namespace Arc\Console;
 
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class ShipPluginCommand extends Command
 {
@@ -78,7 +80,7 @@ class ShipPluginCommand extends Command
 
         // Copy the files to their shipped location
         $this->line('Copying files to the final destination');
-        $this->xcopy($this->app->path, $this->finalDestination);
+        $this->xcopy($this->app->basePath(), $this->finalDestination);
         $this->done();
 
         // Remove studio.json file if it exists
@@ -131,6 +133,11 @@ class ShipPluginCommand extends Command
      */
     protected function xcopy($source, $dest, $permissions = 0755)
     {
+        // Throw exception if source is not a file or directory
+        if (!file_exists($source)) {
+            throw new \Exception('"'.$source.'" is not a file or directory');
+        }
+
         // Check for symlinks
         if (is_link($source)) {
             return symlink(readlink($source), $dest);

@@ -23,7 +23,6 @@
         "illuminate/translation": "^5.4",
         "illuminate/validation": "^5.4",
         "illuminate/view": "^5.3",
-        "mnapoli/silly": "^1.5",
         "soundasleep/html2text": "~0.3",
         "symfony/var-dumper": "^3.2",
         "tightenco/collect": "^5.3",

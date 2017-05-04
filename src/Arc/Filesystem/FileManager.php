@@ -2,6 +2,8 @@
 
 namespace Arc\Filesystem;
 
+use Arc\Exceptions\InsufficientPermissionsException;
+
 class FileManager
 {
     /**
@@ -38,7 +40,7 @@ class FileManager
         }
 
         if (!is_writeable(dirname($dirPath))) {
-            throw new \Exception('Insufficient permissions to create directory ' . $dirPath);
+            throw new InsufficientPermissionsException('Insufficient permissions to create directory ' . $dirPath);
         }
         mkdir($dirPath, $permissions ?? 0777, $recursive);
     }

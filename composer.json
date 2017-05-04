@@ -13,6 +13,7 @@
         "php": ">=5.5.9",
         "container-interop/container-interop": "^1.2",
         "illuminate/config": "^5.4",
+        "illuminate/console": "^5.4",
         "illuminate/container": "^5.3",
         "illuminate/database": "^5.3",
         "illuminate/filesystem": "^5.3",
@@ -47,8 +48,7 @@
         "10up/wp_mock": "dev-master",
         "mockery/mockery": "^0.9.9",
         "symfony/css-selector": "~3.1",
-        "symfony/dom-crawler": "~3.1",
-        "illuminate/console": "^5.4"
+        "symfony/dom-crawler": "~3.1"
     },
     "config" : {
         "sort-packages": true

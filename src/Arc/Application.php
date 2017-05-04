@@ -75,6 +75,12 @@ abstract class Application extends Container implements ApplicationContract, Con
     public $uri;
 
     /**
+     * The path to the wordpress directory
+     * @var string
+     **/
+    protected $wordpressPath;
+
+    /**
      * The current globally available plugin instance (if any).
      *
      * @var static
@@ -944,9 +950,11 @@ abstract class Application extends Container implements ApplicationContract, Con
         return $this->namespace;
     }
 
-    public function wordpressPath()
+    public function wordpressPath($path = null)
     {
-        return $this->wordpressPath ?? $this->wordpressPath = $this->env('WORDPRESS_PATH', ABSPATH);
+        $wordpressPath = $this->wordpressPath ?? $this->wordpressPath = $this->env('WORDPRESS_PATH', ABSPATH);
+
+        return $wordpressPath.'/'.$path;
     }
 
     /**
@@ -965,9 +973,9 @@ abstract class Application extends Container implements ApplicationContract, Con
         return $this->uri ?? $this->uri = $this->env('PLUGIN_URI', $this->getUrl());
     }
 
-    public function testsDirectory()
+    public function testsDirectory($path = null)
     {
-        return $this->basePath() . 'tests';
+        return $this->testsDirectory ?? $this->testsDirectory = $this->basePath('tests').'/'.$path;
     }
 
     public function slug()

@@ -739,15 +739,6 @@ abstract class Application extends Container implements ApplicationContract, Con
         );
     }
 
-
-    /**
-     * Boots and runs the plugin
-     **/
-    public function start()
-    {
-        $this->callRun();
-    }
-
     /**
      * Determine if the application has been bootstrapped before.
      *
@@ -793,15 +784,10 @@ abstract class Application extends Container implements ApplicationContract, Con
     public abstract static function app();
 
     /**
-     * Call the 'run' method on the plugin class if it exists, injecting any dependencies
+     * Start the plugin
      **/
-    public function callRun()
+    public function start()
     {
-        // Run plugin
-        if (method_exists($this, 'run')) {
-            $this->call([$this, 'run']);
-        }
-
         // Handle request through http kernel
         add_action('init', function() {
             $kernel = $this->make(HttpKernelContract::class);
@@ -813,6 +799,11 @@ abstract class Application extends Container implements ApplicationContract, Con
             $response->send();
             $kernel->terminate($request, $response);
         });
+
+        // Run plugin
+        if (method_exists($this, 'run')) {
+            $this->call([$this, 'run']);
+        }
     }
 
     public function config($key, $default = null)

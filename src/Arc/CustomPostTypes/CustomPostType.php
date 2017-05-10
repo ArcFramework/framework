@@ -35,42 +35,43 @@ class CustomPostType extends Post
     ];
 
     /**
-     * Creates a post of the given post type with the given attributes and returns the post id
+     * Creates a post of the given post type with the given attributes and returns the model
      *
-     * @param string $postType The slug of the post type
      * @param array $attributes
      * @return int The post id of the newly minted post
      */
-    public static function create($postType, $attributes)
+    public static function create($attributes = [])
     {
-        $nativeAttributes = self::filterNativeAttributes($attributes);
-        $customAttributes = self::filterCustomAttributes($attributes);
+        // Get the name of the class for which the method was called
+        $className = get_called_class();
 
         // Insert the post
-        $postId = wp_insert_post($nativeAttributes->merge(
-            ['post_type' => $postType]
-        )->toArray(), true);
+        $post = (new $className);
+        foreach($attributes as $key => $value) {
+            $post->$key = $value;
+        }
+        $post->save();
 
         // Append the custom fields to the post
-        $customAttributes->each(function ($value, $key) use ($postId) {
-            add_post_meta($postId, $key, $value);
+        collect($customAttributes)->each(function ($value, $key) use ($post) {
+            add_post_meta($post->ID, $key, $value);
         });
 
-        return $postId;
+        return $post;
     }
 
     public static function filterCustomAttributes($attributes)
     {
         return collect($attributes)->filter(function ($attribute, $key) {
             return !collect(self::NATIVE_ATTRIBUTES)->contains($key);
-        });
+        })->toArray();
     }
 
     public static function filterNativeAttributes($attributes)
     {
         return collect($attributes)->filter(function ($attribute, $key) {
             return collect(self::NATIVE_ATTRIBUTES)->contains($key);
-        });
+        })->toArray();
     }
 
     /**

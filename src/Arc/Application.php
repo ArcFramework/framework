@@ -789,16 +789,14 @@ abstract class Application extends Container implements ApplicationContract, Con
     public function start()
     {
         // Handle request through http kernel
-        add_action('init', function() {
-            $kernel = $this->make(HttpKernelContract::class);
+        $kernel = $this->make(HttpKernelContract::class);
 
-            $response = $kernel->handle(
-                $request = \Illuminate\Http\Request::capture()
-            );
+        $response = $kernel->handle(
+            $request = \Illuminate\Http\Request::capture()
+        );
 
-            $response->send();
-            $kernel->terminate($request, $response);
-        });
+        $response->send();
+        $kernel->terminate($request, $response);
 
         // Run plugin
         if (method_exists($this, 'run')) {

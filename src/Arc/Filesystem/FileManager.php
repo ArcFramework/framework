@@ -96,7 +96,8 @@ class FileManager
     }
 
     /**
-     * Get all the files in a given directory and return them as an array of File objects
+     * Get all the files in a given directory and return them as an array of File objects.
+     * Files subdirectories and files in subdirectories will be ignored.
      *
      * @param string $dirPath The full path to the directory
      * @return array
@@ -112,9 +113,12 @@ class FileManager
         }
 
         // Map the files in directory to file objects
-        return array_map(function($fileName) use ($dirPath) {
-            return $this->getFile($dirPath . '/' . $fileName);
-        }, preg_grep('/^([^.])/', scandir($dirPath)));
+        return collect(preg_grep('/^([^.])/', scandir($dirPath)))
+            ->reject(function ($filename) use ($dirPath) {
+                return is_dir("$dirPath/$filename");
+            })->map(function ($filename) use ($dirPath) {
+                return $this->getFile("$dirPath/$filename");
+            })->toArray();
     }
 
     /**

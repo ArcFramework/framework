@@ -1,8 +1,10 @@
 <?php
 
-namespace Arc\PostTypes;
+namespace Arc\CustomPostTypes;
 
-class PostType
+use Arc\Models\Post;
+
+class CustomPostType extends Post
 {
     const NATIVE_ATTRIBUTES = [
         'ID',
@@ -69,5 +71,49 @@ class PostType
         return collect($attributes)->filter(function ($attribute, $key) {
             return collect(self::NATIVE_ATTRIBUTES)->contains($key);
         });
+    }
+
+    /**
+     * Returns the slug of the custom post type class
+     * @return string
+     **/
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    public function getView()
+    {
+        return $this->view;
+    }
+
+    public function isPublic()
+    {
+        return (bool) $this->public;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getPluralName()
+    {
+        return $this->pluralName;
+    }
+
+    public function getSupportedFields()
+    {
+        return $this->supportsFields;
+    }
+
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    public function getMetaBoxes()
+    {
+        return $this->metaBoxes;
     }
 }

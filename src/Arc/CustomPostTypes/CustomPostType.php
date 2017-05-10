@@ -42,6 +42,9 @@ class CustomPostType extends Post
      */
     public static function create($attributes = [])
     {
+        $nativeAttributes = self::filterNativeAttributes($attributes);
+        $customAttributes = self::filterCustomAttributes($attributes);
+
         // Get the name of the class for which the method was called
         $className = get_called_class();
 

@@ -103,9 +103,23 @@ class Post extends Model
      **/
     public function updateUniqueMeta($data, $value = null)
     {
-        foreach ($data as $key => $value) {
-            update_post_meta($this->ID, $key, $value);
+        collect($data)->each(function ($value, $key) {
+            $this->updateMeta($key, $value);
+        });
+    }
+
+    public function setMeta($key, $value)
+    {
+        if (is_null($this->findMetaValue($key))) {
+            return $this->addMeta($key, $value);
         }
+
+        return $this->updateMeta($key, $value);
+    }
+
+    public function updateMeta($key, $value)
+    {
+        return update_post_meta($this->ID, $key, $value);
     }
 }
 

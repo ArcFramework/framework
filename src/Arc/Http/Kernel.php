@@ -8,6 +8,7 @@ use Arc\Routing\Router;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Http\Request as IlluminateRequest;
+use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 

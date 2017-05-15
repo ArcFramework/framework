@@ -3,11 +3,12 @@
 namespace Arc\Http\Controllers;
 
 use Arc\Application;
+use Illuminate\Routing\Controller;
 use Illuminate\Routing\Redirector;
 use Illuminate\Routing\ResponseFactory;
 use Illuminate\Validation\Factory;
 
-class BaseController
+class BaseController extends Controller
 {
     public $app;
     private $validator;

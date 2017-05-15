@@ -62,7 +62,7 @@ class Post extends Model
      * @param string $key The meta_key
      * @return string
      **/
-    public function findMetaValue($key)
+    public function findMeta($key)
     {
         $meta = $this->getMeta($key)->first();
 

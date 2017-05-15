@@ -952,12 +952,19 @@ abstract class Application extends Container implements ApplicationContract, Con
     /**
      * Get the base url of the site
      **/
-    public function baseUrl()
+    public function baseUrl($uri = null)
     {
-        if (!function_exists('get_site_url')) {
-            return 'http://localhost';
+        if (defined('ARC_TESTING')) {
+            $baseUrl = 'http://localhost';
         }
-        return get_site_url();
+        else if (!function_exists('get_site_url')) {
+            $baseUrl = 'http://localhost';
+        }
+        else {
+            $baseUrl = get_site_url();
+        }
+
+        return $baseUrl.rds('/'.$uri);
     }
 
     public function uri()

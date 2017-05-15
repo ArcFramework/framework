@@ -48,58 +48,56 @@ class CustomPostTypes
 
     public function register(CustomPostType $customPostType)
     {
-        add_action('init', function() use ($customPostType) {
-            register_post_type($customPostType->getSlug(), [
-                'public' => $customPostType->isPublic(),
-                'labels' => [
-                    'name' => $customPostType->getName(),
-                    'plural' => $customPostType->getPluralName(),
-                ],
-                'supports' => $customPostType->getSupportedFields() ?? ['title', 'editor', 'custom-fields'],
-                'menu_icon' => $customPostType->getIcon(),
-            ]);
+        register_post_type($customPostType->getSlug(), [
+            'public' => $customPostType->isPublic(),
+            'labels' => [
+                'name' => $customPostType->getName(),
+                'plural' => $customPostType->getPluralName(),
+            ],
+            'supports' => $customPostType->getSupportedFields() ?? ['title', 'editor', 'custom-fields'],
+            'menu_icon' => $customPostType->getIcon(),
+        ]);
 
-            if (!is_null($customPostType->getMetaBoxes())) {
-                $setupMetaBoxes = function() use ($customPostType) {
-                    foreach ($customPostType->getMetaBoxes() as $metaBox) {
-                        add_meta_box(
-                            $customPostType->getSlug() . '-' . $metaBox['title'] . '-meta-box',
-                            $metaBox['title'],
-                            $metaBox['callback'],
-                            $customPostType->getSlug(),
-                            $metaBox['context'] ?? 'side',
-                            $metaBox['priority'] ?? 'default',
-                            $metaBox['callbackArguments'] ?? null
-                        );
-                    }
-                };
-                add_action('load-post.php', $setupMetaBoxes);
-                add_action('load-post-new.php', $setupMetaBoxes);
-            }
+        if (!is_null($customPostType->getMetaBoxes())) {
+            $setupMetaBoxes = function() use ($customPostType) {
+                foreach ($customPostType->getMetaBoxes() as $metaBox) {
+                    add_meta_box(
+                        $customPostType->getSlug() . '-' . $metaBox['title'] . '-meta-box',
+                        $metaBox['title'],
+                        $metaBox['callback'],
+                        $customPostType->getSlug(),
+                        $metaBox['context'] ?? 'side',
+                        $metaBox['priority'] ?? 'default',
+                        $metaBox['callbackArguments'] ?? null
+                    );
+                }
+            };
+            add_action('load-post.php', $setupMetaBoxes);
+            add_action('load-post-new.php', $setupMetaBoxes);
+        }
 
-            // Register the template handler for a view
-            if (!is_null($customPostType->getView())) {
+        // Register the template handler for a view
+        if (!is_null($customPostType->getView())) {
 
-                // Generate the view
-                $view = $this->app->make('view')->make($customPostType->getView());
+            // Generate the view
+            $view = $this->app->make('view')->make($customPostType->getView());
 
-                // Get the path to the compiled cached view file
-                $compiler = $this->app->make('blade.compiler');
-                $compiler->compile($view->getPath());
-                $compiledPath = $compiler->getCompiledPath($view->getPath());
+            // Get the path to the compiled cached view file
+            $compiler = $this->app->make('blade.compiler');
+            $compiler->compile($view->getPath());
+            $compiledPath = $compiler->getCompiledPath($view->getPath());
 
-                // Add a filter to return the compiled view as the template for this post type
-                add_filter('single_template', function($original) use ($compiledPath, $customPostType) {
-                    global $post;
-                    if ($post->post_type == $customPostType->getSlug()) {
-                        echo($this->app->make('view')->make($customPostType->getView(), [
-                            'post' => $this->app->make(CustomPostTypes::class)->resolve($post)
-                        ]));
-                        die;
-                    }
-                    return $original;
-                });
-            }
-        });
+            // Add a filter to return the compiled view as the template for this post type
+            add_filter('single_template', function($original) use ($compiledPath, $customPostType) {
+                global $post;
+                if ($post->post_type == $customPostType->getSlug()) {
+                    echo($this->app->make('view')->make($customPostType->getView(), [
+                        'post' => $this->app->make(CustomPostTypes::class)->resolve($post)
+                    ]));
+                    die;
+                }
+                return $original;
+            });
+        }
     }
 }

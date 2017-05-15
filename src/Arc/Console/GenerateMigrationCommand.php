@@ -2,6 +2,7 @@
 
 namespace Arc\Console;
 
+use Arc\Application;
 use Illuminate\Support\Composer;
 use Illuminate\Database\Migrations\MigrationCreator;
 
@@ -45,9 +46,9 @@ class GenerateMigrationCommand extends Command
      * @param  \Illuminate\Support\Composer  $composer
      * @return void
      */
-    public function __construct(MigrationCreator $creator, Composer $composer)
+    public function __construct(MigrationCreator $creator, Composer $composer, Application $app)
     {
-        parent::__construct();
+        parent::__construct($app);
 
         $this->creator = $creator;
         $this->composer = $composer;

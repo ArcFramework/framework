@@ -52,5 +52,18 @@ class User extends Model
             'role' => $role
         ]);
     }
+
+    /**
+     * Sets the given usermeta key to the given value if a key value pair is provided
+     * or sets the key value pairs in the array if an array is provided as the first argument
+     * @param array|string $key
+     * @param string|null $value
+     **/
+    public function setMeta($key, $value = null)
+    {
+        collect(is_array($key) ? $key : [$key => $value])->each(function ($value, $key) {
+            update_user_meta($this->ID, $key, $value);
+        });
+    }
 }
 

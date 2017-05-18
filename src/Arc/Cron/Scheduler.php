@@ -97,6 +97,11 @@ class Scheduler
 
     public function schedule()
     {
+        // If it's already scheduled at the given frequency we don't need to do anything
+        if (wp_get_schedule($this->action) == $this->schedule) {
+            return;
+        }
+
         wp_schedule_event($this->fromTime, $this->schedule, $this->action);
     }
 }

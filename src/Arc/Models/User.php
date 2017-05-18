@@ -65,5 +65,17 @@ class User extends Model
             update_user_meta($this->ID, $key, $value);
         });
     }
+
+    /**
+     * Returns the usermeta value matching the given key. To return multiple values if they
+     * are avaiable pass false as the second paramater
+     * @param string $key
+     * @param bool $single = true
+     * @return mixed
+     **/
+    public function findMeta($key, $single = true)
+    {
+        return get_user_meta($this->ID, $key, true);
+    }
 }
 

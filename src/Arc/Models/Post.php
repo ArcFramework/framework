@@ -110,7 +110,7 @@ class Post extends Model
 
     public function setMeta($key, $value)
     {
-        if (is_null($this->findMetaValue($key))) {
+        if (is_null($this->findMeta($key))) {
             return $this->addMeta($key, $value);
         }
 

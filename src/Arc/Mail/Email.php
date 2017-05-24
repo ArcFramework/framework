@@ -2,7 +2,6 @@
 
 namespace Arc\Mail;
 
-use Arc\Application;
 use Illuminate\Support\Str;
 
 class Email
@@ -19,15 +18,15 @@ class Email
 
     /**
      * Gets the email attachments for the email
-     * TODO
+     * TODO.
      **/
     public function getAttachments()
     {
-
     }
 
     /**
-     * Returns the CSS styles if they have been set
+     * Returns the CSS styles if they have been set.
+     *
      * @return string
      **/
     public function getCSS()
@@ -39,44 +38,55 @@ class Email
     {
         $this->template = $template;
         $this->templateParameters = $parameters;
+
         return $this;
     }
 
     /**
-     * Sets the HTML text to be sent in the message
+     * Sets the HTML text to be sent in the message.
+     *
      * @param string $message
+     *
      * @return $this
      **/
     public function withMessage($message)
     {
         $this->message = $message;
+
         return $this;
     }
 
     /**
-     * Sets the subject for the message
+     * Sets the subject for the message.
+     *
      * @param string $subject
+     *
      * @return $this
      **/
     public function withSubject($subject)
     {
         $this->subject = $subject;
+
         return $this;
     }
 
     /**
-     * Sets the CSS styling rules to be applied to the HTML text in the message
+     * Sets the CSS styling rules to be applied to the HTML text in the message.
+     *
      * @param string $css
+     *
      * @return $this
      **/
     public function withCSS($css)
     {
         $this->css = $css;
+
         return $this;
     }
 
     /**
-     * Returns the from address set for the email if it exists
+     * Returns the from address set for the email if it exists.
+     *
      * @erturn string|null
      **/
     public function getFromAddress()
@@ -85,7 +95,8 @@ class Email
     }
 
     /**
-     * Gets the email headers for the email
+     * Gets the email headers for the email.
+     *
      * @return array
      **/
     public function getHeaders()
@@ -94,7 +105,7 @@ class Email
     }
 
     /**
-     * Renders and returns the content of the email message
+     * Renders and returns the content of the email message.
      **/
     public function getMessage()
     {
@@ -102,7 +113,8 @@ class Email
     }
 
     /**
-     * Returns the name of the blade template
+     * Returns the name of the blade template.
+     *
      * @return string
      **/
     public function getTemplate()
@@ -111,7 +123,8 @@ class Email
     }
 
     /**
-     * Returns the parameters being passed into the blade template
+     * Returns the parameters being passed into the blade template.
+     *
      * @return array
      **/
     public function getTemplateParameters()
@@ -120,7 +133,8 @@ class Email
     }
 
     /**
-     * Returns the subject text for the email
+     * Returns the subject text for the email.
+     *
      * @return string
      **/
     public function getSubject()
@@ -129,7 +143,8 @@ class Email
     }
 
     /**
-     * Returns the recipient address(es)
+     * Returns the recipient address(es).
+     *
      * @return string
      **/
     public function getTo()
@@ -138,7 +153,8 @@ class Email
     }
 
     /**
-     * Returns true if the email has CSS styles
+     * Returns true if the email has CSS styles.
+     *
      * @return bool
      **/
     public function hasCSS()
@@ -147,7 +163,8 @@ class Email
     }
 
     /**
-     * Returns true if a from address has been set for the email
+     * Returns true if a from address has been set for the email.
+     *
      * @erturn bool
      **/
     public function hasFromAddress()
@@ -156,7 +173,8 @@ class Email
     }
 
     /**
-     * Returns true if the email has a plain text message
+     * Returns true if the email has a plain text message.
+     *
      * @return bool
      **/
     public function hasMessage()
@@ -165,7 +183,8 @@ class Email
     }
 
     /**
-     * Returns true if the email has a blade template
+     * Returns true if the email has a blade template.
+     *
      * @return bool
      **/
     public function hasTemplate()
@@ -175,34 +194,40 @@ class Email
 
     /**
      * Returns true if the given email address is one of the recipients of the
-     * email
-    **/
+     * email.
+     **/
     public function isBeingSentTo($emailAddress)
     {
-         return Str::contains($this->to, $emailAddress)
+        return Str::contains($this->to, $emailAddress)
             || Str::contains($this->cc, $emailAddress)
             || Str::contains($this->bcc, $emailAddress);
     }
 
     /**
-     * Set the recipient of the email
+     * Set the recipient of the email.
+     *
      * @param string $email An email address, or comma separated list of email addresses
+     *
      * @return $this
      **/
     public function to($email)
     {
         $this->to = $email;
+
         return $this;
     }
 
     /**
-     * Set the sender address of the email
+     * Set the sender address of the email.
+     *
      * @param string $email An email address
+     *
      * @return $this
      **/
     public function from($email)
     {
         $this->from = $email;
+
         return $this;
     }
 }

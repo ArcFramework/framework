@@ -7,10 +7,9 @@ use Arc\Exceptions\Handler;
 use Arc\Routing\Router;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
 use Illuminate\Pipeline\Pipeline;
-use Illuminate\Http\Request as IlluminateRequest;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Kernel implements KernelContract
 {
@@ -68,7 +67,7 @@ class Kernel implements KernelContract
 
     public function bootstrap()
     {
-        if (! $this->app->hasBeenBootstrapped()) {
+        if (!$this->app->hasBeenBootstrapped()) {
             $this->app->bootstrapWith($this->bootstrappers());
         }
     }
@@ -89,8 +88,10 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Handle the request and return a response
+     * Handle the request and return a response.
+     *
      * @param $request
+     *
      * @return Illuminate\Http\Response
      **/
     public function handle($request)
@@ -99,9 +100,9 @@ class Kernel implements KernelContract
             $request->enableHttpMethodParameterOverride();
             $response = $this->sendRequestThroughRouter($request);
         } catch (NotFoundHttpException $e) {
-            $response = new DeferToWordpress;
+            $response = new DeferToWordpress();
         } catch (MethodNotAllowedHttpException $e) {
-            $response = new DeferToWordpress;
+            $response = new DeferToWordpress();
         } catch (\Exception $e) {
             $this->reportException($e);
             $response = $this->renderException($request, $e);
@@ -144,7 +145,8 @@ class Kernel implements KernelContract
     /**
      * Send the given request through the middleware / router.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     protected function sendRequestThroughRouter($request)
@@ -152,13 +154,14 @@ class Kernel implements KernelContract
         $this->app->instance('request', $request);
 
         $this->bootstrap();
+
         return (new Pipeline($this->app))
                     ->send($request)
                     ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
                     ->then($this->dispatchToRouter());
     }
 
-     /**
+    /**
      * Get the route dispatcher callback.
      *
      * @return \Closure
@@ -197,6 +200,6 @@ class Kernel implements KernelContract
             return $response;
         }
 
-        return new DeferToWordpress;
+        return new DeferToWordpress();
     }
 }

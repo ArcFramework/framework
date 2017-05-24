@@ -2,7 +2,6 @@
 
 namespace Arc\Console;
 
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -23,25 +22,29 @@ class ShipPluginCommand extends Command
     protected $description = 'Build the plugin and zip it up ready for deployment';
 
     /**
-     * The location of the Arc config file on the local file system
+     * The location of the Arc config file on the local file system.
+     *
      * @var string
      **/
     protected $configFilePath;
 
     /**
-     * The path to the directory where all shipped plugins are stored
+     * The path to the directory where all shipped plugins are stored.
+     *
      * @var string
      **/
     protected $shippedPluginDirectory;
 
     /**
-     * The path to the directory where the final zip will be save
+     * The path to the directory where the final zip will be save.
+     *
      * @var string
      **/
     protected $releaseDirectory;
 
     /**
-     * The path to the directory where shipped plugins for this plugin are stored
+     * The path to the directory where shipped plugins for this plugin are stored.
+     *
      * @var string
      **/
     protected $finalDestination;
@@ -59,21 +62,21 @@ class ShipPluginCommand extends Command
     public function fire()
     {
         // Get the arc config file path
-        $this->configFilePath = $this->getHomeDirectory() . '/.arc/config.php';
+        $this->configFilePath = $this->getHomeDirectory().'/.arc/config.php';
         $this->shippedPluginDirectory = $this->getConfig()['shippedPluginDirectory'];
-        $this->releaseDirectory = $this->shippedPluginDirectory . '/' . basename($this->app->slug());
-        $this->finalDestination = $this->releaseDirectory . '/' . basename($this->app->slug());
+        $this->releaseDirectory = $this->shippedPluginDirectory.'/'.basename($this->app->slug());
+        $this->finalDestination = $this->releaseDirectory.'/'.basename($this->app->slug());
 
         // Create the shipped plugin directory if it does not yet exist
         if (!file_exists($this->shippedPluginDirectory)) {
-            $this->line('Creating shipped plugin directory at ' . $this->shippedPluginDirectory);
+            $this->line('Creating shipped plugin directory at '.$this->shippedPluginDirectory);
             mkdir($this->shippedPluginDirectory);
             $this->done();
         }
 
         // Create the plugin release directory if it does not yet exist
         if (!file_exists($this->releaseDirectory)) {
-            $this->line('Creating directory for releases of this plugin at ' . $this->releaseDirectory);
+            $this->line('Creating directory for releases of this plugin at '.$this->releaseDirectory);
             mkdir($this->releaseDirectory);
             $this->done();
         }
@@ -84,14 +87,14 @@ class ShipPluginCommand extends Command
         $this->done();
 
         // Remove studio.json file if it exists
-        if (file_exists($this->finalDestination . '/studio.json')) {
+        if (file_exists($this->finalDestination.'/studio.json')) {
             $this->line("Removing studio.json so we don't include any symlinks");
-            unlink($this->finalDestination . '/studio.json');
+            unlink($this->finalDestination.'/studio.json');
             $this->done();
         }
 
         // Run composer install
-        $this->line("Removing vendor directory so we have a fresh install of all dependencies without symlinks");
+        $this->line('Removing vendor directory so we have a fresh install of all dependencies without symlinks');
         echo shell_exec("rm -R $this->finalDestination/vendor");
         $this->done();
         $this->line('Running composer install');
@@ -100,16 +103,16 @@ class ShipPluginCommand extends Command
 
         // Delete skipped files
         $this->line('Deleting files named in .shipignore');
-        foreach($this->getSkippedFiles() as $filename) {
+        foreach ($this->getSkippedFiles() as $filename) {
             if (empty($filename)) {
                 continue;
             }
-            $path = $this->finalDestination . '/' . $filename;
+            $path = $this->finalDestination.'/'.$filename;
             echo shell_exec("rm -Rf $path");
         }
         $this->done();
 
-        $zipFilePath = $this->finalDestination . '-' . $this->app->version() . '.zip';
+        $zipFilePath = $this->finalDestination.'-'.$this->app->version().'.zip';
         $this->line('Zip up resulting folder to '.$zipFilePath);
 
         $this->zipDir($this->finalDestination, $zipFilePath);
@@ -124,14 +127,19 @@ class ShipPluginCommand extends Command
     }
 
     /**
-     * Copy a file, or recursively copy a folder and its contents
+     * Copy a file, or recursively copy a folder and its contents.
+     *
      * @author      Aidan Lister <aidan@php.net>
+     *
      * @version     1.0.1
+     *
      * @link        http://aidanlister.com/2004/04/recursively-copying-directories-in-php/
-     * @param       string   $source    Source path
-     * @param       string   $dest      Destination path
-     * @param       int      $permissions New folder creation permissions
-     * @return      bool     Returns true on success, false on failure
+     *
+     * @param string $source      Source path
+     * @param string $dest        Destination path
+     * @param int    $permissions New folder creation permissions
+     *
+     * @return bool Returns true on success, false on failure
      */
     protected function xcopy($source, $dest, $permissions = 0755)
     {
@@ -169,6 +177,7 @@ class ShipPluginCommand extends Command
 
         // Clean up
         $dir->close();
+
         return true;
     }
 
@@ -176,22 +185,23 @@ class ShipPluginCommand extends Command
     {
         if (!file_exists($this->configFilePath)) {
             return [
-                'shippedPluginDirectory' => $this->getHomeDirectory()
+                'shippedPluginDirectory' => $this->getHomeDirectory(),
             ];
         }
 
-        return include($this->configFilePath);
+        return include $this->configFilePath;
     }
 
     protected function getSkippedFiles()
     {
         $skippedFiles = [];
-        if ($file = fopen(".shipignore", "r")) {
+        if ($file = fopen('.shipignore', 'r')) {
             while (!feof($file)) {
                 $skippedFiles[] = trim(fgets($file));
             }
             fclose($file);
         }
+
         return $skippedFiles;
     }
 
@@ -217,7 +227,6 @@ class ShipPluginCommand extends Command
         closedir($handle);
     }
 
-
     /**
      * Zip a folder (include itself).
      *
@@ -226,7 +235,7 @@ class ShipPluginCommand extends Command
      */
     protected function zipDir($sourcePath, $outZipPath)
     {
-        $pathInfo = pathInfo($sourcePath);
+        $pathInfo = pathinfo($sourcePath);
         $parentPath = $pathInfo['dirname'];
         $dirName = $pathInfo['basename'];
 
@@ -248,7 +257,8 @@ class ShipPluginCommand extends Command
     }
 
     /**
-     * Get the current user's home directory
+     * Get the current user's home directory.
+     *
      * @return string
      **/
     protected function getHomeDirectory()

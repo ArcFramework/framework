@@ -8,7 +8,7 @@ class FileManager
 {
     /**
      * Copy a file from the first path to the second path, overwriting any file that exists
-     * already at that path
+     * already at that path.
      *
      * @param string $fromPath
      * @param string $toPath
@@ -25,7 +25,7 @@ class FileManager
     }
 
     /**
-     * Creates a directory at the given path if one does not already exist
+     * Creates a directory at the given path if one does not already exist.
      *
      * @param string $dirPath
      **/
@@ -39,15 +39,15 @@ class FileManager
             return;
         }
 
-        if (!is_writeable(dirname($dirPath))) {
-            throw new InsufficientPermissionsException('Insufficient permissions to create directory ' . $dirPath);
+        if (!is_writable(dirname($dirPath))) {
+            throw new InsufficientPermissionsException('Insufficient permissions to create directory '.$dirPath);
         }
         mkdir($dirPath, $permissions ?? 0777, $recursive);
     }
 
     /**
      * Deletes any existing directory recursively at the given path and creates a fresh
-     * one, creating any parent folders that do not already exist
+     * one, creating any parent folders that do not already exist.
      *
      * @param string $dirPath
      **/
@@ -61,19 +61,19 @@ class FileManager
     }
 
     /**
-     * Deletes the given directory and all files it contains recursively
+     * Deletes the given directory and all files it contains recursively.
      *
      * @param string $dirPath
      **/
     public function deleteDirectory($dirPath)
     {
-        if (! is_dir($dirPath)) {
+        if (!is_dir($dirPath)) {
             return;
         }
         if (substr($dirPath, strlen($dirPath) - 1, 1) != '/') {
             $dirPath .= '/';
         }
-        $files = glob($dirPath . '*', GLOB_MARK);
+        $files = glob($dirPath.'*', GLOB_MARK);
         foreach ($files as $file) {
             if (is_dir($file)) {
                 self::deleteDirectory($file);
@@ -85,9 +85,10 @@ class FileManager
     }
 
     /**
-     * Returns true if the given directory contains no files
+     * Returns true if the given directory contains no files.
      *
      * @param string $dirPath
+     *
      * @return bool
      **/
     public function directoryIsEmpty($dirPath)
@@ -100,6 +101,7 @@ class FileManager
      * Files subdirectories and files in subdirectories will be ignored.
      *
      * @param string $dirPath The full path to the directory
+     *
      * @return array
      **/
     public function getAllFilesInDirectory($dirPath)
@@ -122,15 +124,16 @@ class FileManager
     }
 
     /**
-     * Get the given file and return a File object or null if no file exists
+     * Get the given file and return a File object or null if no file exists.
      *
      * @param string $filePath The full path to the file
+     *
      * @return array
      **/
     public function getFile($filePath)
     {
         if (!file_exists($filePath)) {
-            return null;
+            return;
         }
 
         return new File($filePath);
@@ -138,7 +141,7 @@ class FileManager
 
     /**
      * Delete the directory or file at the given path or file object
-     * (Directories will be deleted recursively)
+     * (Directories will be deleted recursively).
      **/
     public function delete($file)
     {
@@ -157,10 +160,10 @@ class FileManager
     }
 
     /**
-     * Removes double forward slashes from the given path and returns the result
+     * Removes double forward slashes from the given path and returns the result.
      **/
     public function removeDoubleSlashes($path)
     {
-        return preg_replace('#/+#','/', $path);
+        return preg_replace('#/+#', '/', $path);
     }
 }

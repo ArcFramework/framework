@@ -2,63 +2,36 @@
 
 namespace Arc;
 
-use Arc\Activation\ActivationHooks;
-use Arc\Hooks\Actions;
-use Arc\Admin\AdminMenus;
 use Arc\Assets\Assets;
-use Arc\Exceptions\Handler;
 use Arc\Config\Config;
 use Arc\Config\Env;
 use Arc\Config\EnvironmentDetector;
-use Arc\Config\WPOptions;
 use Arc\Console\Kernel as ConsoleKernel;
-use Arc\Contracts\Mail\Mailer as MailerContract;
-use Arc\Cron\CronSchedules;
-use Arc\Events\NonDispatcher;
+use Arc\Exceptions\Handler;
 use Arc\Http\Kernel as HttpKernel;
 use Arc\Http\Response;
-use Arc\Http\ValidatesRequests;
 use Arc\Mail\Mailer;
 use Arc\Providers\ProviderRepository;
 use Arc\Routing\Router;
 use Arc\Routing\RoutingServiceProvider;
-use Arc\Shortcodes\Shortcodes;
-use Arc\View\ViewFinder;
 use Closure;
-use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Contracts\Container\Container as ContainerContract;
-use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
+use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
 use Illuminate\Contracts\Translation\Translator as Translator;
-use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Contracts\View\Factory as ViewFactoryContract;
-use Illuminate\Database\Capsule\Manager as Capsule;
-use Illuminate\Database\Schema\MySqlBuilder;
 use Illuminate\Events\EventServiceProvider;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Http\Response as IlluminateResponse;
 use Illuminate\Http\Request;
 use Illuminate\Log\LogServiceProvider;
-use Illuminate\Routing\RouteCollection;
-use Illuminate\Session\CookieSessionHandler;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Session\SessionManager;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use Illuminate\Translation\Translator as IlluminateTranslator;
-use Illuminate\Translation\FileLoader;
-use Illuminate\Translation\LoaderInterface;
-use Illuminate\Validation\Factory as IlluminateValidationFactory;
-use Illuminate\Validation\Validator as IlluminateValidator;
 use Illuminate\View\Factory as ViewFactory;
-use Illuminate\View\ViewFinderInterface;
 use Interop\Container\ContainerInterface;
-use SessionHandlerInterface;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -75,7 +48,8 @@ abstract class Application extends Container implements ApplicationContract, Con
     public $uri;
 
     /**
-     * The path to the wordpress directory
+     * The path to the wordpress directory.
+     *
      * @var string
      **/
     protected $wordpressPath;
@@ -165,7 +139,8 @@ abstract class Application extends Container implements ApplicationContract, Con
     protected $hasBeenBootstrapped = false;
 
     /**
-     * Instantiate the class
+     * Instantiate the class.
+     *
      * @param string $pluginFilename Full qualified path to plugin file
      **/
     public function __construct($pluginFilename)
@@ -198,7 +173,7 @@ abstract class Application extends Container implements ApplicationContract, Con
      */
     public function hasMonologConfigurator()
     {
-        return ! is_null($this->monologConfigurator);
+        return !is_null($this->monologConfigurator);
     }
 
     /**
@@ -213,6 +188,7 @@ abstract class Application extends Container implements ApplicationContract, Con
      * Get the path to the bootstrap directory.
      *
      * @param string $path Optionally, a path to append to the bootstrap path
+     *
      * @return string
      */
     public function bootstrapPath($path = '')
@@ -223,7 +199,8 @@ abstract class Application extends Container implements ApplicationContract, Con
     /**
      * Call the booting callbacks for the application.
      *
-     * @param  array  $callbacks
+     * @param array $callbacks
+     *
      * @return void
      */
     protected function fireAppCallbacks(array $callbacks)
@@ -232,7 +209,6 @@ abstract class Application extends Container implements ApplicationContract, Con
             call_user_func($callback, $this);
         }
     }
-
 
     /**
      * Get the path to the configuration cache file.
@@ -304,7 +280,7 @@ abstract class Application extends Container implements ApplicationContract, Con
                 \Arc\Routing\Router::class,
                 \Illuminate\Routing\Router::class,
                 \Illuminate\Contracts\Routing\Registrar::class,
-                \Illuminate\Contracts\Routing\BindingRegistrar::class
+                \Illuminate\Contracts\Routing\BindingRegistrar::class,
             ],
             'session'              => [\Illuminate\Session\SessionManager::class],
             'session.store'        => [\Illuminate\Session\Store::class, \Illuminate\Contracts\Session\Session::class],
@@ -337,7 +313,8 @@ abstract class Application extends Container implements ApplicationContract, Con
     /**
      * Mark the given provider as registered.
      *
-     * @param  \Illuminate\Support\ServiceProvider  $provider
+     * @param \Illuminate\Support\ServiceProvider $provider
+     *
      * @return void
      */
     protected function markAsRegistered($provider)
@@ -351,7 +328,8 @@ abstract class Application extends Container implements ApplicationContract, Con
      *
      * (Overriding Container::make)
      *
-     * @param  string  $abstract
+     * @param string $abstract
+     *
      * @return mixed
      */
     public function make($abstract)
@@ -368,7 +346,8 @@ abstract class Application extends Container implements ApplicationContract, Con
     /**
      * Get the registered service provider instance if it exists.
      *
-     * @param  \Illuminate\Support\ServiceProvider|string  $provider
+     * @param \Illuminate\Support\ServiceProvider|string $provider
+     *
      * @return \Illuminate\Support\ServiceProvider|null
      */
     public function getProvider($provider)
@@ -400,12 +379,13 @@ abstract class Application extends Container implements ApplicationContract, Con
     /**
      * Load the provider for a deferred service.
      *
-     * @param  string  $service
+     * @param string $service
+     *
      * @return void
      */
     public function loadDeferredProvider($service)
     {
-        if (! isset($this->deferredServices[$service])) {
+        if (!isset($this->deferredServices[$service])) {
             return;
         }
 
@@ -414,7 +394,7 @@ abstract class Application extends Container implements ApplicationContract, Con
         // If the service provider has not already been loaded and registered we can
         // register it with the application and remove the service from this list
         // of deferred services, since it will already be loaded on subsequent.
-        if (! isset($this->loadedProviders[$provider])) {
+        if (!isset($this->loadedProviders[$provider])) {
             $this->registerDeferredProvider($provider, $service);
         }
     }
@@ -438,7 +418,8 @@ abstract class Application extends Container implements ApplicationContract, Con
     {
         $basePath = $this->basePath ??
             $this->basePath = $this->env('PLUGIN_BASE_PATH', dirname($this->filename));
-        return rtrim("$basePath/$path", "/");
+
+        return rtrim("$basePath/$path", '/');
     }
 
     /**
@@ -454,7 +435,8 @@ abstract class Application extends Container implements ApplicationContract, Con
     /**
      * Detect the application's current environment.
      *
-     * @param  \Closure  $callback
+     * @param \Closure $callback
+     *
      * @return string
      */
     public function detectEnvironment(Closure $callback)
@@ -490,6 +472,7 @@ abstract class Application extends Container implements ApplicationContract, Con
      * Get the path to the application configuration files.
      *
      * @param string $path Optionally, a path to append to the config path
+     *
      * @return string
      */
     public function configPath($path = '')
@@ -530,7 +513,8 @@ abstract class Application extends Container implements ApplicationContract, Con
     /**
      * Add an array of services to the application's deferred services.
      *
-     * @param  array  $services
+     * @param array $services
+     *
      * @return void
      */
     public function addDeferredServices(array $services)
@@ -545,21 +529,22 @@ abstract class Application extends Container implements ApplicationContract, Con
      */
     public function registerConfiguredProviders()
     {
-        (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPath()))
+        (new ProviderRepository($this, new Filesystem(), $this->getCachedServicesPath()))
                     ->load($this->config['app.providers']);
     }
 
     /**
      * Register a service provider with the application.
      *
-     * @param  \Illuminate\Support\ServiceProvider|string  $provider
-     * @param  array  $options
-     * @param  bool   $force
+     * @param \Illuminate\Support\ServiceProvider|string $provider
+     * @param array                                      $options
+     * @param bool                                       $force
+     *
      * @return \Illuminate\Support\ServiceProvider
      */
     public function register($provider, $options = [], $force = false)
     {
-        if (($registered = $this->getProvider($provider)) && ! $force) {
+        if (($registered = $this->getProvider($provider)) && !$force) {
             return $registered;
         }
 
@@ -589,7 +574,8 @@ abstract class Application extends Container implements ApplicationContract, Con
     /**
      * Resolve a service provider instance from the class name.
      *
-     * @param  string  $provider
+     * @param string $provider
+     *
      * @return \Illuminate\Support\ServiceProvider
      */
     public function resolveProvider($provider)
@@ -600,8 +586,9 @@ abstract class Application extends Container implements ApplicationContract, Con
     /**
      * Register a deferred provider and service.
      *
-     * @param  string  $provider
-     * @param  string  $service
+     * @param string $provider
+     * @param string $service
+     *
      * @return void
      */
     public function registerDeferredProvider($provider, $service = null)
@@ -613,7 +600,7 @@ abstract class Application extends Container implements ApplicationContract, Con
             unset($this->deferredServices[$service]);
         }
         $this->register($instance = new $provider($this));
-        if (! $this->booted) {
+        if (!$this->booted) {
             $this->booting(function () use ($instance) {
                 $this->bootProvider($instance);
             });
@@ -623,7 +610,8 @@ abstract class Application extends Container implements ApplicationContract, Con
     /**
      * Boot the given service provider.
      *
-     * @param  \Illuminate\Support\ServiceProvider  $provider
+     * @param \Illuminate\Support\ServiceProvider $provider
+     *
      * @return mixed
      */
     protected function bootProvider(ServiceProvider $provider)
@@ -659,7 +647,8 @@ abstract class Application extends Container implements ApplicationContract, Con
     /**
      * Register a new boot listener.
      *
-     * @param  mixed  $callback
+     * @param mixed $callback
+     *
      * @return void
      */
     public function booting($callback)
@@ -670,7 +659,8 @@ abstract class Application extends Container implements ApplicationContract, Con
     /**
      * Register a new "booted" listener.
      *
-     * @param  mixed  $callback
+     * @param mixed $callback
+     *
      * @return void
      */
     public function booted($callback)
@@ -711,11 +701,11 @@ abstract class Application extends Container implements ApplicationContract, Con
     {
         $this->instance('app', $this);
 
-        $this->bind(ContainerContract::class, Application::class);
+        $this->bind(ContainerContract::class, self::class);
 
         $this->instance(Container::class, $this);
 
-        $this->instance(Application::class, $this);
+        $this->instance(self::class, $this);
     }
 
     /**
@@ -752,7 +742,8 @@ abstract class Application extends Container implements ApplicationContract, Con
     /**
      * Run the given array of bootstrap classes.
      *
-     * @param  array  $bootstrappers
+     * @param array $bootstrappers
+     *
      * @return void
      */
     public function bootstrapWith(array $bootstrappers)
@@ -771,26 +762,27 @@ abstract class Application extends Container implements ApplicationContract, Con
     /**
      * Set the shared instance of the application.
      *
-     * @param  Application|null  $container
+     * @param Application|null $container
+     *
      * @return static
      */
-    public abstract static function setApplicationInstance(Application $application);
+    abstract public static function setApplicationInstance(Application $application);
 
     /**
      * Get the shared instance of the application.
      *
      * @return static
      */
-    public abstract static function app();
+    abstract public static function app();
 
     /**
-     * Start the plugin
+     * Start the plugin.
      **/
     public function start()
     {
         $kernel = $this->make(HttpKernelContract::class);
 
-        add_action('init', function() use ($kernel) {
+        add_action('init', function () use ($kernel) {
             // Handle request through http kernel
             $response = $kernel->handle(
                 $request = \Illuminate\Http\Request::capture()
@@ -840,6 +832,7 @@ abstract class Application extends Container implements ApplicationContract, Con
         }
 
         return $value;
+
         return $this->environment($key, $default);
     }
 
@@ -849,7 +842,7 @@ abstract class Application extends Container implements ApplicationContract, Con
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function get($id)
     {
@@ -857,7 +850,7 @@ abstract class Application extends Container implements ApplicationContract, Con
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function has($id)
     {
@@ -872,9 +865,10 @@ abstract class Application extends Container implements ApplicationContract, Con
     /**
      * Generate the URL to a named route.
      *
-     * @param  string  $name
-     * @param  array   $parameters
-     * @param  bool    $absolute
+     * @param string $name
+     * @param array  $parameters
+     * @param bool   $absolute
+     *
      * @return string
      */
     public function route($name, $parameters = [], $absolute = true)
@@ -885,9 +879,10 @@ abstract class Application extends Container implements ApplicationContract, Con
     /**
      * Get the evaluated view contents for the given view.
      *
-     * @param  string  $view
-     * @param  array   $data
-     * @param  array   $mergeData
+     * @param string $view
+     * @param array  $data
+     * @param array  $mergeData
+     *
      * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
     public function view($view = null, $data = [], $mergeData = [])
@@ -902,7 +897,8 @@ abstract class Application extends Container implements ApplicationContract, Con
     }
 
     /**
-     * Set all the relative paths and other constants for the application
+     * Set all the relative paths and other constants for the application.
+     *
      * @param string $pluginFilename the fully path to the plugin file
      **/
     protected function setPaths($pluginFilename)
@@ -916,7 +912,7 @@ abstract class Application extends Container implements ApplicationContract, Con
             ->getDeclaringClass()
             ->getFilename());
         $this->filename = $pluginFilename;
-        $this->namespace = substr(get_called_class(), 0, strrpos(get_called_class(), "\\"));
+        $this->namespace = substr(get_called_class(), 0, strrpos(get_called_class(), '\\'));
 
         $this->bindPathsInContainer();
     }
@@ -950,17 +946,15 @@ abstract class Application extends Container implements ApplicationContract, Con
     }
 
     /**
-     * Get the base url of the site
+     * Get the base url of the site.
      **/
     public function baseUrl($uri = null)
     {
         if (defined('ARC_TESTING')) {
             $baseUrl = 'http://localhost';
-        }
-        else if (!function_exists('get_site_url')) {
+        } elseif (!function_exists('get_site_url')) {
             $baseUrl = 'http://localhost';
-        }
-        else {
+        } else {
             $baseUrl = get_site_url();
         }
 
@@ -1000,18 +994,18 @@ abstract class Application extends Container implements ApplicationContract, Con
 
     public function terminate()
     {
-
     }
 
     /**
      * Throw an HttpException with the given data.
      *
-     * @param  int     $code
-     * @param  string  $message
-     * @param  array   $headers
-     * @return void
+     * @param int    $code
+     * @param string $message
+     * @param array  $headers
      *
      * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     *
+     * @return void
      */
     public function abort($code, $message = '', array $headers = [])
     {
@@ -1026,8 +1020,9 @@ abstract class Application extends Container implements ApplicationContract, Con
      *
      * If an array is passed as the key, we will assume you want to set an array of values.
      *
-     * @param  array|string  $key
-     * @param  mixed  $default
+     * @param array|string $key
+     * @param mixed        $default
+     *
      * @return mixed
      */
     public function session($key = null, $default = null)
@@ -1038,6 +1033,7 @@ abstract class Application extends Container implements ApplicationContract, Con
         if (is_array($key)) {
             return $this->make('session')->put($key);
         }
+
         return make('session')->get($key, $default);
     }
 

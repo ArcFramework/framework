@@ -8,19 +8,22 @@ class Filters
 
     /**
      * Set the hook for the action
-     * string $hook
+     * string $hook.
      **/
     public function forHook($hook)
     {
         $this->hook = $hook;
+
         return $this;
     }
 
     /**
-     * Apply the filters for the given hook on the given text and return the result
+     * Apply the filters for the given hook on the given text and return the result.
+     *
      * @param string $hook
      * @param string $text
      * @params $args (optional) Optional additional parameters to pass into the callbacks
+     *
      * @return mixed
      **/
     public function apply($hook, $text, ...$args)
@@ -31,7 +34,7 @@ class Filters
     /**
      * Set the callable to be called when the action is invoked and register the action
      * in WordPress
-     * Callable $callable
+     * Callable $callable.
      **/
     public function doThis($callable)
     {

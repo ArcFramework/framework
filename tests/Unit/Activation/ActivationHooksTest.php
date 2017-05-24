@@ -1,7 +1,6 @@
 <?php
 
 use Arc\Hooks\Activation;
-use Arc\Config\Config;
 
 class ActivationHooksTest extends FrameworkTestCase
 {
@@ -16,10 +15,10 @@ class ActivationHooksTest extends FrameworkTestCase
 
         WP_Mock::wpFunction('register_activation_hook', [
             'times' => 1,
-            'args' => [
+            'args'  => [
                 $this->app->filename,
-                $doThis
-            ]
+                $doThis,
+            ],
         ]);
 
         $this->app->make(Activation::class)->whenPluginIsActivated($doThis);
@@ -36,10 +35,10 @@ class ActivationHooksTest extends FrameworkTestCase
 
         WP_Mock::wpFunction('register_deactivation_hook', [
             'times' => 1,
-            'args' => [
+            'args'  => [
                 $this->app->filename,
-                $doThis
-            ]
+                $doThis,
+            ],
         ]);
 
         $this->app->make(Activation::class)->whenPluginIsDeactivated($doThis);

@@ -25,8 +25,7 @@ class AdminMenus
         Application $plugin,
         Factory $viewFactory,
         ControllerDispatcher $controllerDispatcher
-    )
-    {
+    ) {
         $this->app = $plugin;
         $this->controllerDispatcher = $controllerDispatcher;
         $this->viewFactory = $viewFactory;
@@ -34,7 +33,7 @@ class AdminMenus
 
     public function register()
     {
-        $adminRegistrarClassName = $this->app->namespace . '\\Admin\\RegistersAdminMenus';
+        $adminRegistrarClassName = $this->app->namespace.'\\Admin\\RegistersAdminMenus';
 
         // If no activator class has been defined we can return early
         if (!class_exists($adminRegistrarClassName)) {
@@ -50,7 +49,7 @@ class AdminMenus
             return;
         }
 
-        add_action('admin_menu', function() {
+        add_action('admin_menu', function () {
             add_menu_page(
                 $this->name,
                 $this->title,
@@ -63,7 +62,7 @@ class AdminMenus
         });
 
         foreach ($this->settings as $setting) {
-            add_action('admin_init', function() use ($setting) {
+            add_action('admin_init', function () use ($setting) {
                 register_setting($this->slug, $setting);
             });
         }
@@ -78,36 +77,41 @@ class AdminMenus
 
     public function render($view)
     {
-        echo($this->viewFactory->make($view, $this->viewParameters));
+        echo $this->viewFactory->make($view, $this->viewParameters);
     }
 
     public function addMenuPageCalled($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
     public function withMenuTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
     public function restrictedToCapability($capability)
     {
         $this->capability = $capability;
+
         return $this;
     }
 
     public function withSettings($settings = [])
     {
         $this->settings = $settings;
+
         return $this;
     }
 
     public function withSlug($slug)
     {
         $this->slug = $slug;
+
         return $this;
     }
 
@@ -116,6 +120,7 @@ class AdminMenus
         $parameters = explode('@', $controllerMethod);
         $this->controller = $parameters[0];
         $this->controllerMethod = $parameters[1];
+
         return $this;
     }
 
@@ -123,22 +128,26 @@ class AdminMenus
     {
         $this->view = $view;
         $this->viewParameters = $parameters;
+
         return $this;
     }
 
     public function withIcon($icon)
     {
-        $this->icon = $this->app->getUrl() . '/resources/assets/images/' . $icon;
+        $this->icon = $this->app->getUrl().'/resources/assets/images/'.$icon;
+
         return $this;
     }
 
     protected function getCallable()
     {
         if (!empty($this->controller)) {
-            return function() {
+            return function () {
                 $this->controllerDispatcher->call($this->controller, $this->controllerMethod);
             };
         }
-        return !is_null($this->view) ? [$this, 'render' . $this->view] : function() {};
+
+        return !is_null($this->view) ? [$this, 'render'.$this->view] : function () {
+        };
     }
 }

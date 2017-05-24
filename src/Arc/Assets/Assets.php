@@ -24,17 +24,17 @@ class Assets
     }
 
     /**
-     * Enqueues the assets into the Wordpress application
+     * Enqueues the assets into the Wordpress application.
      **/
     public function enqueue()
     {
         $this->parser->parse('assets', [
-            'assets' => $this
+            'assets' => $this,
         ]);
     }
 
     /**
-     * Enqueue the script and reset the fluent properties
+     * Enqueue the script and reset the fluent properties.
      **/
     public function enqueueScript()
     {
@@ -42,7 +42,7 @@ class Assets
     }
 
     /**
-     * Enqueue the script and reset the fluent properties
+     * Enqueue the script and reset the fluent properties.
      **/
     public function enqueueStyle()
     {
@@ -50,7 +50,7 @@ class Assets
     }
 
     /**
-     * Enqueue the script and reset the fluent properties
+     * Enqueue the script and reset the fluent properties.
      **/
     public function enqueueAdminStyle()
     {
@@ -58,7 +58,7 @@ class Assets
     }
 
     /**
-     * Enqueue the admin script and reset the fluent properties
+     * Enqueue the admin script and reset the fluent properties.
      **/
     public function enqueueAdminScript()
     {
@@ -78,12 +78,12 @@ class Assets
     }
 
     /**
-     * Add Wordpress hooks to register the assets at the appropriate time
+     * Add Wordpress hooks to register the assets at the appropriate time.
      **/
     public function register()
     {
-        add_action('wp_enqueue_scripts', function() {
-            foreach($this->scripts as $script) {
+        add_action('wp_enqueue_scripts', function () {
+            foreach ($this->scripts as $script) {
                 wp_enqueue_script(
                     $script->slug,
                     $this->getPath($script),
@@ -92,7 +92,7 @@ class Assets
                 );
             }
 
-            foreach($this->styles as $style) {
+            foreach ($this->styles as $style) {
                 wp_enqueue_style(
                     $style->slug,
                     $this->getPath($style),
@@ -102,8 +102,8 @@ class Assets
             }
         });
 
-        add_action('admin_enqueue_scripts', function() {
-            foreach($this->adminScripts as $script) {
+        add_action('admin_enqueue_scripts', function () {
+            foreach ($this->adminScripts as $script) {
                 wp_enqueue_script(
                     $script->slug,
                     $this->getPath($script),
@@ -112,7 +112,7 @@ class Assets
                 );
             }
 
-            foreach($this->adminStyles as $style) {
+            foreach ($this->adminStyles as $style) {
                 wp_enqueue_style(
                     $style->slug,
                     $this->getPath($style),
@@ -124,56 +124,60 @@ class Assets
     }
 
     /**
-     * Sets the path of the asset
+     * Sets the path of the asset.
      **/
     public function path($path)
     {
         $this->path = $path;
+
         return $this;
     }
 
     /**
-     * Sets the dependencies of the asset
+     * Sets the dependencies of the asset.
      **/
     public function dependencies($dependencies)
     {
         $this->dependencies = $dependencies;
+
         return $this;
     }
 
     /**
-     * Sets the slug of the asset
+     * Sets the slug of the asset.
      **/
     public function slug($slug)
     {
         $this->slug = $slug;
+
         return $this;
     }
 
     /**
-     * Expand the relative path of the asset
+     * Expand the relative path of the asset.
      *
      * @param $asset The Asset object or a string with the relative path to the assets folder
+     *
      * @return string The fully qualified path of the asset
      **/
     public function getPath($asset)
     {
         if ($asset instanceof Asset) {
             $path = $asset->path;
-        }
-        else {
+        } else {
             $path = $asset;
-        };
+        }
 
         // If no relative path has been specified the script has no path
         if (empty($path)) {
-            return null;
+            return;
         }
 
         // If a protocol is specified, the path is external
         if (Str::contains($path, 'http')) {
             return $path;
         }
+
         return $this->app->uri().'/resources/assets/'.$path;
     }
 }

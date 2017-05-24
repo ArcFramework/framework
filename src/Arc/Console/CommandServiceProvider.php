@@ -20,7 +20,7 @@ class CommandServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        foreach($this->commands as $key => $className) {
+        foreach ($this->commands as $key => $className) {
             $this->app->singleton($key, function ($app) use ($className) {
                 return $this->app->make($className);
             });
@@ -29,4 +29,3 @@ class CommandServiceProvider extends ServiceProvider
         $this->commands(array_keys($this->commands));
     }
 }
-

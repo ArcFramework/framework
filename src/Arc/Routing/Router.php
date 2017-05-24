@@ -4,28 +4,30 @@ namespace Arc\Routing;
 
 use Illuminate\Container\Container;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Router as IlluminateRouter;
 use Illuminate\Routing\RouteCollection;
+use Illuminate\Routing\Router as IlluminateRouter;
 
 class Router extends IlluminateRouter
 {
     /**
      * Create a new Router instance.
      *
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
-     * @param  \Illuminate\Container\Container  $container
+     * @param \Illuminate\Contracts\Events\Dispatcher $events
+     * @param \Illuminate\Container\Container         $container
+     *
      * @return void
      */
     public function __construct(Container $container = null)
     {
-        $this->routes = new RouteCollection;
-        $this->container = $container ?: new Container;
+        $this->routes = new RouteCollection();
+        $this->container = $container ?: new Container();
     }
 
     /**
      * Dispatch the request to a route and return the response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
+     *
      * @return mixed
      */
     public function dispatchToRoute(Request $request)

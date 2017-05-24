@@ -8,8 +8,8 @@ class AdminMenusTestTest extends FrameworkTestCase
     public function the_class_can_register_an_admin_menu_via_the_fluent_api()
     {
         WP_Mock::wpFunction('is_admin', [
-            'times' => 1,
-            'return' => true
+            'times'  => 1,
+            'return' => true,
         ]);
 
         $this->app->make(AdminMenus::class)
@@ -34,4 +34,3 @@ class AdminMenusTestTest extends FrameworkTestCase
         ob_end_clean();
     }
 }
-

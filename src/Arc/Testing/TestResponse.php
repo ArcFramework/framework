@@ -4,10 +4,10 @@ namespace Arc\Testing;
 
 use Arc\Application;
 use Closure;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Http\Response;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Traits\Macroable;
 use PHPUnit\Framework\Assert as PHPUnit;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -28,7 +28,8 @@ class TestResponse
     /**
      * Create a new test response instance.
      *
-     * @param  \Illuminate\Http\Response  $response
+     * @param \Illuminate\Http\Response $response
+     *
      * @return void
      */
     public function __construct($response, Application $app)
@@ -40,7 +41,8 @@ class TestResponse
     /**
      * Create a new TestResponse from another response.
      *
-     * @param  \Illuminate\Http\Response  $response
+     * @param \Illuminate\Http\Response $response
+     *
      * @return static
      */
     public static function fromBaseResponse($response, $app)
@@ -66,7 +68,8 @@ class TestResponse
     /**
      * Assert that the response has the given status code.
      *
-     * @param  int  $status
+     * @param int $status
+     *
      * @return $this
      */
     public function assertStatus($status)
@@ -84,7 +87,8 @@ class TestResponse
     /**
      * Assert whether the response is redirecting to a given URI.
      *
-     * @param  string  $uri
+     * @param string $uri
+     *
      * @return $this
      */
     public function assertRedirect($uri = null)
@@ -93,7 +97,7 @@ class TestResponse
             $this->isRedirect(), 'Response status code ['.$this->getStatusCode().'] is not a redirect status code.'
         );
 
-        if (! is_null($uri)) {
+        if (!is_null($uri)) {
             PHPUnit::assertEquals($this->app('url')->to($uri), $this->headers->get('Location'));
         }
 
@@ -103,8 +107,9 @@ class TestResponse
     /**
      * Asserts that the response contains the given header and equals the optional value.
      *
-     * @param  string  $headerName
-     * @param  mixed  $value
+     * @param string $headerName
+     * @param mixed  $value
+     *
      * @return $this
      */
     public function assertHeader($headerName, $value = null)
@@ -115,7 +120,7 @@ class TestResponse
 
         $actual = $this->headers->get($headerName);
 
-        if (! is_null($value)) {
+        if (!is_null($value)) {
             PHPUnit::assertEquals(
                 $this->headers->get($headerName), $value,
                 "Header [{$headerName}] was found, but value [{$actual}] does not match [{$value}]."
@@ -128,8 +133,9 @@ class TestResponse
     /**
      * Asserts that the response contains the given cookie and equals the optional value.
      *
-     * @param  string  $cookieName
-     * @param  mixed  $value
+     * @param string $cookieName
+     * @param mixed  $value
+     *
      * @return $this
      */
     public function assertPlainCookie($cookieName, $value = null)
@@ -142,9 +148,10 @@ class TestResponse
     /**
      * Asserts that the response contains the given cookie and equals the optional value.
      *
-     * @param  string  $cookieName
-     * @param  mixed  $value
-     * @param  bool  $encrypted
+     * @param string $cookieName
+     * @param mixed  $value
+     * @param bool   $encrypted
+     *
      * @return $this
      */
     public function assertCookie($cookieName, $value = null, $encrypted = true)
@@ -154,7 +161,7 @@ class TestResponse
             "Cookie [{$cookieName}] not present on response."
         );
 
-        if (! $cookie || is_null($value)) {
+        if (!$cookie || is_null($value)) {
             return $this;
         }
 
@@ -174,7 +181,8 @@ class TestResponse
     /**
      * Get the given cookie from the response.
      *
-     * @param  string  $cookieName
+     * @param string $cookieName
+     *
      * @return Cookie|null
      */
     protected function getCookie($cookieName)
@@ -189,7 +197,8 @@ class TestResponse
     /**
      * Assert that the given string is contained within the response.
      *
-     * @param  string  $value
+     * @param string $value
+     *
      * @return $this
      */
     public function assertSee($value)
@@ -202,7 +211,8 @@ class TestResponse
     /**
      * Assert that the given string is not contained within the response.
      *
-     * @param  string  $value
+     * @param string $value
+     *
      * @return $this
      */
     public function assertDontSee($value)
@@ -215,7 +225,8 @@ class TestResponse
     /**
      * Assert that the response is a superset of the given JSON.
      *
-     * @param  array  $data
+     * @param array $data
+     *
      * @return $this
      */
     public function assertJson(array $data)
@@ -230,7 +241,8 @@ class TestResponse
     /**
      * Get the assertion message for assertJson.
      *
-     * @param  array  $data
+     * @param array $data
+     *
      * @return string
      */
     protected function assertJsonMessage(array $data)
@@ -248,7 +260,8 @@ class TestResponse
     /**
      * Assert that the response has the exact given JSON.
      *
-     * @param  array  $data
+     * @param array $data
+     *
      * @return $this
      */
     public function assertExactJson(array $data)
@@ -265,7 +278,8 @@ class TestResponse
     /**
      * Assert that the response contains the given JSON fragment.
      *
-     * @param  array  $data
+     * @param array $data
+     *
      * @return $this
      */
     public function assertJsonFragment(array $data)
@@ -292,8 +306,9 @@ class TestResponse
     /**
      * Assert that the response has a given JSON structure.
      *
-     * @param  array|null  $structure
-     * @param  array|null  $responseData
+     * @param array|null $structure
+     * @param array|null $responseData
+     *
      * @return $this
      */
     public function assertJsonStructure(array $structure = null, $responseData = null)
@@ -358,8 +373,9 @@ class TestResponse
     /**
      * Assert that the response view has a given piece of bound data.
      *
-     * @param  string|array  $key
-     * @param  mixed  $value
+     * @param string|array $key
+     * @param mixed        $value
+     *
      * @return $this
      */
     public function assertViewHas($key, $value = null)
@@ -384,7 +400,8 @@ class TestResponse
     /**
      * Assert that the response view has a given list of bound data.
      *
-     * @param  array  $bindings
+     * @param array $bindings
+     *
      * @return $this
      */
     public function assertViewHasAll(array $bindings)
@@ -403,7 +420,8 @@ class TestResponse
     /**
      * Assert that the response view is missing a piece of bound data.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return $this
      */
     public function assertViewMissing($key)
@@ -422,7 +440,7 @@ class TestResponse
      */
     protected function ensureResponseHasView()
     {
-        if (! isset($this->original) || ! $this->original instanceof View) {
+        if (!isset($this->original) || !$this->original instanceof View) {
             return PHPUnit::fail('The response is not a view.');
         }
 
@@ -432,8 +450,9 @@ class TestResponse
     /**
      * Assert that the session has a given value.
      *
-     * @param  string|array  $key
-     * @param  mixed  $value
+     * @param string|array $key
+     * @param mixed        $value
+     *
      * @return $this
      */
     public function assertSessionHas($key, $value = null)
@@ -457,7 +476,8 @@ class TestResponse
     /**
      * Assert that the session has a given list of values.
      *
-     * @param  array  $bindings
+     * @param array $bindings
+     *
      * @return $this
      */
     public function assertSessionHasAll(array $bindings)
@@ -476,8 +496,9 @@ class TestResponse
     /**
      * Assert that the session has the given errors.
      *
-     * @param  string|array  $keys
-     * @param  mixed  $format
+     * @param string|array $keys
+     * @param mixed        $format
+     *
      * @return $this
      */
     public function assertSessionHasErrors($keys = [], $format = null)
@@ -502,7 +523,8 @@ class TestResponse
     /**
      * Assert that the session does not have a given key.
      *
-     * @param  string|array  $key
+     * @param string|array $key
+     *
      * @return $this
      */
     public function assertSessionMissing($key)
@@ -552,7 +574,8 @@ class TestResponse
     /**
      * Dynamically access base response parameters.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return mixed
      */
     public function __get($key)
@@ -563,7 +586,8 @@ class TestResponse
     /**
      * Proxy isset() checks to the underlying base response.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return mixed
      */
     public function __isset($key)
@@ -574,8 +598,9 @@ class TestResponse
     /**
      * Handle dynamic calls into macros or pass missing methods to the base response.
      *
-     * @param  string  $method
-     * @param  array   $parameters
+     * @param string $method
+     * @param array  $parameters
+     *
      * @return mixed
      */
     public function __call($method, $args)

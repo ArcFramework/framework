@@ -21,5 +21,5 @@ return [
         Illuminate\Filesystem\FilesystemServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-    ]
+    ],
 ];

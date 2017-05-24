@@ -13,7 +13,7 @@ class Activation
 
     /**
      * Register an activation hook with WordPress to Execute the callable when the plugin
-     * is activated
+     * is activated.
      **/
     public function whenPluginIsActivated($callable)
     {
@@ -25,7 +25,7 @@ class Activation
 
     /**
      * Register a deactivation hook with Wordpress to execture the callable when the plugin
-     * is deactivated
+     * is deactivated.
      **/
     public function whenPluginIsDeactivated($callable)
     {

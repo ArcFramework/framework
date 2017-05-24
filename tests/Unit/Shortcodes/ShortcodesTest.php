@@ -14,7 +14,7 @@ class ShortcodesTest extends FrameworkTestCase
         $this->app->make(Shortcodes::class)
             ->code('test-shortcode')
             ->rendersView('test', [
-                'variable' => true
+                'variable' => true,
             ])
             ->register();
     }
@@ -26,7 +26,7 @@ class ShortcodesTest extends FrameworkTestCase
 
         $shortcodes->code('test-shortcode')
             ->rendersView('test', [
-                'variable' => true
+                'variable' => true,
             ]);
 
         $shortcodes->render(null, '', 'test-shortcode');

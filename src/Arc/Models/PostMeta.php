@@ -12,5 +12,3 @@ class PostMeta extends Model
 
     protected $table = 'postmeta';
 }
-
-

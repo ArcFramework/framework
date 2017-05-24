@@ -18,7 +18,7 @@ class CustomPostTypes
 
     /**
      * Register all Custom Post Type class listed in the plugin's config/wordpress.php file
-     * under custom_post_types
+     * under custom_post_types.
      **/
     public function registerAll()
     {
@@ -28,8 +28,10 @@ class CustomPostTypes
     }
 
     /**
-     * Return the corresponding custom post type model object for the given WP_Post object
+     * Return the corresponding custom post type model object for the given WP_Post object.
+     *
      * @param WP_Post $post
+     *
      * @return Arc\CustomPostTypes\CustomPostType
      **/
     public function resolve(WP_Post $post)
@@ -51,18 +53,18 @@ class CustomPostTypes
         register_post_type($customPostType->getSlug(), [
             'public' => $customPostType->isPublic(),
             'labels' => [
-                'name' => $customPostType->getName(),
+                'name'   => $customPostType->getName(),
                 'plural' => $customPostType->getPluralName(),
             ],
-            'supports' => $customPostType->getSupportedFields() ?? ['title', 'editor', 'custom-fields'],
+            'supports'  => $customPostType->getSupportedFields() ?? ['title', 'editor', 'custom-fields'],
             'menu_icon' => $customPostType->getIcon(),
         ]);
 
         if (!is_null($customPostType->getMetaBoxes())) {
-            $setupMetaBoxes = function() use ($customPostType) {
+            $setupMetaBoxes = function () use ($customPostType) {
                 foreach ($customPostType->getMetaBoxes() as $metaBox) {
                     add_meta_box(
-                        $customPostType->getSlug() . '-' . $metaBox['title'] . '-meta-box',
+                        $customPostType->getSlug().'-'.$metaBox['title'].'-meta-box',
                         $metaBox['title'],
                         $metaBox['callback'],
                         $customPostType->getSlug(),
@@ -88,14 +90,15 @@ class CustomPostTypes
             $compiledPath = $compiler->getCompiledPath($view->getPath());
 
             // Add a filter to return the compiled view as the template for this post type
-            add_filter('single_template', function($original) use ($compiledPath, $customPostType) {
+            add_filter('single_template', function ($original) use ($compiledPath, $customPostType) {
                 global $post;
                 if ($post->post_type == $customPostType->getSlug()) {
-                    echo($this->app->make('view')->make($customPostType->getView(), [
-                        'post' => $this->app->make(CustomPostTypes::class)->resolve($post)
-                    ]));
+                    echo $this->app->make('view')->make($customPostType->getView(), [
+                        'post' => $this->app->make(CustomPostTypes::class)->resolve($post),
+                    ]);
                     die;
                 }
+
                 return $original;
             });
         }

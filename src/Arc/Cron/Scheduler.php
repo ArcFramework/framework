@@ -15,16 +15,17 @@ class Scheduler
     }
 
     /**
-     * Set the time from which the action will be scheduled
+     * Set the time from which the action will be scheduled.
      **/
     public function after($timestamp)
     {
         $this->fromTime = $timestamp;
+
         return $this;
     }
 
     /**
-     * Clear the given scheduled hook
+     * Clear the given scheduled hook.
      **/
     public function deleteHook($hook)
     {
@@ -32,7 +33,7 @@ class Scheduler
     }
 
     /**
-     * Register the event to be run every minute
+     * Register the event to be run every minute.
      *
      * Note: This method terminates the fluent API
      **/
@@ -43,7 +44,7 @@ class Scheduler
     }
 
     /**
-     * Register the event to be run every minute
+     * Register the event to be run every minute.
      *
      * Note: This method terminates the fluent API
      **/
@@ -54,7 +55,7 @@ class Scheduler
     }
 
     /**
-     * Register the event to be run every ten minutes
+     * Register the event to be run every ten minutes.
      *
      * Note: This method terminates the fluent API
      **/
@@ -65,7 +66,7 @@ class Scheduler
     }
 
     /**
-     * Register the event to be run every 15 minutes
+     * Register the event to be run every 15 minutes.
      *
      * Note: This method terminates the fluent API
      **/
@@ -76,7 +77,7 @@ class Scheduler
     }
 
     /**
-     * Register the event to be run every hour
+     * Register the event to be run every hour.
      *
      * Note: This method terminates the fluent API
      **/
@@ -87,11 +88,12 @@ class Scheduler
     }
 
     /**
-     * Set the Action to be run
+     * Set the Action to be run.
      **/
     public function runAction($action)
     {
         $this->action = $action;
+
         return $this;
     }
 

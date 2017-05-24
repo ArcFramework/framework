@@ -12,6 +12,3 @@ class UserMeta extends Model
 
     protected $table = 'usermeta';
 }
-
-
-

@@ -30,3 +30,6 @@ If you're involved in WordPress plugin development and looking for an open sourc
 If you're unsure where to start, or have never/rarely contributed to open source before don't hesitate to get in touch at
 arcwpframework@gmail.com and we'll be happy to get you started.
 
+### Slack Channel
+[Join the Arc Framework slack channel](https://arc-framework.slack.com/shared_invite/MTg3Njg2MTU2NzU2LTE0OTU2NjExNTYtMjk4NWNmMTExMg)
+

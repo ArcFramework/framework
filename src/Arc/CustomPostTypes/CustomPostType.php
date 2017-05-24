@@ -31,13 +31,14 @@ class CustomPostType extends Post
         'guid',
         'post_category',
         'tax_input',
-        'meta_input'
+        'meta_input',
     ];
 
     /**
-     * Creates a post of the given post type with the given attributes and returns the model
+     * Creates a post of the given post type with the given attributes and returns the model.
      *
      * @param array $attributes
+     *
      * @return int The post id of the newly minted post
      */
     public static function create($attributes = [])
@@ -49,8 +50,8 @@ class CustomPostType extends Post
         $className = get_called_class();
 
         // Insert the post
-        $post = (new $className);
-        foreach($attributes as $key => $value) {
+        $post = (new $className());
+        foreach ($attributes as $key => $value) {
             $post->$key = $value;
         }
         $post->save();
@@ -78,7 +79,8 @@ class CustomPostType extends Post
     }
 
     /**
-     * Returns the slug of the custom post type class
+     * Returns the slug of the custom post type class.
+     *
      * @return string
      **/
     public function getSlug()

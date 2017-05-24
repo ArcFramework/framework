@@ -29,4 +29,3 @@ return [
 
     'compiled' => $app->storagePath('framework/views'),
 ];
-

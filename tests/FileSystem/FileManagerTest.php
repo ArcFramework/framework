@@ -1,6 +1,5 @@
 <?php
 
-use Arc\Filesystem;
 
 use Arc\Filesystem\File;
 use Arc\Filesystem\FileManager;
@@ -11,7 +10,7 @@ class FileManagerTest extends FrameworkTestCase
     {
         parent::setUp();
 
-        $this->fileManager = new FileManager;
+        $this->fileManager = new FileManager();
     }
 
     /** @test */

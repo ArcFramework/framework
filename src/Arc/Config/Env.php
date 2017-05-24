@@ -10,8 +10,8 @@ class Env
     {
         $environment = [];
 
-        if (file_exists($this->directory . '/.env')) {
-            foreach(file($this->directory . '/.env') as $envLine) {
+        if (file_exists($this->directory.'/.env')) {
+            foreach (file($this->directory.'/.env') as $envLine) {
                 $pair = explode('=', $envLine);
                 $environment[trim($pair[0])] = trim($pair[1]);
             }

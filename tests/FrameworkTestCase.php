@@ -1,7 +1,6 @@
 <?php
 
 use Arc\Http\Kernel;
-use Arc\Testing\Concerns\InteractsWithPages;
 use Arc\Testing\Concerns\MakesHttpRequests;
 
 abstract class FrameworkTestCase extends PHPUnit_Framework_TestCase

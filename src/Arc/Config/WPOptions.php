@@ -34,6 +34,7 @@ class WPOptions
         if ($this->isAlreadySet($key)) {
             return;
         }
+
         return $this->set($key, $value);
     }
 
@@ -42,6 +43,7 @@ class WPOptions
         if ($this->isAlreadySet($key)) {
             return update_option($key, $value);
         }
+
         return add_option($key, $value);
     }
 
@@ -51,22 +53,24 @@ class WPOptions
     }
 
     /**
-     * Sets the default sending address for wordpress emails
+     * Sets the default sending address for wordpress emails.
+     *
      * @param string $email
-     * @param string $name (optional)
+     * @param string $name  (optional)
      **/
     public function setDefaultFromAddress($email, $name = null)
     {
-        $this->filters->forHook('wp_mail_from')->doThis(function() use ($email) {
+        $this->filters->forHook('wp_mail_from')->doThis(function () use ($email) {
             return $email;
         });
-        $this->filters->forHook('wp_mail_from_name')->doThis(function() use ($name) {
+        $this->filters->forHook('wp_mail_from_name')->doThis(function () use ($name) {
             return $name;
         });
     }
 
     /**
-     * Returns true if a from address has been set for outgoing mail
+     * Returns true if a from address has been set for outgoing mail.
+     *
      * @return bool
      **/
     public function defaultFromAddressIsSet()
@@ -75,7 +79,7 @@ class WPOptions
     }
 
     /**
-     * Returns the default from address for outgoing mail if it is set
+     * Returns the default from address for outgoing mail if it is set.
      **/
     public function getDefaultFromAddress()
     {

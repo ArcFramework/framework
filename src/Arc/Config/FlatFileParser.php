@@ -14,11 +14,11 @@ class FlatFileParser
     }
 
     /**
-     * Requires the given config file, passing in the given variables and returns the result
+     * Requires the given config file, passing in the given variables and returns the result.
      *
      * @param string $configFileName The name of the config file to be loaded
-     * @param array $variables (optional) A set of key value pairs which will be passed in as
-     * variables
+     * @param array  $variables      (optional) A set of key value pairs which will be passed in as
+     *                               variables
      **/
     public function parse($configFileName, $variables = [])
     {
@@ -26,23 +26,23 @@ class FlatFileParser
             $$name = $value;
         }
 
-        $fileName = $this->app->path . '/config/' . $configFileName . '.php';
+        $fileName = $this->app->path.'/config/'.$configFileName.'.php';
 
         if (!file_exists($fileName)) {
             return [];
         }
 
-        return include($fileName);
+        return include $fileName;
     }
 
     public function parseDirectory($directoryName, $variables = [])
     {
-        foreach($variables as $name => $value) {
+        foreach ($variables as $name => $value) {
             $$name = $value;
         }
 
-        foreach($this->fileManager->getAllFilesInDirectory($this->app->path . '/' . $directoryName) as $file) {
-            include ($file->getPath() . '/' . $file->getFilename());
+        foreach ($this->fileManager->getAllFilesInDirectory($this->app->path.'/'.$directoryName) as $file) {
+            include $file->getPath().'/'.$file->getFilename();
         }
     }
 }

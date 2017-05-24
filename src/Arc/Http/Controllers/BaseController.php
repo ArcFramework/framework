@@ -6,7 +6,6 @@ use Arc\Application;
 use Illuminate\Routing\Controller;
 use Illuminate\Routing\Redirector;
 use Illuminate\Routing\ResponseFactory;
-use Illuminate\Validation\Factory;
 
 class BaseController extends Controller
 {
@@ -21,13 +20,14 @@ class BaseController extends Controller
     /**
      * Throw an HttpException with the given data.
      *
-     * @param  int     $code
-     * @param  string  $message
-     * @param  array   $headers
-     * @return void
+     * @param int    $code
+     * @param string $message
+     * @param array  $headers
      *
      * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     *
+     * @return void
      */
     public function abort($code, $message = '', array $headers = [])
     {
@@ -48,18 +48,18 @@ class BaseController extends Controller
     /**
      * Get an instance of the redirector.
      *
-     * @param  string|null  $to
-     * @param  int     $status
-     * @param  array   $headers
-     * @param  bool    $secure
+     * @param string|null $to
+     * @param int         $status
+     * @param array       $headers
+     * @param bool        $secure
+     *
      * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
      */
     public function redirect($to = null, $status = 302, $headers = [], $secure = null)
     {
         if (is_null($to)) {
             $redirect = $this->app->make(Redirector::class);
-        }
-        else {
+        } else {
             $redirect = $this->app->make(Redirector::class)->to($to, $status, $headers, $secure);
         }
         $redirect->setSession($this->app->make('session.store'));

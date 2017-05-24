@@ -10,9 +10,9 @@ class WPOptionsTest extends FrameworkTestCase
     {
         WP_Mock::wpFunction('get_option', [
             'times' => 1,
-            'args' => [
+            'args'  => [
                 'key',
-            ]
+            ],
         ]);
 
         $this->app->make(WPOptions::class)->get('key');
@@ -23,18 +23,18 @@ class WPOptionsTest extends FrameworkTestCase
     {
         WP_Mock::wpFunction('get_option', [
             'times' => 1,
-            'args' => [
+            'args'  => [
                 'key',
             ],
-            'return' => false
+            'return' => false,
         ]);
 
         WP_Mock::wpFunction('add_option', [
             'times' => 1,
-            'args' => [
+            'args'  => [
                 'key',
                 'value',
-            ]
+            ],
         ]);
 
         $this->app->make(WPOptions::class)->set('key', 'value');
@@ -45,18 +45,18 @@ class WPOptionsTest extends FrameworkTestCase
     {
         WP_Mock::wpFunction('get_option', [
             'times' => 1,
-            'args' => [
+            'args'  => [
                 'key',
             ],
-            'return' => true
+            'return' => true,
         ]);
 
         WP_Mock::wpFunction('update_option', [
             'times' => 1,
-            'args' => [
+            'args'  => [
                 'key',
                 'value',
-            ]
+            ],
         ]);
 
         $this->app->make(WPOptions::class)->set('key', 'value');
@@ -80,10 +80,10 @@ class WPOptionsTest extends FrameworkTestCase
     {
         WP_Mock::wpFunction('add_option', [
             'times' => 1,
-            'args' => [
+            'args'  => [
                 'key',
                 'value',
-            ]
+            ],
         ]);
 
         $this->app->make(WPOptions::class)->set('key', 'value');
@@ -94,10 +94,10 @@ class WPOptionsTest extends FrameworkTestCase
     {
         WP_Mock::wpFunction('add_option', [
             'times' => 0,
-            'args' => [
+            'args'  => [
                 'key',
                 'value',
-            ]
+            ],
         ]);
 
         $wpOptions = $this->app->make(WPOptions::class);
@@ -122,7 +122,7 @@ class WPOptionsTest extends FrameworkTestCase
         $filters = Mockery::mock(Filters::class);
         $filters->shouldReceive('forHook')->with('wp_mail_from')->once()->andReturn($filters);
         $filters->shouldReceive('doThis')
-            ->with(\Mockery::on(function($arg) {
+            ->with(\Mockery::on(function ($arg) {
                 return call_user_func($arg) == 'from@domain.com';
             }))
             ->once()

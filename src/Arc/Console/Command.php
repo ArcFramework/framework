@@ -3,10 +3,10 @@
 namespace Arc\Console;
 
 use Arc\Application;
-use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
+use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class Command extends SymfonyCommand
@@ -51,7 +51,6 @@ abstract class Command extends SymfonyCommand
      *
      * @var bool
      */
-
     protected $hidden = false;
 
     /**
@@ -62,13 +61,14 @@ abstract class Command extends SymfonyCommand
     protected $verbosity = OutputInterface::VERBOSITY_NORMAL;
 
     /**
-     * The instance of the Arc framework application
+     * The instance of the Arc framework application.
+     *
      * @var \Arc\Application
      **/
     protected $plugin;
 
     /**
-     * Invoke the class as a function
+     * Invoke the class as a function.
      **/
     public function __invoke(ArgvInput $input, ConsoleOutput $output)
     {
@@ -91,8 +91,9 @@ abstract class Command extends SymfonyCommand
     /**
      * Execute the console command.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
      * @return mixed
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -105,7 +106,8 @@ abstract class Command extends SymfonyCommand
     /**
      * Get the value of a command argument.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return string|array
      */
     public function argument($key = null)
@@ -113,14 +115,16 @@ abstract class Command extends SymfonyCommand
         if (is_null($key)) {
             return $this->input->getArguments();
         }
+
         return $this->input->getArgument($key);
     }
 
     /**
      * Run the console command.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
      * @return int
      */
     public function run(InputInterface $input, OutputInterface $output)
@@ -148,7 +152,7 @@ abstract class Command extends SymfonyCommand
         }
     }
 
-     /**
+    /**
      * Get the console command options.
      *
      * @return array
@@ -158,11 +162,12 @@ abstract class Command extends SymfonyCommand
         return [];
     }
 
-   /**
+    /**
      * Write a string as information output.
      *
-     * @param  string  $string
-     * @param  null|int|string  $verbosity
+     * @param string          $string
+     * @param null|int|string $verbosity
+     *
      * @return void
      */
     public function info($string, $verbosity = null)
@@ -173,9 +178,10 @@ abstract class Command extends SymfonyCommand
     /**
      * Write a string as standard output.
      *
-     * @param  string  $string
-     * @param  string  $style
-     * @param  null|int|string  $verbosity
+     * @param string          $string
+     * @param string          $style
+     * @param null|int|string $verbosity
+     *
      * @return void
      */
     public function line($string, $style = null, $verbosity = null)
@@ -188,8 +194,9 @@ abstract class Command extends SymfonyCommand
     /**
      * Write a string as comment output.
      *
-     * @param  string  $string
-     * @param  null|int|string  $verbosity
+     * @param string          $string
+     * @param null|int|string $verbosity
+     *
      * @return void
      */
     public function comment($string, $verbosity = null)
@@ -200,8 +207,9 @@ abstract class Command extends SymfonyCommand
     /**
      * Write a string as question output.
      *
-     * @param  string  $string
-     * @param  null|int|string  $verbosity
+     * @param string          $string
+     * @param null|int|string $verbosity
+     *
      * @return void
      */
     public function question($string, $verbosity = null)
@@ -212,8 +220,9 @@ abstract class Command extends SymfonyCommand
     /**
      * Write a string as error output.
      *
-     * @param  string  $string
-     * @param  null|int|string  $verbosity
+     * @param string          $string
+     * @param null|int|string $verbosity
+     *
      * @return void
      */
     public function error($string, $verbosity = null)
@@ -224,13 +233,14 @@ abstract class Command extends SymfonyCommand
     /**
      * Write a string as warning output.
      *
-     * @param  string  $string
-     * @param  null|int|string  $verbosity
+     * @param string          $string
+     * @param null|int|string $verbosity
+     *
      * @return void
      */
     public function warn($string, $verbosity = null)
     {
-        if (! $this->output->getFormatter()->hasStyle('warning')) {
+        if (!$this->output->getFormatter()->hasStyle('warning')) {
             $style = new OutputFormatterStyle('yellow');
 
             $this->output->getFormatter()->setStyle('warning', $style);
@@ -242,7 +252,8 @@ abstract class Command extends SymfonyCommand
     /**
      * Set the verbosity level.
      *
-     * @param  string|int  $level
+     * @param string|int $level
+     *
      * @return void
      */
     protected function setVerbosity($level)
@@ -253,14 +264,15 @@ abstract class Command extends SymfonyCommand
     /**
      * Get the verbosity level in terms of Symfony's OutputInterface level.
      *
-     * @param  string|int  $level
+     * @param string|int $level
+     *
      * @return int
      */
     protected function parseVerbosity($level = null)
     {
         if (isset($this->verbosityMap[$level])) {
             $level = $this->verbosityMap[$level];
-        } elseif (! is_int($level)) {
+        } elseif (!is_int($level)) {
             $level = $this->verbosity;
         }
 
@@ -270,7 +282,8 @@ abstract class Command extends SymfonyCommand
     /**
      * Get the value of a command option.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return string|array
      */
     public function option($key = null)
@@ -278,6 +291,7 @@ abstract class Command extends SymfonyCommand
         if (is_null($key)) {
             return $this->input->getOptions();
         }
+
         return $this->input->getOption($key);
     }
 

@@ -6,5 +6,4 @@ use Illuminate\View\FileViewFinder;
 
 class ViewFinder extends FileViewFinder
 {
-    
 }

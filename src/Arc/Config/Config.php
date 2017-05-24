@@ -2,8 +2,8 @@
 
 namespace Arc\Config;
 
-use ArrayAccess;
 use Arc\Application;
+use ArrayAccess;
 
 class Config implements ArrayAccess
 {
@@ -27,14 +27,14 @@ class Config implements ArrayAccess
             return $this->testConfig[$key];
         }
 
-        $configPath = $this->app->path . 'config/app.php';
+        $configPath = $this->app->path.'config/app.php';
         $configValues = (file_exists($configPath)) ? include($configPath) : [];
 
         if (!isset($configValues[$key])) {
             $configValues = $this->values;
         }
         if (!isset($configValues[$key])) {
-            return null;
+            return;
         }
 
         return $configValues[$key];

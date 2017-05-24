@@ -1,11 +1,8 @@
 <?php
 
 use Arc\Config\WPOptions;
-use Arc\Hooks\Actions;
-use Arc\Hooks\Filters;
 use Arc\Mail\Email;
 use Arc\Mail\Mailer;
-
 use Illuminate\Support\Str;
 
 class MailerTest extends FrameworkTestCase
@@ -13,7 +10,7 @@ class MailerTest extends FrameworkTestCase
     /** @test */
     public function send_method_calls_wp_mail_with_expected_arguments()
     {
-        $email = (new Email)
+        $email = (new Email())
             ->withTemplate('test')
             ->withMessage('<span class="red"> Test message. </span>')
             ->withCSS('.red { color: red; }')
@@ -23,15 +20,15 @@ class MailerTest extends FrameworkTestCase
 
         WP_Mock::wpFunction('wp_mail', [
             'times' => 1,
-            'args' => [
+            'args'  => [
                 'test@domain.com',
                 'Test Subject',
                 \Mockery::on(function ($message) {
                     return Str::contains($message, '<span class="red" style="color: red;"> Test message. </span>');
                 }),
                 \Mockery::any(),
-                null
-            ]
+                null,
+            ],
         ]);
 
         $mailer = $this->app->make(Mailer::class);
@@ -45,7 +42,7 @@ class MailerTest extends FrameworkTestCase
         $wpOptions->setTest('admin_email', 'admin@domain.com');
         $wpOptions->setTest('wp_mail_from', 'from@domain.com');
 
-        $email = (new Email)
+        $email = (new Email())
             ->withMessage('Test message.')
             ->to('test@domain.com');
 
@@ -69,7 +66,7 @@ class MailerTest extends FrameworkTestCase
 
         $this->app->instance(WPOptions::class, $wpOptions);
 
-        $email = (new Email)
+        $email = (new Email())
             ->withMessage('Test message.')
             ->to('test@domain.com');
 

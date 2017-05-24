@@ -2,12 +2,12 @@
 
 namespace Arc\Mail;
 
+use Arc\Config\WPOptions;
 use Arc\Contracts\Mail\Mailer as MailerContract;
 use Arc\Hooks\Actions;
 use Arc\Hooks\Filters;
-use Arc\Config\WPOptions;
-use Illuminate\View\Factory as ViewFactory;
 use Html2Text\Html2Text;
+use Illuminate\View\Factory as ViewFactory;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
 class Mailer implements MailerContract
@@ -25,8 +25,7 @@ class Mailer implements MailerContract
         Email $email,
         Filters $filters,
         WPOptions $wpOptions
-    )
-    {
+    ) {
         $this->actions = $actions;
         $this->filters = $filters;
         $this->blankEmail = $email;
@@ -50,7 +49,7 @@ class Mailer implements MailerContract
         // Automatically render a plain text version of the email
         $this->actions
             ->forHook('phpmailer_init')
-            ->doThis(function($phpMailer) use ($message) {
+            ->doThis(function ($phpMailer) use ($message) {
                 $phpMailer->AltBody = Html2Text::convert($message);
             });
 
@@ -65,8 +64,10 @@ class Mailer implements MailerContract
     }
 
     /**
-     * Renders the message for the given email and returns it
+     * Renders the message for the given email and returns it.
+     *
      * @param Arc\Mail\Email $email
+     *
      * @return string
      **/
     protected function renderMessage(Email $email)
@@ -93,9 +94,10 @@ class Mailer implements MailerContract
     }
 
     /**
-     * Set the from address for outgoing mail
+     * Set the from address for outgoing mail.
+     *
      * @param string $address The email address
-     * @param string $name (optional) The from name
+     * @param string $name    (optional) The from name
      **/
     public function setFromAddress($address, $name = null)
     {
@@ -103,8 +105,10 @@ class Mailer implements MailerContract
     }
 
     /**
-     * Returns the appropriate from address that we should use to send this email
+     * Returns the appropriate from address that we should use to send this email.
+     *
      * @param Arc\Mail\Email
+     *
      * @return string
      **/
     public function getFromAddress(Email $email)

@@ -9,7 +9,8 @@ class TestPlugin extends Application
     /**
      * Set the shared instance of the application.
      *
-     * @param  Application|null  $container
+     * @param Application|null $container
+     *
      * @return static
      */
     public static function setApplicationInstance(Application $application)

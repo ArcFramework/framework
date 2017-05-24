@@ -11,6 +11,7 @@ class Media
     public function attachFile($filePath)
     {
         $this->filePath = $filePath;
+
         return $this;
     }
 
@@ -31,7 +32,7 @@ class Media
         // If there was an error uploading the file we need to handle it
         if ($uploadedFile['error']) {
             throw new \Exception(
-                'Error uploading ' . $this->filePath . ': ' . $uploadedFile['error']
+                'Error uploading '.$this->filePath.': '.$uploadedFile['error']
             );
         }
 
@@ -41,10 +42,10 @@ class Media
         // Prepare the attachment data
         $attachment = [
             'post_mime_type' => $mimeType['type'],
-            'post_parent' => $post,
-            'post_title' => preg_replace('/\.[^.]+$/', '', $filename),
-            'post_content' => '',
-            'post_status' => 'inherit'
+            'post_parent'    => $post,
+            'post_title'     => preg_replace('/\.[^.]+$/', '', $filename),
+            'post_content'   => '',
+            'post_status'    => 'inherit',
         ];
 
         // Attach the file to the post
@@ -55,8 +56,8 @@ class Media
             throw new \Exception($attachmentId);
         }
 
-        require_once(ABSPATH . 'wp-admin/includes/image.php');
+        require_once ABSPATH.'wp-admin/includes/image.php';
         $attachmentData = wp_generate_attachment_metadata($attachmentId, $uploadedFile['file']);
-        wp_update_attachment_metadata($attachmentId,  $attachmentData);
+        wp_update_attachment_metadata($attachmentId, $attachmentData);
     }
 }

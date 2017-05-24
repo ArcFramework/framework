@@ -13,8 +13,10 @@ class User extends Model
     protected $primaryKey = 'ID';
 
     /**
-     * Returns the user matching the given email address or null if none exists
+     * Returns the user matching the given email address or null if none exists.
+     *
      * @param string $email
+     *
      * @return \Arc\Models\User|null
      **/
     public static function findByEmail($email)
@@ -23,8 +25,10 @@ class User extends Model
     }
 
     /**
-     * Returns the user matching the given username (user_login) or null if none exists
+     * Returns the user matching the given username (user_login) or null if none exists.
+     *
      * @param string $username
+     *
      * @return \Arc\Models\User|null
      **/
     public static function findByUsername($username)
@@ -33,7 +37,7 @@ class User extends Model
     }
 
     /**
-     * Set the role of the user to 'administrator'
+     * Set the role of the user to 'administrator'.
      **/
     public function makeAdministrator()
     {
@@ -41,15 +45,17 @@ class User extends Model
     }
 
     /**
-     * Set the user's role to the given role
+     * Set the user's role to the given role.
+     *
      * @param string $role
+     *
      * @return mixed
      **/
     public function setRole($role)
     {
         return wp_update_user([
-            'ID' => $this->ID,
-            'role' => $role
+            'ID'   => $this->ID,
+            'role' => $role,
         ]);
     }
 
@@ -60,9 +66,10 @@ class User extends Model
 
     /**
      * Sets the given usermeta key to the given value if a key value pair is provided
-     * or sets the key value pairs in the array if an array is provided as the first argument
+     * or sets the key value pairs in the array if an array is provided as the first argument.
+     *
      * @param array|string $key
-     * @param string|null $value
+     * @param string|null  $value
      **/
     public function setMeta($key, $value = null)
     {
@@ -73,9 +80,11 @@ class User extends Model
 
     /**
      * Returns the usermeta value matching the given key. To return multiple values if they
-     * are avaiable pass false as the second paramater
+     * are avaiable pass false as the second paramater.
+     *
      * @param string $key
-     * @param bool $single = true
+     * @param bool   $single = true
+     *
      * @return mixed
      **/
     public function findMeta($key, $single = true)
@@ -84,9 +93,10 @@ class User extends Model
     }
 
     /**
-     * Returns the PostMeta rows matching the given key in a Collection
+     * Returns the PostMeta rows matching the given key in a Collection.
      *
      * @param string $key The meta_key
+     *
      * @return Illuminate\Support\Collection
      **/
     public function getMeta($key)
@@ -98,9 +108,10 @@ class User extends Model
 
     /**
      * Deletes the all the usermeta for the user matching the given key or key and value
-     * if a value is provided
+     * if a value is provided.
+     *
      * @param string $key
-     * @param mixed $value (optional)
+     * @param mixed  $value (optional)
      **/
     public function deleteMeta($key, $value = null)
     {
@@ -109,7 +120,7 @@ class User extends Model
     }
 
     /**
-     * A User has many UserMeta
+     * A User has many UserMeta.
      **/
     public function userMeta()
     {
@@ -118,9 +129,11 @@ class User extends Model
 
     /**
      * Returns true if the user has a usermeta record matching the given key
-     * and value if provided
+     * and value if provided.
+     *
      * @param string $key
-     * @param mixed $value (optional)
+     * @param mixed  $value (optional)
+     *
      * @return bool
      **/
     public function hasMeta($key, $value = null)
@@ -147,4 +160,3 @@ class User extends Model
         return $this->addMeta($key, $value);
     }
 }
-

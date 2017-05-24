@@ -4,7 +4,7 @@ namespace Arc\Testing;
 
 use Illuminate\Database\Schema\MySqlBuilder;
 use Illuminate\View\Factory as ViewFactory;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Util_Test;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -20,7 +20,7 @@ if ( ! $_tests_dir ) {
 require_once $_tests_dir . '/includes/factory.php';
 require_once $_tests_dir . '/includes/trac.php';
 
-abstract class ArcTestCase extends PHPUnit_Framework_TestCase
+abstract class ArcTestCase extends TestCase
 {
     use Concerns\InteractsWithDatabase,
         Concerns\MakesHttpRequests;

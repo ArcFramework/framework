@@ -29,6 +29,11 @@ class WPOptions
         return !empty($this->get($key));
     }
 
+    public function exists($key)
+    {
+        return $this->get($key) !== false;
+    }
+
     public function setDefault($key, $value)
     {
         if ($this->isAlreadySet($key)) {
@@ -40,7 +45,7 @@ class WPOptions
 
     public function set($key, $value)
     {
-        if ($this->isAlreadySet($key)) {
+        if ($this->exists($key)) {
             return update_option($key, $value);
         }
 

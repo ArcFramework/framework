@@ -62,7 +62,7 @@ class AdminMenus
                     $this->icon,
                     $this->position
                 );
-            } else if ($this->type == 'submenu') {
+            } elseif ($this->type == 'submenu') {
                 add_submenu_page(
                     $this->parent,
                     $this->name,
@@ -71,7 +71,7 @@ class AdminMenus
                     $this->slug,
                     $this->getCallable()
                 );
-            } else if ($this->type = 'options') {
+            } elseif ($this->type = 'options') {
                 add_options_page($this->name, $this->title, $this->capability, $this->slug, $this->getCallable());
             }
         });
@@ -126,6 +126,7 @@ class AdminMenus
 
         return $this;
     }
+
     public function withMenuTitle($title)
     {
         $this->title = $title;

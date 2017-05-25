@@ -1,3 +1,7 @@
+![Logo]
+(https://pbs.twimg.com/profile_images/867578267884191744/LHIFNTve_400x400.jpg)
+
+
 # Arc Framework
 
 WordPress plugin development framework for Laravel developers.

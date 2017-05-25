@@ -1,6 +1,4 @@
-<p align="center">
 ![Logo](http://i.imgur.com/L3fOrtc.png)
-</p>
 
 # Arc Framework
 

@@ -78,6 +78,14 @@ class WPOptionsTest extends FrameworkTestCase
     /** @test */
     public function the_set_default_method_sets_a_config_value_if_none_has_already_been_set()
     {
+        WP_Mock::wpFunction('get_option', [
+            'times' => 1,
+            'args'  => [
+                'key',
+            ],
+            'return' => false,
+        ]);
+
         WP_Mock::wpFunction('add_option', [
             'times' => 1,
             'args'  => [

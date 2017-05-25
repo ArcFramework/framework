@@ -20,6 +20,8 @@ class AdminMenus
     private $icon;
     private $position;
     private $settings = [];
+    private $parent;
+    private $type;
 
     public function __construct(
         Application $plugin,
@@ -50,15 +52,28 @@ class AdminMenus
         }
 
         add_action('admin_menu', function () {
-            add_menu_page(
-                $this->name,
-                $this->title,
-                $this->capability,
-                $this->slug,
-                $this->getCallable(),
-                $this->icon,
-                $this->position
-            );
+            if ($this->type == 'menu') {
+                add_menu_page(
+                    $this->name,
+                    $this->title,
+                    $this->capability,
+                    $this->slug,
+                    $this->getCallable(),
+                    $this->icon,
+                    $this->position
+                );
+            } else if ($this->type == 'submenu') {
+                add_submenu_page(
+                    $this->parent,
+                    $this->name,
+                    $this->title,
+                    $this->capability,
+                    $this->slug,
+                    $this->getCallable()
+                );
+            } else if ($this->type = 'options') {
+                add_options_page($this->name, $this->title, $this->capability, $this->slug, $this->getCallable());
+            }
         });
 
         foreach ($this->settings as $setting) {
@@ -75,6 +90,13 @@ class AdminMenus
         }
     }
 
+    public function called($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
     public function render($view)
     {
         echo $this->viewFactory->make($view, $this->viewParameters);
@@ -82,11 +104,28 @@ class AdminMenus
 
     public function addMenuPageCalled($name)
     {
+        $this->type = 'menu';
+
         $this->name = $name;
 
         return $this;
     }
 
+    public function addSubMenuPageUnder($parent)
+    {
+        $this->type = 'submenu';
+
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    public function addSettingsPage()
+    {
+        $this->type = 'options';
+
+        return $this;
+    }
     public function withMenuTitle($title)
     {
         $this->title = $title;
@@ -132,9 +171,16 @@ class AdminMenus
         return $this;
     }
 
-    public function withIcon($icon)
+    public function withIconImage($url)
     {
         $this->icon = $this->app->getUrl().'/resources/assets/images/'.$icon;
+
+        return $this;
+    }
+
+    public function withIcon($icon)
+    {
+        $this->icon = $icon;
 
         return $this;
     }

@@ -1,3 +1,5 @@
+![Logo](http://i.imgur.com/L3fOrtc.png)
+
 # Arc Framework
 
 WordPress plugin development framework for Laravel developers.

@@ -58,6 +58,7 @@ class CustomPostTypes
             ],
             'supports'  => $customPostType->getSupportedFields() ?? ['title', 'editor', 'custom-fields'],
             'menu_icon' => $customPostType->getIcon(),
+            'show_in_menu' => $customPostType->getShowInMenu()
         ]);
 
         if (!is_null($customPostType->getMetaBoxes())) {

@@ -122,4 +122,9 @@ class CustomPostType extends Post
     {
         return $this->metaBoxes;
     }
+
+    public function getShowInMenu()
+    {
+        return $this->showInMenu;
+    }
 }

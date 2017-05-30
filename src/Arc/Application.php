@@ -8,6 +8,7 @@ use Arc\Config\Env;
 use Arc\Config\EnvironmentDetector;
 use Arc\Console\Kernel as ConsoleKernel;
 use Arc\Exceptions\Handler;
+use Arc\Filesystem\PluginFileParser;
 use Arc\Http\Kernel as HttpKernel;
 use Arc\Http\Response;
 use Arc\Mail\Mailer;
@@ -406,6 +407,10 @@ abstract class Application extends Container implements ApplicationContract, Con
      */
     public function version()
     {
+        if (!defined('get_plugin_data')) {
+            return $this->make(PluginFileParser::class)->getPluginVersion($this->filename);
+        }
+
         return get_plugin_data($this->filename)['Version'];
     }
 

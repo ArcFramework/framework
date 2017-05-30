@@ -64,6 +64,7 @@ class Kernel implements KernelContract
         \Arc\Bootstrap\RegisterFacades::class,
         \Arc\Bootstrap\SetRequestForConsole::class,
         \Arc\Bootstrap\RegisterProviders::class,
+        \Arc\Bootstrap\BindWordpressAdapters::class,
         \Arc\Bootstrap\BootProviders::class,
     ];
 

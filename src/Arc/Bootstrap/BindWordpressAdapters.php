@@ -5,7 +5,6 @@ namespace Arc\Bootstrap;
 use Arc\Hooks\Filters;
 use Arc\Hooks\NoOpFilters;
 use Arc\Hooks\WPFilters;
-use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
 
 class BindWordpressAdapters
@@ -13,7 +12,7 @@ class BindWordpressAdapters
     protected $app;
 
     /**
-     * Bind the instances of the classes which interact with wordpress
+     * Bind the instances of the classes which interact with wordpress.
      *
      * @param \Illuminate\Contracts\Foundation\Application $app
      *

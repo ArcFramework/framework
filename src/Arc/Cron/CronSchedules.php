@@ -2,11 +2,20 @@
 
 namespace Arc\Cron;
 
+use Arc\Hooks\Filters;
+
 class CronSchedules
 {
+    protected $filters;
+
+    public function __construct(Filters $filters)
+    {
+        $this->filters = $filters;
+    }
+
     public function register()
     {
-        add_filter('cron_schedules', function ($schedules) {
+        $this->filters->add('cron_schedules', function ($schedules) {
             $schedules['every_minute'] = [
                 'interval' => 1 * 60, // 1 * 60 seconds
                 'display'  => __('Every Minute'),

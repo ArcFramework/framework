@@ -47,6 +47,11 @@ class AdminMenus
 
     public function add()
     {
+        // If wordpress isn't booted
+        if (!defined('is_admin')) {
+            return;
+        }
+
         if (!is_admin()) {
             return;
         }

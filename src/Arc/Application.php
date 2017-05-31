@@ -140,11 +140,11 @@ abstract class Application extends Container implements ApplicationContract, Con
     protected $hasBeenBootstrapped = false;
 
     /**
-     * The title of the plugin
+     * The name of the plugin
      *
      * @var string
      **/
-    protected $pluginTitle;
+    protected $pluginName;
 
     /**
      * Instantiate the class.
@@ -1071,8 +1071,8 @@ abstract class Application extends Container implements ApplicationContract, Con
 
     public function pluginName()
     {
-        if (empty($this->pluginTitle)) {
-            return $this->pluginTitle;
+        if (!empty($this->pluginName)) {
+            return $this->pluginName;
         }
 
         return $this->make(PluginFileParser::class)->getPluginName($this->filename);

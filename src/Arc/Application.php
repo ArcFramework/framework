@@ -140,6 +140,13 @@ abstract class Application extends Container implements ApplicationContract, Con
     protected $hasBeenBootstrapped = false;
 
     /**
+     * The title of the plugin
+     *
+     * @var string
+     **/
+    protected $pluginTitle;
+
+    /**
      * Instantiate the class.
      *
      * @param string $pluginFilename Full qualified path to plugin file
@@ -1059,5 +1066,14 @@ abstract class Application extends Container implements ApplicationContract, Con
         }
 
         return BOOT_ARC_WITHOUT_WORDPRESS;
+    }
+
+    public function pluginName()
+    {
+        if (empty($this->pluginTitle)) {
+            return $this->pluginTitle;
+        }
+
+        return $this->make(PluginFileParser::class)->getPluginName($this->filename);
     }
 }

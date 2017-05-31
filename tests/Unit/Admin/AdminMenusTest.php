@@ -7,6 +7,9 @@ class AdminMenusTestTest extends FrameworkTestCase
     /** @test */
     public function the_class_can_register_an_admin_menu_via_the_fluent_api()
     {
+        // This test should be reimplemented as an actual integration test that hits the database
+        $this->markTestIncomplete();
+
         WP_Mock::wpFunction('is_admin', [
             'times'  => 1,
             'return' => true,

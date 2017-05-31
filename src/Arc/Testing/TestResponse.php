@@ -629,7 +629,7 @@ class TestResponse
             return $this->baseResponse->shouldBeDeferredToWordpress();
         }
 
-        return ($this->baseResponse instanceof DeferToWordPress);
+        return $this->baseResponse instanceof DeferToWordPress;
     }
 
     public function assertNotDeferredToWordpress()

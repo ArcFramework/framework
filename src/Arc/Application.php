@@ -140,7 +140,7 @@ abstract class Application extends Container implements ApplicationContract, Con
     protected $hasBeenBootstrapped = false;
 
     /**
-     * The name of the plugin
+     * The name of the plugin.
      *
      * @var string
      **/

@@ -51,8 +51,8 @@ class AdminMenus
             return;
         }
 
-        $pageName = $this->name ?? $this->app->pluginTitle();
-        $menuTitle = $this->title ?? $this->app->pluginTitle();
+        $pageName = $this->name ?? $this->app->pluginName();
+        $menuTitle = $this->title ?? $this->app->pluginName();
         $capability = $this->capability ?? 'administrator';
         $slug = $this->slug ?? $this->app->slug;
 

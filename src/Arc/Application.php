@@ -410,6 +410,7 @@ abstract class Application extends Container implements ApplicationContract, Con
         if (!defined('get_plugin_data')) {
             return $this->make(PluginFileParser::class)->getPluginVersion($this->filename);
         }
+
         return get_plugin_data($this->filename)['Version'];
     }
 

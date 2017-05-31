@@ -3,7 +3,7 @@
 namespace Arc\Hooks;
 
 /**
- * This is one lazy-ass class
+ * This is one lazy-ass class.
  **/
 class NoOpFilters implements Filters
 {
@@ -26,4 +26,3 @@ class NoOpFilters implements Filters
         // No op
     }
 }
-

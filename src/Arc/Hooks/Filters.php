@@ -14,4 +14,3 @@ interface Filters
 
     public function add($slug, $callable);
 }
-

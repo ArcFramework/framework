@@ -24,6 +24,7 @@ class WPOptions
         if (!defined('get_option')) {
             return;
         }
+
         return get_option($key);
     }
 

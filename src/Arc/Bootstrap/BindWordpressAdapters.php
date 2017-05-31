@@ -23,7 +23,7 @@ class BindWordpressAdapters
     {
         $this->app = $app;
 
-        if (constant('BOOT_ARC_WITHOUT_WORDPRESS')) {
+        if (@constant('BOOT_ARC_WITHOUT_WORDPRESS')) {
             return $this->bindNoWordpressImplementations();
         }
 

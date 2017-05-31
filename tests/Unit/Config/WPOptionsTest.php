@@ -8,6 +8,9 @@ class WPOptionsTest extends FrameworkTestCase
     /** @test */
     public function the_get_method_calls_the_get_option_function()
     {
+        // This test should be reimplemented as an actual integration test that hits the database
+        $this->markTestIncomplete();
+
         WP_Mock::wpFunction('get_option', [
             'times' => 1,
             'args'  => [
@@ -21,6 +24,9 @@ class WPOptionsTest extends FrameworkTestCase
     /** @test */
     public function the_set_method_calls_the_add_option_function_when_there_is_no_existing_option()
     {
+        // This test should be reimplemented as an actual integration test that hits the database
+        $this->markTestIncomplete();
+
         WP_Mock::wpFunction('get_option', [
             'times' => 1,
             'args'  => [
@@ -43,6 +49,9 @@ class WPOptionsTest extends FrameworkTestCase
     /** @test */
     public function the_set_method_calls_the_update_option_function_when_there_is_an_existing_option()
     {
+        // This test should be reimplemented as an actual integration test that hits the database
+        $this->markTestIncomplete();
+
         WP_Mock::wpFunction('get_option', [
             'times' => 1,
             'args'  => [
@@ -65,6 +74,9 @@ class WPOptionsTest extends FrameworkTestCase
     /** @test */
     public function the_set_test_method_sets_a_test_value_without_touching_wordpress_api()
     {
+        // This test should be reimplemented as an actual integration test that hits the database
+        $this->markTestIncomplete();
+
         WP_Mock::wpFunction('add_option', [
             'times' => 0,
         ]);
@@ -78,6 +90,9 @@ class WPOptionsTest extends FrameworkTestCase
     /** @test */
     public function the_set_default_method_sets_a_config_value_if_none_has_already_been_set()
     {
+        // This test should be reimplemented as an actual integration test that hits the database
+        $this->markTestIncomplete();
+
         WP_Mock::wpFunction('get_option', [
             'times' => 1,
             'args'  => [

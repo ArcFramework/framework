@@ -3,6 +3,7 @@
 namespace Arc\Testing;
 
 use Arc\Application;
+use Arc\Http\DeferToWordpress;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Response;
@@ -619,10 +620,20 @@ class TestResponse
 
     public function assertDeferredToWordpress()
     {
+        PHPUnit::assertTrue($this->wasDeferredToWordpress(), 'Failed asserting that the response was deferred to Wordpress');
+    }
+
+    protected function wasDeferredToWordpress()
+    {
         if (method_exists($this->baseResponse, 'shouldBeDeferredToWordpress')) {
             return $this->baseResponse->shouldBeDeferredToWordpress();
         }
 
-        return false;
+        return ($this->baseResponse instanceof DeferToWordPress);
+    }
+
+    public function assertNotDeferredToWordpress()
+    {
+        PHPUnit::assertFalse($this->wasDeferredToWordpress(), 'Failed asserting that the response was not deferred to Wordpress');
     }
 }

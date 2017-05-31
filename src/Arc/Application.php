@@ -8,6 +8,7 @@ use Arc\Config\Env;
 use Arc\Config\EnvironmentDetector;
 use Arc\Console\Kernel as ConsoleKernel;
 use Arc\Exceptions\Handler;
+use Arc\Filesystem\PluginFileParser;
 use Arc\Http\Kernel as HttpKernel;
 use Arc\Http\Response;
 use Arc\Mail\Mailer;
@@ -137,6 +138,13 @@ abstract class Application extends Container implements ApplicationContract, Con
      * @var bool
      */
     protected $hasBeenBootstrapped = false;
+
+    /**
+     * The title of the plugin
+     *
+     * @var string
+     **/
+    protected $pluginTitle;
 
     /**
      * Instantiate the class.
@@ -406,6 +414,9 @@ abstract class Application extends Container implements ApplicationContract, Con
      */
     public function version()
     {
+        if (!defined('get_plugin_data')) {
+            return $this->make(PluginFileParser::class)->getPluginVersion($this->filename);
+        }
         return get_plugin_data($this->filename)['Version'];
     }
 
@@ -616,6 +627,12 @@ abstract class Application extends Container implements ApplicationContract, Con
      */
     protected function bootProvider(ServiceProvider $provider)
     {
+        if ($this->shouldBeBootedWithoutWordpress()) {
+            if (method_exists($provider, 'bootWithoutWordpress')) {
+                return $this->call([$provider, 'bootWithoutWordpress']);
+            }
+        }
+
         if (method_exists($provider, 'boot')) {
             return $this->call([$provider, 'boot']);
         }
@@ -1040,5 +1057,23 @@ abstract class Application extends Container implements ApplicationContract, Con
     public function resourcePath($path = null)
     {
         return $this->basePath().DIRECTORY_SEPARATOR.'resources'.($path ? DIRECTORY_SEPARATOR.$path : $path);
+    }
+
+    public function shouldBeBootedWithoutWordpress()
+    {
+        if (!defined('BOOT_ARC_WITHOUT_WORDPRESS')) {
+            return false;
+        }
+
+        return BOOT_ARC_WITHOUT_WORDPRESS;
+    }
+
+    public function pluginName()
+    {
+        if (empty($this->pluginTitle)) {
+            return $this->pluginTitle;
+        }
+
+        return $this->make(PluginFileParser::class)->getPluginName($this->filename);
     }
 }

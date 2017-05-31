@@ -38,6 +38,7 @@ class Kernel implements KernelContract
         \Arc\Bootstrap\HandleExceptions::class,
         \Arc\Bootstrap\RegisterFacades::class,
         \Arc\Bootstrap\RegisterProviders::class,
+        \Arc\Bootstrap\BindWordpressAdapters::class,
         \Arc\Bootstrap\BootProviders::class,
     ];
 

@@ -21,6 +21,10 @@ class WPOptions
             return $this->testConfig[$key];
         }
 
+        if (!defined('get_option')) {
+            return;
+        }
+
         return get_option($key);
     }
 

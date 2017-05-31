@@ -51,34 +51,24 @@ class AdminMenus
             return;
         }
 
+        $pageName = $this->name ?? $this->app->pluginTitle();
+        $menuTitle = $this->title ?? $this->app->pluginTitle();
+        $capability = $this->capability ?? 'administrator';
+        $slug = $this->slug ?? $this->app->slug;
+
         add_action('admin_menu', function () {
             if ($this->type == 'menu') {
-                add_menu_page(
-                    $this->name,
-                    $this->title,
-                    $this->capability,
-                    $this->slug,
-                    $this->getCallable(),
-                    $this->icon,
-                    $this->position
-                );
+                add_menu_page($pageName, $menuTitle, $capability, $slug, $this->icon, $this->position);
             } elseif ($this->type == 'submenu') {
-                add_submenu_page(
-                    $this->parent,
-                    $this->name,
-                    $this->title,
-                    $this->capability,
-                    $this->slug,
-                    $this->getCallable()
-                );
+                add_submenu_page($this->parent, $pageName, $menuTitle, $capability, $slug, $this->getCallable());
             } elseif ($this->type = 'options') {
-                add_options_page($this->name, $this->title, $this->capability, $this->slug, $this->getCallable());
+                add_options_page($pageName, $menuTitle, $capability, $slug, $this->getCallable());
             }
         });
 
         foreach ($this->settings as $setting) {
-            add_action('admin_init', function () use ($setting) {
-                register_setting($this->slug, $setting);
+            add_action('admin_init', function () use ($slug, $setting) {
+                register_setting($slug, $setting);
             });
         }
     }

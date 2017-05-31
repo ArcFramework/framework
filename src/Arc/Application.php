@@ -621,6 +621,12 @@ abstract class Application extends Container implements ApplicationContract, Con
      */
     protected function bootProvider(ServiceProvider $provider)
     {
+        if ($this->shouldBeBootedWithoutWordpress()) {
+            if (method_exists($provider, 'bootWithoutWordpress')) {
+                return $this->call([$provider, 'bootWithoutWordpress']);
+            }
+        }
+
         if (method_exists($provider, 'boot')) {
             return $this->call([$provider, 'boot']);
         }
@@ -1045,5 +1051,14 @@ abstract class Application extends Container implements ApplicationContract, Con
     public function resourcePath($path = null)
     {
         return $this->basePath().DIRECTORY_SEPARATOR.'resources'.($path ? DIRECTORY_SEPARATOR.$path : $path);
+    }
+
+    public function shouldBeBootedWithoutWordpress()
+    {
+        if (!defined('BOOT_ARC_WITHOUT_WORDPRESS')) {
+            return false;
+        }
+
+        return BOOT_ARC_WITHOUT_WORDPRESS;
     }
 }

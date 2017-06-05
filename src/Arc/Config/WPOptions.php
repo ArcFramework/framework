@@ -7,10 +7,12 @@ use Arc\Hooks\Filters;
 
 class WPOptions
 {
-    public function __construct(Application $app, Filters $filters)
+    protected $filters;
+
+    public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->filters = $filters;
+        $this->filters = $app->make(Filters::class);
     }
 
     protected $testConfig = [];

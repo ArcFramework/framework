@@ -21,8 +21,8 @@ class WPOptions
             return $this->testConfig[$key];
         }
 
-        if (!defined('get_option')) {
-            return;
+        if (!function_exists('get_option')) {
+            return false;
         }
 
         return get_option($key);

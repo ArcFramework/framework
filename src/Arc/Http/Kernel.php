@@ -105,7 +105,6 @@ class Kernel implements KernelContract
             if (isset($response->exception)) {
                 throw $response->exception;
             }
-
         } catch (NotFoundHttpException $e) {
             $response = new DeferToWordpress();
         } catch (MethodNotAllowedHttpException $e) {

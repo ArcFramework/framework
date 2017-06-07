@@ -6,7 +6,7 @@ WordPress plugin development framework for Laravel developers.
 
 ## Documentation
 
-You can find the documentation [here](http://arc-framework.com/documentation)
+You can find the documentation [here](http://arc-framework.com/docs)
 
 ## Project Aims
 

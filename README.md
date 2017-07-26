@@ -30,8 +30,9 @@ to use it in production.
 
 If you're involved in WordPress plugin development and looking for an open source project to get involved in we welcome you!
 If you're unsure where to start, or have never/rarely contributed to open source before don't hesitate to get in touch at
-arcwpframework@gmail.com and we'll be happy to get you started.
+arcwpframework@gmail.com, or even better click the link below to join the Slack channel and we'll be happy to get you started.
 
 ### Slack Channel
-[Join the Arc Framework slack channel](https://arc-framework.slack.com/shared_invite/MTg3Njg2MTU2NzU2LTE0OTU2NjExNTYtMjk4NWNmMTExMg)
+
+Need instant help? [Come and join the Arc Framework slack channel](https://arc-framework.slack.com/shared_invite/MTg3Njg2MTU2NzU2LTE0OTU2NjExNTYtMjk4NWNmMTExMg)
 

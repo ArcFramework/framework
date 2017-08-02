@@ -5,7 +5,6 @@ namespace Arc\Testing;
 use Illuminate\Database\Schema\MySqlBuilder;
 use Illuminate\View\Factory as ViewFactory;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Util_Test;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Text_Template;

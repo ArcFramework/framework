@@ -3,9 +3,9 @@
 namespace Arc\Testing\Constraints;
 
 use Illuminate\Database\Connection;
-use PHPUnit_Framework_Constraint;
+use PHPUnit\Framework\Constraint\Constraint;
 
-class HasInDatabase extends PHPUnit_Framework_Constraint
+class HasInDatabase extends Constraint
 {
     /**
      * Number of records that will be shown in the console in case of failure.

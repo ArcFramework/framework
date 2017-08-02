@@ -14,4 +14,3 @@ class Option extends Model
 
     protected $primaryKey = 'option_id';
 }
-

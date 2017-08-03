@@ -968,15 +968,13 @@ abstract class Application extends Container implements ApplicationContract, Con
      **/
     public function baseUrl($uri = null)
     {
-        if (defined('ARC_TESTING')) {
-            $baseUrl = 'http://localhost';
-        } elseif (!function_exists('get_site_url')) {
+        if (!function_exists('get_site_url')) {
             $baseUrl = 'http://localhost';
         } else {
             $baseUrl = get_site_url();
         }
 
-        return $baseUrl.rds('/'.$uri);
+        return $baseUrl.(!is_null($uri) ? rds('/'.$uri) : '');
     }
 
     public function uri()

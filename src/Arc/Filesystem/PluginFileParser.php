@@ -22,7 +22,7 @@ class PluginFileParser
             return Str::contains($line, $attribute.':');
         });
 
-        return trim(str_replace($attribute.':', '', $versionLine));
+        return trim(str_replace([$attribute.':', '*'], '', $versionLine));
     }
 
     public function getPluginData($filename)

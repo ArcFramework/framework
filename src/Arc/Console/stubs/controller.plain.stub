@@ -2,10 +2,13 @@
 
 namespace DummyNamespace;
 
+use Arc\Http\ValidatesRequests;
 use Illuminate\Http\Request;
 use DummyRootNamespace\Http\Controllers\Controller;
 
 class DummyClass extends Controller
 {
+    use ValidatesRequests;
+
     //
 }

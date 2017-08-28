@@ -103,5 +103,41 @@ class CustomPostTypes
                 return $original;
             });
         }
+
+        if (method_exists($customPostType, 'adminColumnHeaders')) {
+            $this->registerAdminColumnHeaders($customPostType);
+        }
+
+        if (method_exists($customPostType, 'adminColumnCells')) {
+            $this->registerAdminColumnCells($customPostType);
+        }
+    }
+
+    public function registerAdminColumnHeaders($customPostType)
+    {
+        // Set values for admin columns
+        add_filter(
+            'manage_edit-'.$customPostType->getSlug().'_columns',
+            function($columns) use ($customPostType) {
+
+                $headers = [];
+
+                foreach ($customPostType->adminColumnHeaders($columns) as $key => $value) {
+                    $headers[$key] = __($value);
+                }
+
+                return $headers;
+            }
+        );
+    }
+
+    public function registerAdminColumnCells($customPostType)
+    {
+        add_action(
+            'manage_'.$customPostType->getSlug().'_posts_custom_column',
+            function($column, $postId) use ($customPostType) {
+                echo($customPostType->adminColumnCells($column, $customPostType->find($postId)));
+            }, 10, 2
+        );
     }
 }

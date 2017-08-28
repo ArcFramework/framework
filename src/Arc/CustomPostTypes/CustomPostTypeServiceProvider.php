@@ -1,6 +1,6 @@
 <?php
 
-namespace Arc\CustomPostType;
+namespace Arc\CustomPostTypes;
 
 use Illuminate\Support\ServiceProvider;
 

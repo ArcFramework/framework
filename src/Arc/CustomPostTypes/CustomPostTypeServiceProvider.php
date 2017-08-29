@@ -13,6 +13,11 @@ class CustomPostTypeServiceProvider extends ServiceProvider
         $registrar->registerAll();
     }
 
+    public function bootWithoutWordpress()
+    {
+        // No op
+    }
+
     public function register()
     {
         // Bind the custom post types handler

@@ -1028,6 +1028,7 @@ abstract class Application extends Container implements ApplicationContract, Con
         if ($code == 404) {
             throw new NotFoundHttpException($message);
         }
+
         throw new HttpException($code, $message, null, $headers);
     }
 

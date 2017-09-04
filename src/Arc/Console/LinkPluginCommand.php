@@ -50,7 +50,7 @@ class LinkPluginCommand extends Command
             if (!$this->option('f')) {
                 return $this->error('File or folder already exists at '.$pluginDirectory.'. Use -f option to overwrite it.');
             }
-dd($pluginDirectory);
+            dd($pluginDirectory);
             // $this->fileManager->deleteDirectory($pluginDirectory);
         }
 
@@ -59,4 +59,3 @@ dd($pluginDirectory);
         $this->info('Plugin installed via symlink at '.$pluginDirectory);
     }
 }
-

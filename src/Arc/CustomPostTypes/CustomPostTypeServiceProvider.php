@@ -27,4 +27,3 @@ class CustomPostTypeServiceProvider extends ServiceProvider
         );
     }
 }
-

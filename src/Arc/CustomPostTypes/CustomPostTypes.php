@@ -118,8 +118,7 @@ class CustomPostTypes
         // Set values for admin columns
         add_filter(
             'manage_edit-'.$customPostType->getSlug().'_columns',
-            function($columns) use ($customPostType) {
-
+            function ($columns) use ($customPostType) {
                 $headers = [];
 
                 foreach ($customPostType->adminColumnHeaders($columns) as $key => $value) {
@@ -135,8 +134,8 @@ class CustomPostTypes
     {
         add_action(
             'manage_'.$customPostType->getSlug().'_posts_custom_column',
-            function($column, $postId) use ($customPostType) {
-                echo($customPostType->adminColumnCells($column, $customPostType->find($postId)));
+            function ($column, $postId) use ($customPostType) {
+                echo $customPostType->adminColumnCells($column, $customPostType->find($postId));
             }, 10, 2
         );
     }

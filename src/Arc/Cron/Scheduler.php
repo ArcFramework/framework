@@ -88,6 +88,17 @@ class Scheduler
     }
 
     /**
+     * Register the event to be run every hour.
+     *
+     * Note: This method terminates the fluent API
+     **/
+    public function everyWeek()
+    {
+        $this->schedule = 'weekly';
+        $this->schedule();
+    }
+
+    /**
      * Set the Action to be run.
      **/
     public function runAction($action)

@@ -32,6 +32,10 @@ class CronSchedules
                 'interval' => 15 * 60, // 15 * 60 seconds
                 'display'  => __('Every 15 Minutes'),
             ];
+            $schedules['weekly'] = [
+                'interval' => 60 * 60 * 24 * 7,
+                'display'  => __('Every Week'),
+            ];
 
             return $schedules;
         });

@@ -133,6 +133,13 @@ abstract class Application extends Container implements ApplicationContract, Con
     protected $storagePath;
 
     /**
+     * The routes path for the plugin.
+     *
+     * @var string
+     */
+    protected $routesPath;
+
+    /**
      * Indicates if the application has been bootstrapped before.
      *
      * @var bool
@@ -1001,6 +1008,12 @@ abstract class Application extends Container implements ApplicationContract, Con
     {
         return $this->storagePath ??
             $this->storagePath = rtrim($this->basePath('storage')."/$path", '/');
+    }
+
+    public function routesPath($path = null)
+    {
+        return $this->routesPath ??
+            $this->routesPath = rtrim($this->basePath('routes')."/$path", '/');
     }
 
     public function filename()

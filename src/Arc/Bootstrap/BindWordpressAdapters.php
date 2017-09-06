@@ -4,7 +4,6 @@ namespace Arc\Bootstrap;
 
 use Arc\Hooks\Filters;
 use Arc\Hooks\NoOpFilters;
-use Arc\Hooks\WPFilters;
 use Illuminate\Contracts\Foundation\Application;
 
 class BindWordpressAdapters
@@ -22,16 +21,11 @@ class BindWordpressAdapters
     {
         $this->app = $app;
 
-        if (@constant('BOOT_ARC_WITHOUT_WORDPRESS')) {
-            return $this->bindNoWordpressImplementations();
+        if (!@constant('BOOT_ARC_WITHOUT_WORDPRESS')) {
+            return;
         }
 
-        $this->bindWordpressImplementations();
-    }
-
-    protected function bindWordpressImplementations()
-    {
-        $this->app->singleton(Filters::class, WPFilters::class);
+        $this->bindNoWordpressImplementations();
     }
 
     protected function bindNoWordpressImplementations()

@@ -11,4 +11,6 @@ class PostMeta extends Model
     protected $guarded = [];
 
     protected $table = 'postmeta';
+
+    protected $primaryKey = 'meta_id';
 }

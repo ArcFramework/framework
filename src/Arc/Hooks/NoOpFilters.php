@@ -5,7 +5,7 @@ namespace Arc\Hooks;
 /**
  * This is one lazy-ass class.
  **/
-class NoOpFilters implements Filters
+class NoOpFilters extends Filters
 {
     /**
      * Set the hook for the action

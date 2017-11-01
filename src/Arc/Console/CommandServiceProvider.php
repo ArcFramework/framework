@@ -7,10 +7,10 @@ use Illuminate\Support\ServiceProvider;
 class CommandServiceProvider extends ServiceProvider
 {
     protected $commands = [
-        'command.ship'              => ShipPluginCommand::class,
-        'command.make.controller'   => GenerateControllerCommand::class,
+        'command.ship'            => ShipPluginCommand::class,
+        'command.make.controller' => GenerateControllerCommand::class,
         //'command.make.migration'    => GenerateMigrationCommand::class,
-        'command.make.provider'     => GenerateProviderCommand::class,
+        'command.make.provider' => GenerateProviderCommand::class,
     ];
 
     /**
